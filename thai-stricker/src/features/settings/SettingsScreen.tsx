@@ -1,12 +1,13 @@
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import { useState } from "react";
+
+import type { AppTheme } from "../../styles/theme";
 
 const REST_OPTIONS = [15, 30, 45, 60, 90, 120] as const;
 const TRAINING_DAY_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
 const MAX_EXERCISES_OPTIONS = [6, 8, 10, 12, 14, 16, 18, 20] as const;
 const NUMBER_OF_EXERCISES_PER_PAGE_OPTIONS = [4, 6, 8, 10] as const;
 const DEFAULT_REPS_EXERCISE_DURATION_OPTIONS = [1, 2, 3, 4, 5] as const;
-const THEME_OPTIONS = ["light", "dark"] as const;
+const THEME_OPTIONS = ["Light", "Dark"] as const;
 
 type RestOption = (typeof REST_OPTIONS)[number];
 export type TrainingDayOption = (typeof TRAINING_DAY_OPTIONS)[number];
@@ -15,19 +16,23 @@ export type NumberOfExercisesPerPageOption =
   (typeof NUMBER_OF_EXERCISES_PER_PAGE_OPTIONS)[number];
 export type DefaultRepsExerciseDurationOption =
   (typeof DEFAULT_REPS_EXERCISE_DURATION_OPTIONS)[number];
-type ThemeOption = (typeof THEME_OPTIONS)[number];
+export type ThemePreferenceOption = (typeof THEME_OPTIONS)[number];
 
 function OptionGroup<T extends string | number>({
   options,
   selectedValue,
   onSelect,
   getLabel,
+  theme,
 }: {
   options: readonly T[];
   selectedValue: T;
   onSelect: (value: T) => void;
   getLabel: (value: T) => string;
+  theme: AppTheme;
 }) {
+  const styles = getStyles(theme);
+
   return (
     <View style={styles.optionGroup}>
       {options.map((option) => {
@@ -62,6 +67,9 @@ type SettingsScreenProps = {
   onDefaultRepsExerciseDurationMinutesChange: (
     value: DefaultRepsExerciseDurationOption,
   ) => void;
+  themePreference: ThemePreferenceOption;
+  onThemePreferenceChange: (value: ThemePreferenceOption) => void;
+  theme: AppTheme;
 };
 
 export function SettingsScreen({
@@ -75,8 +83,11 @@ export function SettingsScreen({
   onNumberOfExercisesPerPageChange,
   defaultRepsExerciseDurationMinutes,
   onDefaultRepsExerciseDurationMinutesChange,
+  themePreference,
+  onThemePreferenceChange,
+  theme,
 }: SettingsScreenProps) {
-  const [themePreference, setThemePreference] = useState<ThemeOption>("dark");
+  const styles = getStyles(theme);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -103,6 +114,7 @@ export function SettingsScreen({
               selectedValue={restSecondsBetweenExercises}
               onSelect={onRestSecondsChange}
               getLabel={(value) => `${value}s`}
+              theme={theme}
             />
           </View>
 
@@ -119,6 +131,7 @@ export function SettingsScreen({
               selectedValue={trainingDaysPerWeek}
               onSelect={onTrainingDaysPerWeekChange}
               getLabel={(value) => `${value}`}
+              theme={theme}
             />
           </View>
 
@@ -136,6 +149,7 @@ export function SettingsScreen({
               selectedValue={maxExercisesPerWorkout}
               onSelect={onMaxExercisesPerWorkoutChange}
               getLabel={(value) => `${value}`}
+              theme={theme}
             />
           </View>
 
@@ -152,6 +166,7 @@ export function SettingsScreen({
               selectedValue={numberOfExercisesPerPage}
               onSelect={onNumberOfExercisesPerPageChange}
               getLabel={(value) => `${value}`}
+              theme={theme}
             />
           </View>
 
@@ -172,6 +187,7 @@ export function SettingsScreen({
               selectedValue={defaultRepsExerciseDurationMinutes}
               onSelect={onDefaultRepsExerciseDurationMinutesChange}
               getLabel={(value) => `${value}`}
+              theme={theme}
             />
           </View>
         </View>
@@ -184,12 +200,15 @@ export function SettingsScreen({
               <Text style={styles.settingLabel}>Theme preference</Text>
               <Text style={styles.settingValue}>{themePreference}</Text>
             </View>
-            <Text style={styles.settingHint}>This selector does not change the actual app theme yet.</Text>
+            <Text style={styles.settingHint}>
+              Select Light or Dark to apply the app theme immediately for this session.
+            </Text>
             <OptionGroup
               options={THEME_OPTIONS}
               selectedValue={themePreference}
-              onSelect={setThemePreference}
-              getLabel={(value) => value.charAt(0).toUpperCase() + value.slice(1)}
+              onSelect={onThemePreferenceChange}
+              getLabel={(value) => value}
+              theme={theme}
             />
           </View>
         </View>
@@ -206,118 +225,122 @@ export function SettingsScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f4efe6",
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 12,
-    gap: 16,
-  },
-  header: {
-    gap: 6,
-  },
-  eyebrow: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.4,
-  },
-  title: {
-    color: "#1f1f1f",
-    fontSize: 34,
-    fontWeight: "800",
-  },
-  subtitle: {
-    color: "#5f5446",
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  card: {
-    backgroundColor: "#fffaf3",
-    borderRadius: 18,
-    padding: 18,
-    gap: 18,
-    borderWidth: 1,
-    borderColor: "#eadfce",
-  },
-  cardTitle: {
-    color: "#231f1a",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  settingBlock: {
-    gap: 10,
-  },
-  settingHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 12,
-  },
-  settingLabel: {
-    flex: 1,
-    color: "#231f1a",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  settingValue: {
-    color: "#8b5e34",
-    fontSize: 14,
-    fontWeight: "700",
-    textTransform: "capitalize",
-  },
-  settingHint: {
-    color: "#6b5f51",
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  optionGroup: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-  },
-  optionButton: {
-    minWidth: 58,
-    minHeight: 42,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#c9b69b",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fffaf3",
-  },
-  optionButtonSelected: {
-    backgroundColor: "#bf5b22",
-    borderColor: "#bf5b22",
-  },
-  optionText: {
-    color: "#5f5446",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  optionTextSelected: {
-    color: "#fffaf3",
-  },
-  noteCard: {
-    backgroundColor: "#1f3c36",
-    borderRadius: 18,
-    padding: 18,
-    gap: 8,
-  },
-  noteTitle: {
-    color: "#eef7f1",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  noteText: {
-    color: "#d7e8df",
-    fontSize: 14,
-    lineHeight: 21,
-  },
-});
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.appBackground,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 12,
+      gap: 16,
+    },
+    header: {
+      gap: 6,
+    },
+    eyebrow: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.4,
+    },
+    title: {
+      color: theme.colors.textPrimary,
+      fontSize: 34,
+      fontWeight: "800",
+    },
+    subtitle: {
+      color: theme.colors.textSecondary,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    card: {
+      backgroundColor: theme.colors.card,
+      borderRadius: 18,
+      padding: 18,
+      gap: 18,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    cardTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "700",
+    },
+    settingBlock: {
+      gap: 10,
+    },
+    settingHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 12,
+    },
+    settingLabel: {
+      flex: 1,
+      color: theme.colors.textPrimary,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    settingValue: {
+      color: theme.colors.accent,
+      fontSize: 14,
+      fontWeight: "700",
+      textTransform: "capitalize",
+    },
+    settingHint: {
+      color: theme.colors.textSecondary,
+      fontSize: 13,
+      lineHeight: 19,
+    },
+    optionGroup: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 10,
+    },
+    optionButton: {
+      minWidth: 58,
+      minHeight: 42,
+      paddingHorizontal: 12,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.inputBorder,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.inputBackground,
+    },
+    optionButtonSelected: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    optionText: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    optionTextSelected: {
+      color: theme.colors.primaryText,
+    },
+    noteCard: {
+      backgroundColor: theme.colors.cardElevated,
+      borderRadius: 18,
+      padding: 18,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    noteTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    noteText: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 21,
+    },
+  });
+}

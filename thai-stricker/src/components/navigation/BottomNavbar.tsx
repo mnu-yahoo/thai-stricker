@@ -1,5 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
+import type { AppTheme } from "../../styles/theme";
+
 const NAV_ITEMS = ["Home", "Workouts", "Schedule", "AI Coach", "Settings"] as const;
 
 export type BottomNavTab = (typeof NAV_ITEMS)[number];
@@ -7,9 +9,12 @@ export type BottomNavTab = (typeof NAV_ITEMS)[number];
 type BottomNavbarProps = {
   activeTab: BottomNavTab;
   onTabPress: (tab: BottomNavTab) => void;
+  theme: AppTheme;
 };
 
-export function BottomNavbar({ activeTab, onTabPress }: BottomNavbarProps) {
+export function BottomNavbar({ activeTab, onTabPress, theme }: BottomNavbarProps) {
+  const styles = getStyles(theme);
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.bar}>
@@ -32,19 +37,20 @@ export function BottomNavbar({ activeTab, onTabPress }: BottomNavbarProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    backgroundColor: "#f4efe6",
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    wrapper: {
+    backgroundColor: theme.colors.appBackground,
     paddingHorizontal: 16,
     paddingTop: 10,
     paddingBottom: 14,
   },
   bar: {
     flexDirection: "row",
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.navbarBackground,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
     padding: 6,
     gap: 6,
   },
@@ -57,15 +63,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   itemActive: {
-    backgroundColor: "#bf5b22",
+    backgroundColor: theme.colors.navbarActive,
   },
   label: {
-    color: "#6b5f51",
+    color: theme.colors.navbarInactive,
     fontSize: 12,
     fontWeight: "700",
     textAlign: "center",
   },
   labelActive: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
   },
-});
+  });
+}

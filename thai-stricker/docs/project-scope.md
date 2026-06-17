@@ -329,6 +329,8 @@ Current behavior:
 - User can set number of exercises per page locally
 - User can set default duration in minutes for reps exercises locally
 - User can choose light or dark theme preference locally
+- Light preference loads the Light Theme
+- Dark preference loads the Dark Theme
 - Training days per week is shared with the mocked Schedule screen
 
 Not implemented:
@@ -342,12 +344,31 @@ Not implemented:
 - Validating existing workouts against maximum exercises
 - Updating existing workouts with default reps duration
 - Updating existing workouts
-- Applying theme to the app
 - Schedule generation
 
 Settings and Workouts currently share mocked rest time state.
 
 This is not persisted and does not use SQLite or Drizzle.
+
+## Theme Feature
+
+Status:
+
+- Approved
+- Implemented with local theme tokens
+
+Current behavior:
+
+- App supports Light and Dark themes.
+- Settings Theme preference controls active theme.
+- Light preference loads Light Theme.
+- Dark preference loads Dark Theme.
+- Theme tokens are prepared for Google Stitch output.
+
+Not implemented:
+
+- Persistent theme preference
+- Final Stitch token import if Stitch output is not available yet
 
 ## AI Coach Screen
 

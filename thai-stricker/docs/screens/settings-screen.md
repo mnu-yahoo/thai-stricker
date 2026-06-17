@@ -29,7 +29,7 @@ A user should be able to:
 - Adjust the number of exercises per page locally
 - Adjust the default duration in minutes for reps exercises locally
 - Choose a light or dark theme preference locally
-- Understand that these settings are not applied yet
+- See the app theme change immediately
 
 ## Layout Structure
 
@@ -91,12 +91,13 @@ Current implementation:
 - Maximum exercises per workout is currently shared through mocked app-level state
 - Number of exercises per page is currently shared through mocked app-level state
 - Default duration in minutes for reps exercises is currently shared through mocked app-level state
+- Theme preference is currently shared through mocked app-level state
 - Changing the rest time updates the value displayed by the Workouts screen
 - Changing training days per week updates the value displayed by the Schedule screen
 - Changing maximum exercises per workout only updates mocked Settings state for now
 - Changing number of exercises per page only updates mocked Settings state for now
 - Changing default reps exercise duration only updates mocked Settings state for now
-- Theme preference remains local component state only
+- Changing theme preference updates the visible app theme immediately
 - This is not persisted yet
 
 No:
@@ -134,8 +135,8 @@ Current behavior:
 
 Current behavior:
 
-- Updates local UI state only
-- Does not change the actual app theme
+- Updates mocked shared app-level state only
+- Immediately changes the actual app theme for the current session
 
 ## Maximum Exercises Per Workout
 
@@ -244,6 +245,18 @@ Not implemented:
 - Updating existing workouts
 - Database persistence
 
+## Theme Preference
+
+Current behavior:
+- User can select Light or Dark.
+- Light loads the app Light Theme.
+- Dark loads the app Dark Theme.
+- Theme changes apply immediately in mocked local state.
+- Theme selection is not persisted yet.
+
+Future behavior:
+- Theme tokens should be replaced with final Google Stitch output.
+
 ## Out Of Scope
 
 The Settings Screen must not implement:
@@ -257,7 +270,6 @@ The Settings Screen must not implement:
 - Applying default reps exercise duration to Add Workout
 - Applying default reps exercise duration to workout execution
 - Updating existing workouts with default reps duration
-- Changing the actual app theme
 - Theme providers
 - Scheduling behavior
 - Schedule generation
@@ -270,7 +282,6 @@ The Settings Screen must not implement:
 - Settings Screen must not validate or change existing workouts when maximum exercises changes
 - Settings Screen must not apply number of exercises per page anywhere yet
 - Settings Screen must not apply default reps exercise duration anywhere yet
-- Settings Screen must not change actual app theme yet
 - Settings Screen must not implement scheduling behavior
 - Settings Screen must not implement database access
 - Read only `docs/project-scope.md`, `docs/screens/settings-screen.md`, and relevant architecture documents when modifying this screen

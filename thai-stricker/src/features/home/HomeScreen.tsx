@@ -5,6 +5,7 @@ import {
   mockMonthlySummary,
   type MockWorkoutStatus,
 } from "./homeMocks";
+import type { AppTheme } from "../../styles/theme";
 import type { MockCoachTip } from "../aiCoach/coachTipsMocks";
 import type { MockWorkoutLogEntry } from "../workoutLogging/workoutLogMocks";
 import type { MockWeeklyWorkoutPlan } from "../plannedWorkouts/plannedWorkoutMocks";
@@ -26,6 +27,7 @@ type CalendarCell = {
 };
 
 type HomeScreenProps = {
+  theme: AppTheme;
   randomCoachTip: MockCoachTip;
   workoutLogs: MockWorkoutLogEntry[];
   weeklyWorkoutPlans: MockWeeklyWorkoutPlan[];
@@ -83,9 +85,12 @@ function buildCalendarCells(workoutLogs: MockWorkoutLogEntry[]): CalendarCell[] 
   return cells;
 }
 
-function getDayStyle(status?: MockWorkoutStatus) {
+function getDayStyle(theme: AppTheme, status?: MockWorkoutStatus) {
   if (!status) {
-    return styles.calendarDayIdle;
+    return {
+      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surface,
+    };
   }
 
   return {
@@ -95,6 +100,7 @@ function getDayStyle(status?: MockWorkoutStatus) {
 }
 
 export function HomeScreen({
+  theme,
   randomCoachTip,
   workoutLogs,
   weeklyWorkoutPlans,
@@ -102,6 +108,7 @@ export function HomeScreen({
   onStartWorkout,
   onOpenAiCoach,
 }: HomeScreenProps) {
+  const styles = getStyles(theme);
   const calendarCells = buildCalendarCells(workoutLogs);
   const completedWorkoutsThisMonth = workoutLogs.filter((entry) => {
     const completedDate = new Date(entry.completedDate);
@@ -221,7 +228,7 @@ export function HomeScreen({
 
           <View style={styles.calendarGrid}>
             {calendarCells.map((cell) => (
-              <View key={cell.key} style={[styles.calendarDay, getDayStyle(cell.status)]}>
+              <View key={cell.key} style={[styles.calendarDay, getDayStyle(theme, cell.status)]}>
                 {cell.dayNumber ? (
                   <Text
                     style={[
@@ -261,234 +268,235 @@ export function HomeScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f4efe6",
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 12,
-    gap: 16,
-  },
-  header: {
-    paddingTop: 8,
-    gap: 6,
-  },
-  eyebrow: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.4,
-  },
-  title: {
-    color: "#1f1f1f",
-    fontSize: 34,
-    fontWeight: "800",
-  },
-  subtitle: {
-    color: "#5f5446",
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  card: {
-    backgroundColor: "#fffaf3",
-    borderRadius: 18,
-    padding: 18,
-    gap: 14,
-    borderWidth: 1,
-    borderColor: "#eadfce",
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  cardTitle: {
-    color: "#231f1a",
-    fontSize: 20,
-    fontWeight: "700",
-  },
-  cardMeta: {
-    color: "#6b5f51",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  difficultyBadge: {
-    backgroundColor: "#f0dfc8",
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  difficultyText: {
-    color: "#7c4f1f",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  workoutName: {
-    color: "#231f1a",
-    fontSize: 24,
-    fontWeight: "800",
-  },
-  workoutFocus: {
-    color: "#5f5446",
-    fontSize: 15,
-    lineHeight: 21,
-  },
-  metricsRow: {
-    flexDirection: "row",
-    gap: 12,
-    flexWrap: "wrap",
-  },
-  metricPill: {
-    backgroundColor: "#f8efe2",
-    borderRadius: 14,
-    padding: 12,
-    gap: 4,
-    minWidth: "30%",
-    flexGrow: 1,
-  },
-  metricLabel: {
-    color: "#8b7355",
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-  },
-  metricValue: {
-    color: "#231f1a",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  primaryButton: {
-    backgroundColor: "#bf5b22",
-    borderRadius: 14,
-    minHeight: 52,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButtonText: {
-    color: "#fffaf3",
-    fontSize: 16,
-    fontWeight: "700",
-  },
-  summaryGrid: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  summaryTile: {
-    flex: 1,
-    backgroundColor: "#f8efe2",
-    borderRadius: 14,
-    paddingVertical: 16,
-    paddingHorizontal: 10,
-    alignItems: "center",
-    gap: 6,
-  },
-  summaryValue: {
-    color: "#231f1a",
-    fontSize: 24,
-    fontWeight: "800",
-  },
-  summaryLabel: {
-    color: "#6b5f51",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  weekdayRow: {
-    flexDirection: "row",
-  },
-  weekdayLabel: {
-    flex: 1,
-    color: "#8b7355",
-    fontSize: 12,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  calendarGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 8,
-  },
-  calendarDay: {
-    width: "12.9%",
-    aspectRatio: 1,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#e6d9c4",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#f8f3ea",
-  },
-  calendarDayIdle: {
-    borderColor: "#efe5d6",
-    backgroundColor: "#f8f3ea",
-  },
-  calendarDayText: {
-    color: "#b0a391",
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  calendarDayTextActive: {
-    color: "#231f1a",
-    fontWeight: "800",
-  },
-  legend: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 12,
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  legendSwatch: {
-    width: 10,
-    height: 10,
-    borderRadius: 999,
-  },
-  legendLabel: {
-    color: "#5f5446",
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "capitalize",
-  },
-  coachCard: {
-    backgroundColor: "#1f3c36",
-    borderRadius: 18,
-    padding: 18,
-    gap: 12,
-  },
-  coachHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  coachTag: {
-    color: "#c8e0d3",
-    fontSize: 12,
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-  coachMessage: {
-    color: "#eef7f1",
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  secondaryButton: {
-    alignSelf: "flex-start",
-    borderRadius: 999,
-    borderWidth: 1,
-    borderColor: "#5f877b",
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-  },
-  secondaryButtonText: {
-    color: "#eef7f1",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-});
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.appBackground,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 12,
+      gap: 16,
+    },
+    header: {
+      paddingTop: 8,
+      gap: 6,
+    },
+    eyebrow: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.4,
+    },
+    title: {
+      color: theme.colors.textPrimary,
+      fontSize: 34,
+      fontWeight: "800",
+    },
+    subtitle: {
+      color: theme.colors.textSecondary,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    card: {
+      backgroundColor: theme.colors.card,
+      borderRadius: 18,
+      padding: 18,
+      gap: 14,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    cardHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    cardTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "700",
+    },
+    cardMeta: {
+      color: theme.colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    difficultyBadge: {
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 999,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    difficultyText: {
+      color: theme.colors.accent,
+      fontSize: 12,
+      fontWeight: "700",
+    },
+    workoutName: {
+      color: theme.colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+    },
+    workoutFocus: {
+      color: theme.colors.textSecondary,
+      fontSize: 15,
+      lineHeight: 21,
+    },
+    metricsRow: {
+      flexDirection: "row",
+      gap: 12,
+      flexWrap: "wrap",
+    },
+    metricPill: {
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 14,
+      padding: 12,
+      gap: 4,
+      minWidth: "30%",
+      flexGrow: 1,
+    },
+    metricLabel: {
+      color: theme.colors.textMuted,
+      fontSize: 12,
+      fontWeight: "600",
+      textTransform: "uppercase",
+    },
+    metricValue: {
+      color: theme.colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    primaryButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 14,
+      minHeight: 52,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    primaryButtonText: {
+      color: theme.colors.primaryText,
+      fontSize: 16,
+      fontWeight: "700",
+    },
+    summaryGrid: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    summaryTile: {
+      flex: 1,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 14,
+      paddingVertical: 16,
+      paddingHorizontal: 10,
+      alignItems: "center",
+      gap: 6,
+    },
+    summaryValue: {
+      color: theme.colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+    },
+    summaryLabel: {
+      color: theme.colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    weekdayRow: {
+      flexDirection: "row",
+    },
+    weekdayLabel: {
+      flex: 1,
+      color: theme.colors.textMuted,
+      fontSize: 12,
+      fontWeight: "700",
+      textAlign: "center",
+    },
+    calendarGrid: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 8,
+    },
+    calendarDay: {
+      width: "12.9%",
+      aspectRatio: 1,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.surface,
+    },
+    calendarDayText: {
+      color: theme.colors.textMuted,
+      fontSize: 14,
+      fontWeight: "600",
+    },
+    calendarDayTextActive: {
+      color: theme.colors.textPrimary,
+      fontWeight: "800",
+    },
+    legend: {
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 12,
+    },
+    legendItem: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    legendSwatch: {
+      width: 10,
+      height: 10,
+      borderRadius: 999,
+    },
+    legendLabel: {
+      color: theme.colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+      textTransform: "capitalize",
+    },
+    coachCard: {
+      backgroundColor: theme.colors.cardElevated,
+      borderRadius: 18,
+      padding: 18,
+      gap: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    coachHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    coachTag: {
+      color: theme.colors.accent,
+      fontSize: 12,
+      fontWeight: "700",
+      textTransform: "uppercase",
+    },
+    coachMessage: {
+      color: theme.colors.textPrimary,
+      fontSize: 15,
+      lineHeight: 22,
+    },
+    secondaryButton: {
+      alignSelf: "flex-start",
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: theme.colors.inputBorder,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    secondaryButtonText: {
+      color: theme.colors.textPrimary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+  });
+}

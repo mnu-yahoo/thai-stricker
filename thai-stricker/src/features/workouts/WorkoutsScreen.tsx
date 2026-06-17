@@ -1,9 +1,11 @@
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 
+import type { AppTheme } from "../../styles/theme";
 import type { MockWorkout } from "./workoutMocks";
 
 type WorkoutsScreenProps = {
+  theme: AppTheme;
   restSecondsBetweenExercises: 15 | 30 | 45 | 60 | 90 | 120;
   workouts: MockWorkout[];
   onStartWorkout: (workoutId: string) => void;
@@ -20,12 +22,14 @@ function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
 }
 
 export function WorkoutsScreen({
+  theme,
   restSecondsBetweenExercises,
   workouts,
   onStartWorkout,
   onOpenAddWorkout,
   onOpenEditWorkout,
 }: WorkoutsScreenProps) {
+  const styles = getStyles(theme);
   const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
 
   const toggleWorkoutContent = (workoutId: string) => {
@@ -144,192 +148,194 @@ export function WorkoutsScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f4efe6",
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 12,
-    gap: 16,
-  },
-  header: {
-    gap: 16,
-  },
-  headerText: {
-    gap: 6,
-  },
-  eyebrow: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.4,
-  },
-  title: {
-    color: "#1f1f1f",
-    fontSize: 34,
-    fontWeight: "800",
-  },
-  subtitle: {
-    color: "#5f5446",
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  addButton: {
-    alignSelf: "flex-start",
-    backgroundColor: "#bf5b22",
-    borderRadius: 14,
-    minHeight: 48,
-    paddingHorizontal: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  addButtonText: {
-    color: "#fffaf3",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  card: {
-    backgroundColor: "#fffaf3",
-    borderRadius: 18,
-    padding: 18,
-    gap: 14,
-    borderWidth: 1,
-    borderColor: "#eadfce",
-  },
-  cardHeader: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    gap: 12,
-  },
-  headerCopy: {
-    flex: 1,
-    gap: 6,
-  },
-  cardTitle: {
-    color: "#231f1a",
-    fontSize: 24,
-    fontWeight: "800",
-  },
-  cardDescription: {
-    color: "#5f5446",
-    fontSize: 15,
-    lineHeight: 21,
-  },
-  badge: {
-    backgroundColor: "#f0dfc8",
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  badgeText: {
-    color: "#7c4f1f",
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  metaRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  metaPill: {
-    flex: 1,
-    backgroundColor: "#f8efe2",
-    borderRadius: 14,
-    padding: 12,
-    gap: 4,
-  },
-  metaLabel: {
-    color: "#8b7355",
-    fontSize: 12,
-    fontWeight: "600",
-    textTransform: "uppercase",
-  },
-  metaValue: {
-    color: "#231f1a",
-    fontSize: 17,
-    fontWeight: "700",
-  },
-  actionsRow: {
-    flexDirection: "column",
-    gap: 10,
-  },
-  lastDoneText: {
-    color: "#6b5f51",
-    fontSize: 13,
-    fontWeight: "600",
-  },
-  primaryButton: {
-    backgroundColor: "#bf5b22",
-    borderRadius: 14,
-    minHeight: 48,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButtonText: {
-    color: "#fffaf3",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  ghostButton: {
-    flex: 1,
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#c9b69b",
-    minHeight: 48,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fffaf3",
-  },
-  ghostButtonText: {
-    color: "#5f5446",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  expandedSection: {
-    gap: 12,
-    paddingTop: 4,
-  },
-  exerciseCard: {
-    backgroundColor: "#f8efe2",
-    borderRadius: 14,
-    padding: 14,
-    gap: 8,
-  },
-  exerciseHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 10,
-  },
-  exerciseTitle: {
-    flex: 1,
-    color: "#231f1a",
-    fontSize: 17,
-    fontWeight: "700",
-  },
-  exerciseTarget: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-  exerciseDescription: {
-    color: "#4f4538",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  exerciseHelp: {
-    color: "#6b5f51",
-    fontSize: 13,
-    lineHeight: 19,
-  },
-  restNote: {
-    color: "#8b5e34",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-});
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.appBackground,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 12,
+      gap: 16,
+    },
+    header: {
+      gap: 16,
+    },
+    headerText: {
+      gap: 6,
+    },
+    eyebrow: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.4,
+    },
+    title: {
+      color: theme.colors.textPrimary,
+      fontSize: 34,
+      fontWeight: "800",
+    },
+    subtitle: {
+      color: theme.colors.textSecondary,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    addButton: {
+      alignSelf: "flex-start",
+      backgroundColor: theme.colors.primary,
+      borderRadius: 14,
+      minHeight: 48,
+      paddingHorizontal: 16,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    addButtonText: {
+      color: theme.colors.primaryText,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    card: {
+      backgroundColor: theme.colors.card,
+      borderRadius: 18,
+      padding: 18,
+      gap: 14,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    cardHeader: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      justifyContent: "space-between",
+      gap: 12,
+    },
+    headerCopy: {
+      flex: 1,
+      gap: 6,
+    },
+    cardTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 24,
+      fontWeight: "800",
+    },
+    cardDescription: {
+      color: theme.colors.textSecondary,
+      fontSize: 15,
+      lineHeight: 21,
+    },
+    badge: {
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 999,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    badgeText: {
+      color: theme.colors.accent,
+      fontSize: 12,
+      fontWeight: "700",
+    },
+    metaRow: {
+      flexDirection: "row",
+      gap: 12,
+    },
+    metaPill: {
+      flex: 1,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 14,
+      padding: 12,
+      gap: 4,
+    },
+    metaLabel: {
+      color: theme.colors.textMuted,
+      fontSize: 12,
+      fontWeight: "600",
+      textTransform: "uppercase",
+    },
+    metaValue: {
+      color: theme.colors.textPrimary,
+      fontSize: 17,
+      fontWeight: "700",
+    },
+    actionsRow: {
+      flexDirection: "column",
+      gap: 10,
+    },
+    lastDoneText: {
+      color: theme.colors.textSecondary,
+      fontSize: 13,
+      fontWeight: "600",
+    },
+    primaryButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 14,
+      minHeight: 48,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    primaryButtonText: {
+      color: theme.colors.primaryText,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    ghostButton: {
+      flex: 1,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.colors.inputBorder,
+      minHeight: 48,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.surface,
+    },
+    ghostButtonText: {
+      color: theme.colors.textSecondary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    expandedSection: {
+      gap: 12,
+      paddingTop: 4,
+    },
+    exerciseCard: {
+      backgroundColor: theme.colors.surfaceMuted,
+      borderRadius: 14,
+      padding: 14,
+      gap: 8,
+    },
+    exerciseHeader: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: 10,
+    },
+    exerciseTitle: {
+      flex: 1,
+      color: theme.colors.textPrimary,
+      fontSize: 17,
+      fontWeight: "700",
+    },
+    exerciseTarget: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "700",
+      textTransform: "uppercase",
+    },
+    exerciseDescription: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    exerciseHelp: {
+      color: theme.colors.textMuted,
+      fontSize: 13,
+      lineHeight: 19,
+    },
+    restNote: {
+      color: theme.colors.accent,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+  });
+}

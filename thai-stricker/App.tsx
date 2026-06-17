@@ -12,8 +12,10 @@ import {
   type NumberOfExercisesPerPageOption,
   SettingsScreen,
   type MaxExercisesPerWorkoutOption,
+  type ThemePreferenceOption,
   type TrainingDayOption,
 } from './src/features/settings/SettingsScreen';
+import { getTheme } from './src/styles/theme';
 import { ScheduleScreen } from './src/features/plannedWorkouts/ScheduleScreen';
 import { type MockWeeklyWorkoutPlan } from './src/features/plannedWorkouts/plannedWorkoutMocks';
 import { WorkoutFinishedRecapScreen } from './src/features/workoutSession/WorkoutFinishedRecapScreen';
@@ -61,6 +63,7 @@ export default function App() {
     useState<NumberOfExercisesPerPageOption>(6);
   const [defaultRepsExerciseDurationMinutes, setDefaultRepsExerciseDurationMinutes] =
     useState<DefaultRepsExerciseDurationOption>(3);
+  const [themePreference, setThemePreference] = useState<ThemePreferenceOption>('Dark');
   const [availableExercises, setAvailableExercises] = useState(mockAvailableExercises);
   const [workouts, setWorkouts] = useState<MockWorkout[]>(mockWorkouts);
   const [workoutsView, setWorkoutsView] = useState<WorkoutsViewState>('list');
@@ -266,6 +269,7 @@ export default function App() {
   };
 
   const shouldHideNavbar = Boolean(workoutFlow || workoutRecap);
+  const theme = getTheme(themePreference);
 
   let content = null;
 
@@ -295,6 +299,7 @@ export default function App() {
   } else if (activeTab === 'Home') {
     content = (
       <HomeScreen
+        theme={theme}
         randomCoachTip={homeCoachTip}
         workoutLogs={workoutLogs}
         weeklyWorkoutPlans={weeklyWorkoutPlans}
@@ -341,6 +346,7 @@ export default function App() {
         />
       ) : (
         <WorkoutsScreen
+          theme={theme}
           restSecondsBetweenExercises={restSecondsBetweenExercises}
           workouts={workouts}
           onStartWorkout={handleStartWorkout}
@@ -370,6 +376,7 @@ export default function App() {
   } else {
     content = (
       <SettingsScreen
+        theme={theme}
         restSecondsBetweenExercises={restSecondsBetweenExercises}
         onRestSecondsChange={setRestSecondsBetweenExercises}
         trainingDaysPerWeek={trainingDaysPerWeek}
@@ -380,15 +387,19 @@ export default function App() {
         onNumberOfExercisesPerPageChange={setNumberOfExercisesPerPage}
         defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
         onDefaultRepsExerciseDurationMinutesChange={setDefaultRepsExerciseDurationMinutes}
+        themePreference={themePreference}
+        onThemePreferenceChange={setThemePreference}
       />
     );
   }
 
   return (
-    <View style={styles.appShell}>
+    <View style={[styles.appShell, { backgroundColor: theme.colors.appBackground }]}>
       {content}
-      {!shouldHideNavbar ? <BottomNavbar activeTab={activeTab} onTabPress={handleTabPress} /> : null}
-      <StatusBar style="auto" />
+      {!shouldHideNavbar ? (
+        <BottomNavbar activeTab={activeTab} onTabPress={handleTabPress} theme={theme} />
+      ) : null}
+      <StatusBar style={theme.name === 'dark' ? 'light' : 'dark'} />
     </View>
   );
 }
@@ -396,6 +407,5 @@ export default function App() {
 const styles = StyleSheet.create({
   appShell: {
     flex: 1,
-    backgroundColor: '#f4efe6',
   },
 });
