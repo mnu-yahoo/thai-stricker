@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Alert,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -10,6 +9,7 @@ import {
   View,
 } from "react-native";
 
+import { AddExerciseScreen } from "../exercises/AddExerciseScreen";
 import { EditExerciseScreen } from "../exercises/EditExerciseScreen";
 import { type MockAvailableExercise } from "../exercises/exerciseMocks";
 import { type NumberOfExercisesPerPageOption } from "../settings/SettingsScreen";
@@ -29,6 +29,7 @@ type AddWorkoutScreenProps = {
   numberOfExercisesPerPage: NumberOfExercisesPerPageOption;
   restSecondsBetweenExercises: number;
   defaultRepsExerciseDurationMinutes: number;
+  onAddAvailableExercise: (exercise: MockAvailableExercise) => void;
   onUpdateAvailableExercise: (exercise: MockAvailableExercise) => void;
   onBackToWorkouts: () => void;
   onAddWorkout: (workout: MockWorkout) => void;
@@ -36,6 +37,7 @@ type AddWorkoutScreenProps = {
 
 type AddWorkoutMode =
   | { type: "form" }
+  | { type: "addExercise" }
   | { type: "editExercise"; exerciseId: string };
 
 function OptionGroup<T extends string>({
@@ -101,6 +103,7 @@ export function AddWorkoutScreen({
   numberOfExercisesPerPage,
   restSecondsBetweenExercises,
   defaultRepsExerciseDurationMinutes,
+  onAddAvailableExercise,
   onUpdateAvailableExercise,
   onBackToWorkouts,
   onAddWorkout,
@@ -134,8 +137,8 @@ export function AddWorkoutScreen({
     setAvailableExercisesPage((currentPage) => Math.min(currentPage, totalAvailableExercisePages));
   }, [totalAvailableExercisePages]);
 
-  const handleOpenAddExercisePlaceholder = () => {
-    Alert.alert("Coming soon", "Add Exercise screen is not implemented yet.");
+  const handleOpenAddExercise = () => {
+    setMode({ type: "addExercise" });
   };
 
   const handleAddExercise = (exercise: MockAvailableExercise) => {
@@ -168,6 +171,14 @@ export function AddWorkoutScreen({
 
   const handleSaveEditedExercise = (updatedExercise: MockAvailableExercise) => {
     onUpdateAvailableExercise(updatedExercise);
+    setMode({ type: "form" });
+  };
+
+  const handleSaveAddedExercise = (newExercise: MockAvailableExercise) => {
+    onAddAvailableExercise(newExercise);
+    const nextExercisesLength = availableExercises.length + 1;
+    const finalPage = Math.max(1, Math.ceil(nextExercisesLength / numberOfExercisesPerPage));
+    setAvailableExercisesPage(finalPage);
     setMode({ type: "form" });
   };
 
@@ -229,8 +240,16 @@ export function AddWorkoutScreen({
       ? availableExercises.find((exercise) => exercise.id === mode.exerciseId) ?? null
       : null;
 
-  if (mode.type === "editExercise" && activeExercise) {
+  if (mode.type === "addExercise") {
+    return (
+      <AddExerciseScreen
+        onBackToAddWorkout={handleBackToAddWorkoutForm}
+        onSaveExercise={handleSaveAddedExercise}
+      />
+    );
+  }
 
+  if (mode.type === "editExercise" && activeExercise) {
     return (
       <EditExerciseScreen
         exercise={activeExercise}
@@ -370,7 +389,7 @@ export function AddWorkoutScreen({
                 </Text>
               </Pressable>
               <Pressable
-                onPress={handleOpenAddExercisePlaceholder}
+                onPress={handleOpenAddExercise}
                 style={styles.paginationButton}
               >
                 <Text style={styles.paginationButtonText}>Add</Text>

@@ -275,6 +275,9 @@ export default function App() {
           numberOfExercisesPerPage={numberOfExercisesPerPage}
           restSecondsBetweenExercises={restSecondsBetweenExercises}
           defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
+          onAddAvailableExercise={(newExercise) =>
+            setAvailableExercises((currentExercises) => [...currentExercises, newExercise])
+          }
           onUpdateAvailableExercise={(updatedExercise) =>
             setAvailableExercises((currentExercises) =>
               currentExercises.map((exercise) =>

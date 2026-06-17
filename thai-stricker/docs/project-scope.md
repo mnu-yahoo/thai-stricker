@@ -129,7 +129,7 @@ Current behavior:
 - Available Exercises list is paginated with the Settings page-size value
 - User can move through available exercises using Previous and Next controls
 - User can see current page number and total pages
-- Available Exercises list includes placeholder Add Exercise action
+- Available Exercises list includes Add Exercise action
 - Available exercise cards include Edit Exercise action
 - The same available exercise can be reused multiple times in one workout
 - Valid input creates a mocked workout object
@@ -156,11 +156,35 @@ Not implemented:
 - Searching available exercises
 - Filtering available exercises
 - Sorting available exercises
-- Add Exercise screen
 - Creating exercises
 - Deleting exercises
 - Recalculating existing workouts
 - Persisting calculated duration
+
+## Add Exercise Screen
+
+Status:
+
+- Approved
+- Implemented with mocked data only
+
+Current behavior:
+
+- Opened from the Add Workout Available Exercises list top-level Add button
+- User can create an exercise with title, description, and help
+- Exercise target is assigned a mocked default
+- User can save the exercise
+- New exercise is added to the end of the Available Exercises list
+- Available Exercises pagination recalculates
+- User returns to Add Workout after saving
+- Current Add Workout state is preserved
+
+Not implemented:
+
+- Exercise target selection
+- Exercise persistence
+- Database integration
+- Exercise deletion
 
 ## Edit Exercise Screen
 
