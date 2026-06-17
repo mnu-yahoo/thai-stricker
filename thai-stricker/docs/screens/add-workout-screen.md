@@ -124,16 +124,34 @@ The Available Exercises list includes placeholder actions for future exercise ma
 Current behavior:
 
 - Top-level Add button displays mocked feedback only
-- Exercise card Edit button displays mocked feedback only
+- Exercise card Edit button opens the mocked Edit Exercise screen
 - Existing exercise Add button still adds the exercise to the new workout
 
 Not implemented:
 
 - Add Exercise screen
-- Edit Exercise screen
 - Creating exercises
 - Editing exercises
 - Deleting exercises
+
+## Edit Exercise Action
+
+The Available Exercises list provides an Edit action.
+
+Current behavior:
+
+- Opens the mocked Edit Exercise screen
+- User can edit exercise title, description, and help
+- User cannot edit exercise target
+- Saving updates the mocked Available Exercises list
+- User returns to Add Workout after saving
+- Current Add Workout form state is preserved
+
+Not implemented:
+
+- Editing exercise target
+- Persisting exercise changes
+- Editing exercises in a database
 
 ## Exercise List Behavior
 
@@ -252,7 +270,8 @@ The Add Workout screen must not implement:
 - The previous JSON-input workflow has been removed
 - Add Workout now uses form inputs
 - Add Workout selects exercises from a mocked available-exercise list
-- Available Exercises includes placeholder Add and Edit actions for future exercise management
+- Available Exercises includes placeholder Add action for future exercise creation
+- Available Exercises Edit action opens a mocked Edit Exercise screen
 - Add Workout creates mocked workout objects only
 - New workouts are stored in local mocked app state only
 - After saving, user is redirected to Home

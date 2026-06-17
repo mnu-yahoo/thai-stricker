@@ -54,6 +54,7 @@ export default function App() {
     useState<NumberOfExercisesPerPageOption>(6);
   const [defaultRepsExerciseDurationMinutes, setDefaultRepsExerciseDurationMinutes] =
     useState<DefaultRepsExerciseDurationOption>(3);
+  const [availableExercises, setAvailableExercises] = useState(mockAvailableExercises);
   const [workouts, setWorkouts] = useState<MockWorkout[]>(mockWorkouts);
   const [workoutsView, setWorkoutsView] = useState<WorkoutsViewState>('list');
   const [workoutLogs, setWorkoutLogs] = useState<MockWorkoutLogEntry[]>(mockWorkoutLogs);
@@ -269,11 +270,18 @@ export default function App() {
     content =
       workoutsView === 'add' ? (
         <AddWorkoutScreen
-          availableExercises={mockAvailableExercises}
+          availableExercises={availableExercises}
           maxExercisesPerWorkout={maxExercisesPerWorkout}
           numberOfExercisesPerPage={numberOfExercisesPerPage}
           restSecondsBetweenExercises={restSecondsBetweenExercises}
           defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
+          onUpdateAvailableExercise={(updatedExercise) =>
+            setAvailableExercises((currentExercises) =>
+              currentExercises.map((exercise) =>
+                exercise.id === updatedExercise.id ? updatedExercise : exercise,
+              ),
+            )
+          }
           onBackToWorkouts={handleBackToWorkouts}
           onAddWorkout={handleAddWorkout}
         />

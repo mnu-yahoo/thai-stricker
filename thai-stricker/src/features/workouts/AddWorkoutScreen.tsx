@@ -10,6 +10,7 @@ import {
   View,
 } from "react-native";
 
+import { EditExerciseScreen } from "../exercises/EditExerciseScreen";
 import { type MockAvailableExercise } from "../exercises/exerciseMocks";
 import { type NumberOfExercisesPerPageOption } from "../settings/SettingsScreen";
 import {
@@ -28,9 +29,14 @@ type AddWorkoutScreenProps = {
   numberOfExercisesPerPage: NumberOfExercisesPerPageOption;
   restSecondsBetweenExercises: number;
   defaultRepsExerciseDurationMinutes: number;
+  onUpdateAvailableExercise: (exercise: MockAvailableExercise) => void;
   onBackToWorkouts: () => void;
   onAddWorkout: (workout: MockWorkout) => void;
 };
+
+type AddWorkoutMode =
+  | { type: "form" }
+  | { type: "editExercise"; exerciseId: string };
 
 function OptionGroup<T extends string>({
   options,
@@ -95,6 +101,7 @@ export function AddWorkoutScreen({
   numberOfExercisesPerPage,
   restSecondsBetweenExercises,
   defaultRepsExerciseDurationMinutes,
+  onUpdateAvailableExercise,
   onBackToWorkouts,
   onAddWorkout,
 }: AddWorkoutScreenProps) {
@@ -104,6 +111,7 @@ export function AddWorkoutScreen({
   const [category, setCategory] = useState<MockWorkoutCategory>("Fundamentals");
   const [exercises, setExercises] = useState<MockExercise[]>([]);
   const [availableExercisesPage, setAvailableExercisesPage] = useState(1);
+  const [mode, setMode] = useState<AddWorkoutMode>({ type: "form" });
   const [workoutErrorMessage, setWorkoutErrorMessage] = useState<string | null>(null);
   const [selectionErrorMessage, setSelectionErrorMessage] = useState<string | null>(null);
   const calculatedTotalDurationMinutes = calculateWorkoutTotalDurationMinutes(
@@ -130,10 +138,6 @@ export function AddWorkoutScreen({
     Alert.alert("Coming soon", "Add Exercise screen is not implemented yet.");
   };
 
-  const handleOpenEditExercisePlaceholder = () => {
-    Alert.alert("Coming soon", "Edit Exercise screen is not implemented yet.");
-  };
-
   const handleAddExercise = (exercise: MockAvailableExercise) => {
     if (exercises.length >= maxExercisesPerWorkout) {
       setSelectionErrorMessage(`Maximum ${maxExercisesPerWorkout} exercises allowed by Settings.`);
@@ -152,6 +156,19 @@ export function AddWorkoutScreen({
     ]);
     setSelectionErrorMessage(null);
     setWorkoutErrorMessage(null);
+  };
+
+  const handleOpenEditExercise = (exerciseId: string) => {
+    setMode({ type: "editExercise", exerciseId });
+  };
+
+  const handleBackToAddWorkoutForm = () => {
+    setMode({ type: "form" });
+  };
+
+  const handleSaveEditedExercise = (updatedExercise: MockAvailableExercise) => {
+    onUpdateAvailableExercise(updatedExercise);
+    setMode({ type: "form" });
   };
 
   const handleRemoveExercise = (exerciseId: string) => {
@@ -206,6 +223,22 @@ export function AddWorkoutScreen({
     setSelectionErrorMessage(null);
     onAddWorkout(workout);
   };
+
+  const activeExercise =
+    mode.type === "editExercise"
+      ? availableExercises.find((exercise) => exercise.id === mode.exerciseId) ?? null
+      : null;
+
+  if (mode.type === "editExercise" && activeExercise) {
+
+    return (
+      <EditExerciseScreen
+        exercise={activeExercise}
+        onBackToAddWorkout={handleBackToAddWorkoutForm}
+        onSaveExercise={handleSaveEditedExercise}
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -374,7 +407,7 @@ export function AddWorkoutScreen({
                     </Text>
                   </Pressable>
                   <Pressable
-                    onPress={handleOpenEditExercisePlaceholder}
+                    onPress={() => handleOpenEditExercise(exercise.id)}
                     style={[styles.secondaryButton, styles.addExerciseButton]}
                   >
                     <Text style={styles.secondaryButtonText}>Edit</Text>
