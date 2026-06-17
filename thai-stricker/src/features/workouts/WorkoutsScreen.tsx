@@ -1,4 +1,4 @@
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useState } from "react";
 
 import type { MockWorkout } from "./workoutMocks";
@@ -8,6 +8,7 @@ type WorkoutsScreenProps = {
   workouts: MockWorkout[];
   onStartWorkout: (workoutId: string) => void;
   onOpenAddWorkout: () => void;
+  onOpenEditWorkout: (workoutId: string) => void;
 };
 
 function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
@@ -23,12 +24,9 @@ export function WorkoutsScreen({
   workouts,
   onStartWorkout,
   onOpenAddWorkout,
+  onOpenEditWorkout,
 }: WorkoutsScreenProps) {
   const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
-
-  const handleEditWorkout = () => {
-    Alert.alert("Edit workout", "Edit Workout screen is not implemented yet.");
-  };
 
   const toggleWorkoutContent = (workoutId: string) => {
     setExpandedWorkoutId((currentId) => (currentId === workoutId ? null : workoutId));
@@ -107,7 +105,10 @@ export function WorkoutsScreen({
                 >
                   <Text style={styles.primaryButtonText}>Start workout</Text>
                 </Pressable>
-                <Pressable onPress={handleEditWorkout} style={styles.ghostButton}>
+                <Pressable
+                  onPress={() => onOpenEditWorkout(workout.id)}
+                  style={styles.ghostButton}
+                >
                   <Text style={styles.ghostButtonText}>Edit workout</Text>
                 </Pressable>
               </View>

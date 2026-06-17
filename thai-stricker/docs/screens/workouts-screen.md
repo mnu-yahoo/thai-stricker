@@ -24,7 +24,7 @@ A user should be able to:
 - Understand workout difficulty, category, duration, exercise count, and rest time
 - Start a workout directly from the list
 - View the content of a workout without leaving the screen
-- Discover that edit and create flows exist but are not implemented yet
+- Open mocked workout creation and editing flows
 
 ## Layout Structure
 
@@ -143,16 +143,16 @@ Not implemented:
 
 Current behavior:
 
-- Placeholder only
-- Shows mocked feedback
-
-Future behavior:
-
 - Open Edit Workout screen
+- User can edit workout title, description, difficulty, and category
+- User can add exercises to the workout
+- User can remove exercises from the workout
+- Total duration is recalculated
+- Saving updates the mocked workout in the available workouts list
 
 Status:
 
-- Not implemented
+- Implemented with mocked data only
 
 ### Add Workout
 
@@ -160,7 +160,7 @@ Current behavior:
 
 - Opens the mocked form-based Add Workout screen
 - User enters workout properties
-- User adds exercises one by one
+- User adds exercises from the mocked exercise library
 - Valid input creates a mocked workout object
 - New workout is added to available workouts for the current session
 - After saving, user is redirected to Home
@@ -179,7 +179,7 @@ Current behavior:
 
 - Opens the mocked form-based Add Workout screen
 - User enters workout properties
-- User adds exercises one by one
+- User adds exercises from the mocked exercise library
 - Valid input creates a mocked workout object
 - New workout is added to available workouts for the current session
 - After saving, user is redirected to Home
@@ -188,14 +188,29 @@ Not implemented:
 
 - Persistence
 - Database-backed workout creation
-- Edit Workout screen
 - JSON workout import
+
+## Edit Workout Action
+
+Current behavior:
+
+- Opens the mocked Edit Workout screen
+- User can edit workout title, description, difficulty, and category
+- User can add exercises to the workout
+- User can remove exercises from the workout
+- Total duration is recalculated
+- Saving updates the mocked workout in the available workouts list
+
+Not implemented:
+
+- Persistence
+- Database-backed workout editing
+- Workout deletion
 
 ## Out Of Scope
 
 The Workouts Screen must not implement:
 
-- Edit Workout screen
 - Create Workout screen
 - Workout Detail screen
 - In Course Exercise screen
@@ -216,7 +231,7 @@ Rest time is displayed from shared mocked Settings state and is not configurable
 - Workouts Screen may list workouts
 - Workouts Screen may show workout content inline
 - Workouts Screen may open the mocked Add Workout flow
-- Workouts Screen must not implement Edit Workout screen
+- Workouts Screen may open the mocked Edit Workout flow
 - Workouts Screen must not implement Workout Detail screen
 - Rest time is displayed only and is not configurable here
 - Rest time is displayed from shared mocked Settings state

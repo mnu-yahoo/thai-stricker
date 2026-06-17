@@ -161,6 +161,31 @@ Not implemented:
 - Recalculating existing workouts
 - Persisting calculated duration
 
+## Edit Workout Screen
+
+Status:
+
+- Approved
+- Implemented with mocked data only
+
+Current behavior:
+
+- Opened from the Workouts screen Edit Workout button
+- User can edit workout properties
+- User can add exercises from available exercises
+- User can remove exercises from the workout
+- Total duration is calculated automatically
+- Settings maximum exercises per workout is enforced
+- Saving updates the mocked workout in local state
+- User returns to Workouts after saving or cancelling
+
+Not implemented:
+
+- Persistence
+- Database integration
+- Workout deletion
+- AI workout editing
+
 ## Add Exercise Screen
 
 Status:
@@ -238,13 +263,6 @@ Not implemented:
 - Editing workout definitions
 
 ## Workout Detail Screen
-
-Status:
-
-- Planned
-- Not implemented
-
-## Edit Workout Screen
 
 Status:
 

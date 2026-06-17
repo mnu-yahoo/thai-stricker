@@ -21,6 +21,7 @@ import {
   type MockWorkoutLogEntry,
 } from './src/features/workoutLogging/workoutLogMocks';
 import { AddWorkoutScreen } from './src/features/workouts/AddWorkoutScreen';
+import { EditWorkoutScreen } from './src/features/workouts/EditWorkoutScreen';
 import { WorkoutsScreen } from './src/features/workouts/WorkoutsScreen';
 import { mockWorkouts, type MockWorkout } from './src/features/workouts/workoutMocks';
 
@@ -39,7 +40,7 @@ type WorkoutRecapState = {
   skippedExerciseCount: number;
 };
 
-type WorkoutsViewState = 'list' | 'add';
+type WorkoutsViewState = 'list' | 'add' | { type: 'edit'; workoutId: string };
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<BottomNavTab>('Home');
@@ -208,6 +209,10 @@ export default function App() {
     setWorkoutsView('add');
   };
 
+  const handleOpenEditWorkout = (workoutId: string) => {
+    setWorkoutsView({ type: 'edit', workoutId });
+  };
+
   const handleBackToWorkouts = () => {
     setWorkoutsView('list');
   };
@@ -216,6 +221,15 @@ export default function App() {
     setWorkouts((currentWorkouts) => [...currentWorkouts, workout]);
     setWorkoutsView('list');
     setActiveTab('Home');
+  };
+
+  const handleSaveEditedWorkout = (updatedWorkout: MockWorkout) => {
+    setWorkouts((currentWorkouts) =>
+      currentWorkouts.map((workout) =>
+        workout.id === updatedWorkout.id ? updatedWorkout : workout,
+      ),
+    );
+    setWorkoutsView('list');
   };
 
   const handleSaveWeeklyPlan = (plan: MockWeeklyWorkoutPlan) => {
@@ -288,12 +302,27 @@ export default function App() {
           onBackToWorkouts={handleBackToWorkouts}
           onAddWorkout={handleAddWorkout}
         />
+      ) : typeof workoutsView === 'object' && workoutsView.type === 'edit' ? (
+        <EditWorkoutScreen
+          availableExercises={availableExercises}
+          workout={
+            workouts.find((currentWorkout) => currentWorkout.id === workoutsView.workoutId) ??
+            null
+          }
+          maxExercisesPerWorkout={maxExercisesPerWorkout}
+          numberOfExercisesPerPage={numberOfExercisesPerPage}
+          restSecondsBetweenExercises={restSecondsBetweenExercises}
+          defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
+          onBackToWorkouts={handleBackToWorkouts}
+          onSaveWorkout={handleSaveEditedWorkout}
+        />
       ) : (
         <WorkoutsScreen
           restSecondsBetweenExercises={restSecondsBetweenExercises}
           workouts={workouts}
           onStartWorkout={handleStartWorkout}
           onOpenAddWorkout={handleOpenAddWorkout}
+          onOpenEditWorkout={handleOpenEditWorkout}
         />
       );
   } else if (activeTab === 'Schedule') {
