@@ -1,0 +1,437 @@
+import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+
+import {
+  mockCalendarWorkoutDays,
+  mockMonthlySummary,
+  mockPlannedWorkout,
+  type MockWorkoutStatus,
+} from "./homeMocks";
+import type { MockWorkoutLogEntry } from "../workoutLogging/workoutLogMocks";
+
+const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const MONTH_LABEL = "June 2026";
+
+const colors: Record<MockWorkoutStatus, string> = {
+  completed: "#2f855a",
+  planned: "#d69e2e",
+  missed: "#c53030",
+};
+
+type CalendarCell = {
+  key: string;
+  dayNumber?: number;
+  status?: MockWorkoutStatus;
+};
+
+type HomeScreenProps = {
+  workoutLogs: MockWorkoutLogEntry[];
+};
+
+function buildCalendarCells(workoutLogs: MockWorkoutLogEntry[]): CalendarCell[] {
+  const firstDay = new Date(2026, 5, 1).getDay();
+  const daysInMonth = new Date(2026, 6, 0).getDate();
+  const workoutStatusByDay = new Map<number, MockWorkoutStatus>();
+
+  mockCalendarWorkoutDays.forEach((entry) => {
+    workoutStatusByDay.set(Number.parseInt(entry.date.slice(-2), 10), entry.status);
+  });
+
+  workoutLogs.forEach((entry) => {
+    const completedDate = new Date(entry.completedDate);
+    const isCurrentMonth = completedDate.getFullYear() === 2026 && completedDate.getMonth() === 5;
+
+    if (!isCurrentMonth) {
+      return;
+    }
+
+    workoutStatusByDay.set(completedDate.getDate(), "completed");
+  });
+
+  const cells: CalendarCell[] = [];
+
+  for (let index = 0; index < firstDay; index += 1) {
+    cells.push({ key: `empty-${index}` });
+  }
+
+  for (let dayNumber = 1; dayNumber <= daysInMonth; dayNumber += 1) {
+    cells.push({
+      key: `day-${dayNumber}`,
+      dayNumber,
+      status: workoutStatusByDay.get(dayNumber),
+    });
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push({ key: `tail-${cells.length}` });
+  }
+
+  return cells;
+}
+
+function getDayStyle(status?: MockWorkoutStatus) {
+  if (!status) {
+    return styles.calendarDayIdle;
+  }
+
+  return {
+    backgroundColor: `${colors[status]}1A`,
+    borderColor: colors[status],
+  };
+}
+
+export function HomeScreen({ workoutLogs }: HomeScreenProps) {
+  const calendarCells = buildCalendarCells(workoutLogs);
+  const completedWorkoutsThisMonth = workoutLogs.filter((entry) => {
+    const completedDate = new Date(entry.completedDate);
+    return completedDate.getFullYear() === 2026 && completedDate.getMonth() === 5;
+  }).length;
+
+  const handleStartWorkout = () => {
+    Alert.alert("Start workout", "Mocked action only. Workout flow is not implemented yet.");
+  };
+
+  const handleOpenCoachLater = () => {
+    Alert.alert("AI Coach", "Placeholder only. AI Coach Chat is not implemented yet.");
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.eyebrow}>Private coaching app</Text>
+          <Text style={styles.title}>Thai Stricker</Text>
+          <Text style={styles.subtitle}>Train sharp. Stay consistent.</Text>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>Planned workout</Text>
+            <View style={styles.difficultyBadge}>
+              <Text style={styles.difficultyText}>{mockPlannedWorkout.difficulty}</Text>
+            </View>
+          </View>
+
+          <Text style={styles.workoutName}>{mockPlannedWorkout.name}</Text>
+          <Text style={styles.workoutFocus}>{mockPlannedWorkout.focus}</Text>
+
+          <View style={styles.metricsRow}>
+            <View style={styles.metricPill}>
+              <Text style={styles.metricLabel}>Duration</Text>
+              <Text style={styles.metricValue}>{mockPlannedWorkout.durationMinutes} min</Text>
+            </View>
+            <View style={styles.metricPill}>
+              <Text style={styles.metricLabel}>Exercises</Text>
+              <Text style={styles.metricValue}>{mockPlannedWorkout.exercisesCount}</Text>
+            </View>
+          </View>
+
+          <Pressable onPress={handleStartWorkout} style={styles.primaryButton}>
+            <Text style={styles.primaryButtonText}>Start workout</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>Monthly activity</Text>
+          <View style={styles.summaryGrid}>
+            <View style={styles.summaryTile}>
+              <Text style={styles.summaryValue}>{completedWorkoutsThisMonth}</Text>
+              <Text style={styles.summaryLabel}>Completed</Text>
+            </View>
+            <View style={styles.summaryTile}>
+              <Text style={styles.summaryValue}>{mockMonthlySummary.plannedWorkouts}</Text>
+              <Text style={styles.summaryLabel}>Planned</Text>
+            </View>
+            <View style={styles.summaryTile}>
+              <Text style={styles.summaryValue}>{mockMonthlySummary.missedWorkouts}</Text>
+              <Text style={styles.summaryLabel}>Missed</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardTitle}>Calendar preview</Text>
+            <Text style={styles.cardMeta}>{MONTH_LABEL}</Text>
+          </View>
+
+          <View style={styles.weekdayRow}>
+            {WEEKDAY_LABELS.map((label) => (
+              <Text key={label} style={styles.weekdayLabel}>
+                {label}
+              </Text>
+            ))}
+          </View>
+
+          <View style={styles.calendarGrid}>
+            {calendarCells.map((cell) => (
+              <View key={cell.key} style={[styles.calendarDay, getDayStyle(cell.status)]}>
+                {cell.dayNumber ? (
+                  <Text
+                    style={[
+                      styles.calendarDayText,
+                      cell.status ? styles.calendarDayTextActive : undefined,
+                    ]}
+                  >
+                    {cell.dayNumber}
+                  </Text>
+                ) : null}
+              </View>
+            ))}
+          </View>
+
+          <View style={styles.legend}>
+            {(["completed", "planned", "missed"] as MockWorkoutStatus[]).map((status) => (
+              <View key={status} style={styles.legendItem}>
+                <View style={[styles.legendSwatch, { backgroundColor: colors[status] }]} />
+                <Text style={styles.legendLabel}>{status}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.coachCard}>
+          <View style={styles.coachHeader}>
+            <Text style={styles.cardTitle}>AI Coach</Text>
+            <Text style={styles.coachTag}>Teaser</Text>
+          </View>
+          <Text style={styles.coachMessage}>
+            Review your last sessions and ask for focused technique tips.
+          </Text>
+          <Pressable onPress={handleOpenCoachLater} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Open coach later</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#f4efe6",
+  },
+  content: {
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 12,
+    gap: 16,
+  },
+  header: {
+    paddingTop: 8,
+    gap: 6,
+  },
+  eyebrow: {
+    color: "#8b5e34",
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 0.4,
+  },
+  title: {
+    color: "#1f1f1f",
+    fontSize: 34,
+    fontWeight: "800",
+  },
+  subtitle: {
+    color: "#5f5446",
+    fontSize: 16,
+    lineHeight: 22,
+  },
+  card: {
+    backgroundColor: "#fffaf3",
+    borderRadius: 18,
+    padding: 18,
+    gap: 14,
+    borderWidth: 1,
+    borderColor: "#eadfce",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  cardTitle: {
+    color: "#231f1a",
+    fontSize: 20,
+    fontWeight: "700",
+  },
+  cardMeta: {
+    color: "#6b5f51",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  difficultyBadge: {
+    backgroundColor: "#f0dfc8",
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  difficultyText: {
+    color: "#7c4f1f",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  workoutName: {
+    color: "#231f1a",
+    fontSize: 24,
+    fontWeight: "800",
+  },
+  workoutFocus: {
+    color: "#5f5446",
+    fontSize: 15,
+    lineHeight: 21,
+  },
+  metricsRow: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  metricPill: {
+    flex: 1,
+    backgroundColor: "#f8efe2",
+    borderRadius: 14,
+    padding: 12,
+    gap: 4,
+  },
+  metricLabel: {
+    color: "#8b7355",
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "uppercase",
+  },
+  metricValue: {
+    color: "#231f1a",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  primaryButton: {
+    backgroundColor: "#bf5b22",
+    borderRadius: 14,
+    minHeight: 52,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  primaryButtonText: {
+    color: "#fffaf3",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  summaryGrid: {
+    flexDirection: "row",
+    gap: 10,
+  },
+  summaryTile: {
+    flex: 1,
+    backgroundColor: "#f8efe2",
+    borderRadius: 14,
+    paddingVertical: 16,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    gap: 6,
+  },
+  summaryValue: {
+    color: "#231f1a",
+    fontSize: 24,
+    fontWeight: "800",
+  },
+  summaryLabel: {
+    color: "#6b5f51",
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  weekdayRow: {
+    flexDirection: "row",
+  },
+  weekdayLabel: {
+    flex: 1,
+    color: "#8b7355",
+    fontSize: 12,
+    fontWeight: "700",
+    textAlign: "center",
+  },
+  calendarGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+  calendarDay: {
+    width: "12.9%",
+    aspectRatio: 1,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#e6d9c4",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f8f3ea",
+  },
+  calendarDayIdle: {
+    borderColor: "#efe5d6",
+    backgroundColor: "#f8f3ea",
+  },
+  calendarDayText: {
+    color: "#b0a391",
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  calendarDayTextActive: {
+    color: "#231f1a",
+    fontWeight: "800",
+  },
+  legend: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 12,
+  },
+  legendItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  legendSwatch: {
+    width: 10,
+    height: 10,
+    borderRadius: 999,
+  },
+  legendLabel: {
+    color: "#5f5446",
+    fontSize: 13,
+    fontWeight: "600",
+    textTransform: "capitalize",
+  },
+  coachCard: {
+    backgroundColor: "#1f3c36",
+    borderRadius: 18,
+    padding: 18,
+    gap: 12,
+  },
+  coachHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  coachTag: {
+    color: "#c8e0d3",
+    fontSize: 12,
+    fontWeight: "700",
+    textTransform: "uppercase",
+  },
+  coachMessage: {
+    color: "#eef7f1",
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  secondaryButton: {
+    alignSelf: "flex-start",
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: "#5f877b",
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  secondaryButtonText: {
+    color: "#eef7f1",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+});
