@@ -3,10 +3,18 @@ import { useState } from "react";
 
 const REST_OPTIONS = [15, 30, 45, 60, 90, 120] as const;
 const TRAINING_DAY_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
+const MAX_EXERCISES_OPTIONS = [6, 8, 10, 12, 14, 16, 18, 20] as const;
+const NUMBER_OF_EXERCISES_PER_PAGE_OPTIONS = [4, 6, 8, 10] as const;
+const DEFAULT_REPS_EXERCISE_DURATION_OPTIONS = [1, 2, 3, 4, 5] as const;
 const THEME_OPTIONS = ["light", "dark"] as const;
 
 type RestOption = (typeof REST_OPTIONS)[number];
-type TrainingDayOption = (typeof TRAINING_DAY_OPTIONS)[number];
+export type TrainingDayOption = (typeof TRAINING_DAY_OPTIONS)[number];
+export type MaxExercisesPerWorkoutOption = (typeof MAX_EXERCISES_OPTIONS)[number];
+export type NumberOfExercisesPerPageOption =
+  (typeof NUMBER_OF_EXERCISES_PER_PAGE_OPTIONS)[number];
+export type DefaultRepsExerciseDurationOption =
+  (typeof DEFAULT_REPS_EXERCISE_DURATION_OPTIONS)[number];
 type ThemeOption = (typeof THEME_OPTIONS)[number];
 
 function OptionGroup<T extends string | number>({
@@ -44,13 +52,30 @@ function OptionGroup<T extends string | number>({
 type SettingsScreenProps = {
   restSecondsBetweenExercises: RestOption;
   onRestSecondsChange: (value: RestOption) => void;
+  trainingDaysPerWeek: TrainingDayOption;
+  onTrainingDaysPerWeekChange: (value: TrainingDayOption) => void;
+  maxExercisesPerWorkout: MaxExercisesPerWorkoutOption;
+  onMaxExercisesPerWorkoutChange: (value: MaxExercisesPerWorkoutOption) => void;
+  numberOfExercisesPerPage: NumberOfExercisesPerPageOption;
+  onNumberOfExercisesPerPageChange: (value: NumberOfExercisesPerPageOption) => void;
+  defaultRepsExerciseDurationMinutes: DefaultRepsExerciseDurationOption;
+  onDefaultRepsExerciseDurationMinutesChange: (
+    value: DefaultRepsExerciseDurationOption,
+  ) => void;
 };
 
 export function SettingsScreen({
   restSecondsBetweenExercises,
   onRestSecondsChange,
+  trainingDaysPerWeek,
+  onTrainingDaysPerWeekChange,
+  maxExercisesPerWorkout,
+  onMaxExercisesPerWorkoutChange,
+  numberOfExercisesPerPage,
+  onNumberOfExercisesPerPageChange,
+  defaultRepsExerciseDurationMinutes,
+  onDefaultRepsExerciseDurationMinutesChange,
 }: SettingsScreenProps) {
-  const [trainingDaysPerWeek, setTrainingDaysPerWeek] = useState<TrainingDayOption>(3);
   const [themePreference, setThemePreference] = useState<ThemeOption>("dark");
 
   return (
@@ -86,11 +111,66 @@ export function SettingsScreen({
               <Text style={styles.settingLabel}>Training days per week</Text>
               <Text style={styles.settingValue}>{trainingDaysPerWeek} days</Text>
             </View>
-            <Text style={styles.settingHint}>This preference does not affect scheduling yet.</Text>
+            <Text style={styles.settingHint}>
+              Mocked app-level setting. Changing this updates the value shown in Schedule.
+            </Text>
             <OptionGroup
               options={TRAINING_DAY_OPTIONS}
               selectedValue={trainingDaysPerWeek}
-              onSelect={setTrainingDaysPerWeek}
+              onSelect={onTrainingDaysPerWeekChange}
+              getLabel={(value) => `${value}`}
+            />
+          </View>
+
+          <View style={styles.settingBlock}>
+            <View style={styles.settingHeader}>
+              <Text style={styles.settingLabel}>Maximum exercises per workout</Text>
+              <Text style={styles.settingValue}>{maxExercisesPerWorkout} exercises</Text>
+            </View>
+            <Text style={styles.settingHint}>
+              Defines the maximum number of exercises allowed when creating a workout. This
+              setting will be used later by the Add Workout screen.
+            </Text>
+            <OptionGroup
+              options={MAX_EXERCISES_OPTIONS}
+              selectedValue={maxExercisesPerWorkout}
+              onSelect={onMaxExercisesPerWorkoutChange}
+              getLabel={(value) => `${value}`}
+            />
+          </View>
+
+          <View style={styles.settingBlock}>
+            <View style={styles.settingHeader}>
+              <Text style={styles.settingLabel}>Number of Exercises per page</Text>
+              <Text style={styles.settingValue}>{numberOfExercisesPerPage} exercises</Text>
+            </View>
+            <Text style={styles.settingHint}>
+              Used later to control how many available exercises are shown per page.
+            </Text>
+            <OptionGroup
+              options={NUMBER_OF_EXERCISES_PER_PAGE_OPTIONS}
+              selectedValue={numberOfExercisesPerPage}
+              onSelect={onNumberOfExercisesPerPageChange}
+              getLabel={(value) => `${value}`}
+            />
+          </View>
+
+          <View style={styles.settingBlock}>
+            <View style={styles.settingHeader}>
+              <Text style={styles.settingLabel}>
+                Default duration in minutes for reps exercises
+              </Text>
+              <Text style={styles.settingValue}>
+                {defaultRepsExerciseDurationMinutes} minutes
+              </Text>
+            </View>
+            <Text style={styles.settingHint}>
+              Used later to estimate time for reps-based exercises.
+            </Text>
+            <OptionGroup
+              options={DEFAULT_REPS_EXERCISE_DURATION_OPTIONS}
+              selectedValue={defaultRepsExerciseDurationMinutes}
+              onSelect={onDefaultRepsExerciseDurationMinutesChange}
               getLabel={(value) => `${value}`}
             />
           </View>
@@ -117,7 +197,8 @@ export function SettingsScreen({
         <View style={styles.noteCard}>
           <Text style={styles.noteTitle}>Scope note</Text>
           <Text style={styles.noteText}>
-            Settings are local placeholders for now and are not applied to workouts or theme yet.
+            Settings are mocked placeholders for now, stored only for the current app session, and
+            are not persisted yet.
           </Text>
         </View>
       </ScrollView>

@@ -7,6 +7,7 @@ type WorkoutsScreenProps = {
   restSecondsBetweenExercises: 15 | 30 | 45 | 60 | 90 | 120;
   workouts: MockWorkout[];
   onStartWorkout: (workoutId: string) => void;
+  onOpenAddWorkout: () => void;
 };
 
 function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
@@ -21,12 +22,9 @@ export function WorkoutsScreen({
   restSecondsBetweenExercises,
   workouts,
   onStartWorkout,
+  onOpenAddWorkout,
 }: WorkoutsScreenProps) {
   const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
-
-  const handleAddWorkout = () => {
-    Alert.alert("Add workout", "Create Workout screen is not implemented yet.");
-  };
 
   const handleEditWorkout = () => {
     Alert.alert("Edit workout", "Edit Workout screen is not implemented yet.");
@@ -44,10 +42,11 @@ export function WorkoutsScreen({
             <Text style={styles.eyebrow}>Workout library</Text>
             <Text style={styles.title}>Workouts</Text>
             <Text style={styles.subtitle}>
-              Browse focused sessions, inspect their content inline, and keep the rest of the flow mocked for now.
+              Browse focused sessions, inspect their content inline, and add workouts through the
+              mocked form flow.
             </Text>
           </View>
-          <Pressable onPress={handleAddWorkout} style={styles.addButton}>
+          <Pressable onPress={onOpenAddWorkout} style={styles.addButton}>
             <Text style={styles.addButtonText}>Add workout</Text>
           </Pressable>
         </View>

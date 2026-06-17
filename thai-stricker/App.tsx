@@ -4,13 +4,23 @@ import { Alert, StyleSheet, View } from 'react-native';
 
 import { BottomNavbar, type BottomNavTab } from './src/components/navigation/BottomNavbar';
 import { HomeScreen } from './src/features/home/HomeScreen';
-import { SettingsScreen } from './src/features/settings/SettingsScreen';
+import { mockAvailableExercises } from './src/features/exercises/exerciseMocks';
+import {
+  type DefaultRepsExerciseDurationOption,
+  type NumberOfExercisesPerPageOption,
+  SettingsScreen,
+  type MaxExercisesPerWorkoutOption,
+  type TrainingDayOption,
+} from './src/features/settings/SettingsScreen';
+import { ScheduleScreen } from './src/features/plannedWorkouts/ScheduleScreen';
+import { type MockWeeklyWorkoutPlan } from './src/features/plannedWorkouts/plannedWorkoutMocks';
 import { WorkoutFinishedRecapScreen } from './src/features/workoutSession/WorkoutFinishedRecapScreen';
 import { StartWorkoutScreen } from './src/features/workoutSession/StartWorkoutScreen';
 import {
   mockWorkoutLogs,
   type MockWorkoutLogEntry,
 } from './src/features/workoutLogging/workoutLogMocks';
+import { AddWorkoutScreen } from './src/features/workouts/AddWorkoutScreen';
 import { WorkoutsScreen } from './src/features/workouts/WorkoutsScreen';
 import { mockWorkouts, type MockWorkout } from './src/features/workouts/workoutMocks';
 
@@ -29,14 +39,25 @@ type WorkoutRecapState = {
   skippedExerciseCount: number;
 };
 
+type WorkoutsViewState = 'list' | 'add';
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<BottomNavTab>('Home');
   // Mock-only setting value. This will later come from persisted app settings.
   const [restSecondsBetweenExercises, setRestSecondsBetweenExercises] = useState<
     15 | 30 | 45 | 60 | 90 | 120
   >(30);
+  const [trainingDaysPerWeek, setTrainingDaysPerWeek] = useState<TrainingDayOption>(3);
+  const [maxExercisesPerWorkout, setMaxExercisesPerWorkout] =
+    useState<MaxExercisesPerWorkoutOption>(10);
+  const [numberOfExercisesPerPage, setNumberOfExercisesPerPage] =
+    useState<NumberOfExercisesPerPageOption>(6);
+  const [defaultRepsExerciseDurationMinutes, setDefaultRepsExerciseDurationMinutes] =
+    useState<DefaultRepsExerciseDurationOption>(3);
   const [workouts, setWorkouts] = useState<MockWorkout[]>(mockWorkouts);
+  const [workoutsView, setWorkoutsView] = useState<WorkoutsViewState>('list');
   const [workoutLogs, setWorkoutLogs] = useState<MockWorkoutLogEntry[]>(mockWorkoutLogs);
+  const [weeklyWorkoutPlans, setWeeklyWorkoutPlans] = useState<MockWeeklyWorkoutPlan[]>([]);
   const [workoutFlow, setWorkoutFlow] = useState<WorkoutFlowState | null>(null);
   const [workoutRecap, setWorkoutRecap] = useState<WorkoutRecapState | null>(null);
 
@@ -45,8 +66,11 @@ export default function App() {
       return;
     }
 
-    if (tab === 'Home' || tab === 'Workouts' || tab === 'Settings') {
+    if (tab === 'Home' || tab === 'Workouts' || tab === 'Schedule' || tab === 'Settings') {
       setActiveTab(tab);
+      if (tab !== 'Workouts') {
+        setWorkoutsView('list');
+      }
       return;
     }
 
@@ -179,6 +203,32 @@ export default function App() {
     setActiveTab('Home');
   };
 
+  const handleOpenAddWorkout = () => {
+    setWorkoutsView('add');
+  };
+
+  const handleBackToWorkouts = () => {
+    setWorkoutsView('list');
+  };
+
+  const handleAddWorkout = (workout: MockWorkout) => {
+    setWorkouts((currentWorkouts) => [...currentWorkouts, workout]);
+    setWorkoutsView('list');
+    setActiveTab('Home');
+  };
+
+  const handleSaveWeeklyPlan = (plan: MockWeeklyWorkoutPlan) => {
+    setWeeklyWorkoutPlans((currentPlans) => {
+      const plansWithoutWeek = currentPlans.filter(
+        (currentPlan) => currentPlan.weekStartDate !== plan.weekStartDate,
+      );
+
+      return [...plansWithoutWeek, plan].sort((leftPlan, rightPlan) =>
+        leftPlan.weekStartDate.localeCompare(rightPlan.weekStartDate),
+      );
+    });
+  };
+
   const shouldHideNavbar = Boolean(workoutFlow || workoutRecap);
 
   let content = null;
@@ -207,13 +257,41 @@ export default function App() {
       />
     );
   } else if (activeTab === 'Home') {
-    content = <HomeScreen workoutLogs={workoutLogs} />;
-  } else if (activeTab === 'Workouts') {
     content = (
-      <WorkoutsScreen
-        restSecondsBetweenExercises={restSecondsBetweenExercises}
+      <HomeScreen
+        workoutLogs={workoutLogs}
+        weeklyWorkoutPlans={weeklyWorkoutPlans}
         workouts={workouts}
         onStartWorkout={handleStartWorkout}
+      />
+    );
+  } else if (activeTab === 'Workouts') {
+    content =
+      workoutsView === 'add' ? (
+        <AddWorkoutScreen
+          availableExercises={mockAvailableExercises}
+          maxExercisesPerWorkout={maxExercisesPerWorkout}
+          numberOfExercisesPerPage={numberOfExercisesPerPage}
+          restSecondsBetweenExercises={restSecondsBetweenExercises}
+          defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
+          onBackToWorkouts={handleBackToWorkouts}
+          onAddWorkout={handleAddWorkout}
+        />
+      ) : (
+        <WorkoutsScreen
+          restSecondsBetweenExercises={restSecondsBetweenExercises}
+          workouts={workouts}
+          onStartWorkout={handleStartWorkout}
+          onOpenAddWorkout={handleOpenAddWorkout}
+        />
+      );
+  } else if (activeTab === 'Schedule') {
+    content = (
+      <ScheduleScreen
+        trainingDaysPerWeek={trainingDaysPerWeek}
+        workouts={workouts}
+        weeklyWorkoutPlans={weeklyWorkoutPlans}
+        onSaveWeeklyPlan={handleSaveWeeklyPlan}
       />
     );
   } else {
@@ -221,6 +299,14 @@ export default function App() {
       <SettingsScreen
         restSecondsBetweenExercises={restSecondsBetweenExercises}
         onRestSecondsChange={setRestSecondsBetweenExercises}
+        trainingDaysPerWeek={trainingDaysPerWeek}
+        onTrainingDaysPerWeekChange={setTrainingDaysPerWeek}
+        maxExercisesPerWorkout={maxExercisesPerWorkout}
+        onMaxExercisesPerWorkoutChange={setMaxExercisesPerWorkout}
+        numberOfExercisesPerPage={numberOfExercisesPerPage}
+        onNumberOfExercisesPerPageChange={setNumberOfExercisesPerPage}
+        defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
+        onDefaultRepsExerciseDurationMinutesChange={setDefaultRepsExerciseDurationMinutes}
       />
     );
   }

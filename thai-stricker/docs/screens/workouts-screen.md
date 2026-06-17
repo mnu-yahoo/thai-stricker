@@ -158,16 +158,38 @@ Status:
 
 Current behavior:
 
-- Placeholder only
-- Shows mocked feedback
+- Opens the mocked form-based Add Workout screen
+- User enters workout properties
+- User adds exercises one by one
+- Valid input creates a mocked workout object
+- New workout is added to available workouts for the current session
+- After saving, user is redirected to Home
 
 Future behavior:
 
-- Open Create Workout screen
+- Support richer workout creation beyond the current mocked form
 
 Status:
 
-- Not implemented
+- Implemented with mocked data only
+
+## Add Workout Action
+
+Current behavior:
+
+- Opens the mocked form-based Add Workout screen
+- User enters workout properties
+- User adds exercises one by one
+- Valid input creates a mocked workout object
+- New workout is added to available workouts for the current session
+- After saving, user is redirected to Home
+
+Not implemented:
+
+- Persistence
+- Database-backed workout creation
+- Edit Workout screen
+- JSON workout import
 
 ## Out Of Scope
 
@@ -193,8 +215,8 @@ Rest time is displayed from shared mocked Settings state and is not configurable
 
 - Workouts Screen may list workouts
 - Workouts Screen may show workout content inline
+- Workouts Screen may open the mocked Add Workout flow
 - Workouts Screen must not implement Edit Workout screen
-- Workouts Screen must not implement Create Workout screen
 - Workouts Screen must not implement Workout Detail screen
 - Rest time is displayed only and is not configurable here
 - Rest time is displayed from shared mocked Settings state

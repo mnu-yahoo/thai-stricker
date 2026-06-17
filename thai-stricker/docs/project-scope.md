@@ -34,16 +34,16 @@ Navbar items:
 Current behavior:
 
 - Home is active
-- Other tabs are placeholders only
-- Other tabs must not open real screens until those screens are explicitly implemented
+- Workouts opens the mocked Workouts screen
+- Schedule opens the mocked Planned Workout / Schedule screen
+- Settings opens the mocked Settings screen
+- AI Coach remains a placeholder only
 
 Not implemented:
 
 - Real routing
 - Screen transitions
-- Schedule Screen
 - AI Coach Chat Screen
-- Settings Screen
 
 # Approved Screens
 
@@ -56,7 +56,7 @@ Purpose:
 Features:
 
 - Display current month workout activity
-- Display planned workout
+- Display planned workout for today when available
 - Allow user to start planned workout
 - Display workout statistics for current month
 - Display AI Coach teaser card
@@ -65,10 +65,22 @@ Current Status:
 
 - Implemented using mocked data only
 
+Home Planned Workout Card:
+
+Current behavior:
+- Displays today's planned workout from mocked weekly workout plans when available
+- Starts today's planned workout from Home
+- Displays a rest/random workout message when no workout is planned today
+- Starts a random mocked workout when no workout is planned today
+
+Not implemented:
+- Persistence
+- Database-backed planning
+- Real recommendation logic
+
 Not Implemented:
 
 - Real database integration
-- Real workout execution
 - AI chat integration
 - Navigation
 
@@ -85,7 +97,7 @@ Current behavior:
 - Shows workout content inline
 - Allows mocked Start Workout action
 - Allows mocked Edit action
-- Allows mocked Add action
+- Allows mocked Add action that opens the Add Workout flow
 
 Not implemented:
 
@@ -100,12 +112,84 @@ Settings and Workouts currently share mocked rest time state.
 
 This is not persisted and does not use SQLite or Drizzle.
 
+## Add Workout Screen
+
+Status:
+
+- Approved
+- Implemented with mocked data only
+
+Current behavior:
+
+- User can create a workout using form inputs
+- User can define basic workout properties
+- User can add exercises from a mocked available-exercises list in order
+- User can remove exercises before saving
+- Available exercises are seeded from mocked app data including existing workout exercises
+- Available Exercises list is paginated with 6 exercises per page
+- User can move through available exercises using Previous and Next controls
+- User can see current page number and total pages
+- Available Exercises list includes placeholder Add Exercise action
+- Available exercise cards include placeholder Edit Exercise action
+- The same available exercise can be reused multiple times in one workout
+- Valid input creates a mocked workout object
+- New workout appears in available workouts for the current session
+- Workout total duration is calculated automatically
+- User cannot manually set workout total duration
+- Duration-based exercises use their seconds value
+- Reps-based exercises use Settings default duration in minutes for reps exercises
+- Rest time between exercises uses Settings rest time
+- Settings maximum exercises per workout is enforced
+- After saving, user is redirected to Home
+
+Removed:
+
+- JSON-input Add Workout workflow
+
+Not implemented:
+
+- Persistence
+- Database integration
+- Edit Workout
+- File import
+- AI workout generation
+- Searching available exercises
+- Filtering available exercises
+- Sorting available exercises
+- Add Exercise screen
+- Edit Exercise screen
+- Creating exercises
+- Editing exercises
+- Deleting exercises
+- Recalculating existing workouts
+- Persisting calculated duration
+
 ## Workout Scheduler Screen
 
 Status:
 
-- Planned
-- Not implemented
+- Approved
+- Implemented with mocked data only
+
+Current behavior:
+
+- User can select a week
+- Week number is displayed
+- User can move to previous or next week
+- User can plan workouts for the selected week
+- Required planned workout count comes from Settings training days per week
+- User can assign one workout per selected day
+- User can reuse the same workout multiple times in a week
+- Weekly plan is stored in local mocked app-level state
+
+Not implemented:
+
+- Persistence
+- Database integration
+- Notifications
+- Home calendar integration for planned workouts
+- Recurring planning
+- Editing workout definitions
 
 ## Workout Detail Screen
 
@@ -178,12 +262,23 @@ Current behavior:
 
 - User can set rest time between workout exercises locally
 - User can set desired training days per week locally
+- User can set maximum exercises per workout locally
+- User can set number of exercises per page locally
+- User can set default duration in minutes for reps exercises locally
 - User can choose light or dark theme preference locally
+- Training days per week is shared with the mocked Schedule screen
 
 Not implemented:
 
 - Settings persistence
 - Database integration
+- Applying maximum exercises to Add Workout screen
+- Applying number of exercises per page to Add Workout pagination
+- Applying default reps exercise duration to Add Workout
+- Applying default reps exercise duration to workout execution
+- Validating existing workouts against maximum exercises
+- Updating existing workouts with default reps duration
+- Updating existing workouts
 - Applying theme to the app
 - Schedule generation
 

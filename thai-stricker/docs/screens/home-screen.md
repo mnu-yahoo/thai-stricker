@@ -57,15 +57,18 @@ Displays:
 
 Displays:
 
-- Workout name
-- Focus
-- Duration
-- Exercise count
+- Today planned workout title when a mocked plan exists for today
+- Workout description if available
 - Difficulty
+- Category
+- Total duration
+- Exercise count
+- Rest/random message when no workout is planned for today
 
 Actions:
 
-- Start Workout
+- Start workout
+- Start random workout
 
 ### Monthly Activity Summary
 
@@ -108,6 +111,7 @@ Actions:
 Current implementation:
 
 - Mocked data only
+- Uses mocked weekly workout plans for the current day planned-workout card
 
 No:
 
@@ -142,19 +146,37 @@ Workout logging is session-only and not persisted.
 
 ## Actions
 
+## Planned Workout Card Behavior
+
+The Planned Workout Card uses mocked weekly workout plans.
+
+If a workout is planned for the current day:
+
+- The card displays that planned workout
+- The button label is `Start workout`
+- Pressing the button starts the mocked Start Workout flow
+
+If no workout is planned for the current day:
+
+- The card displays `No training planned today. Have a rest. Or start a random Workout`
+- The button label is `Start random workout`
+- Pressing the button starts a randomly selected mocked workout
+
+This behavior is mocked only and not persisted.
+
 ### Start Workout
 
 Current behavior:
 
-- Mocked action only
+- Starts the existing mocked Start Workout flow from Home
 
 Future behavior:
 
-- Open workout execution flow
+- Keep using a real workout execution flow once persistence exists
 
 Status:
 
-- Not implemented
+- Mocked flow implemented
 
 ### Open AI Coach
 

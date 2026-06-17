@@ -3,10 +3,11 @@ import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } fr
 import {
   mockCalendarWorkoutDays,
   mockMonthlySummary,
-  mockPlannedWorkout,
   type MockWorkoutStatus,
 } from "./homeMocks";
 import type { MockWorkoutLogEntry } from "../workoutLogging/workoutLogMocks";
+import type { MockWeeklyWorkoutPlan } from "../plannedWorkouts/plannedWorkoutMocks";
+import type { MockWorkout } from "../workouts/workoutMocks";
 
 const WEEKDAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTH_LABEL = "June 2026";
@@ -25,7 +26,18 @@ type CalendarCell = {
 
 type HomeScreenProps = {
   workoutLogs: MockWorkoutLogEntry[];
+  weeklyWorkoutPlans: MockWeeklyWorkoutPlan[];
+  workouts: MockWorkout[];
+  onStartWorkout: (workoutId: string) => void;
 };
+
+function formatLocalDate(date: Date) {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 function buildCalendarCells(workoutLogs: MockWorkoutLogEntry[]): CalendarCell[] {
   const firstDay = new Date(2026, 5, 1).getDay();
@@ -79,15 +91,39 @@ function getDayStyle(status?: MockWorkoutStatus) {
   };
 }
 
-export function HomeScreen({ workoutLogs }: HomeScreenProps) {
+export function HomeScreen({
+  workoutLogs,
+  weeklyWorkoutPlans,
+  workouts,
+  onStartWorkout,
+}: HomeScreenProps) {
   const calendarCells = buildCalendarCells(workoutLogs);
   const completedWorkoutsThisMonth = workoutLogs.filter((entry) => {
     const completedDate = new Date(entry.completedDate);
     return completedDate.getFullYear() === 2026 && completedDate.getMonth() === 5;
   }).length;
 
-  const handleStartWorkout = () => {
-    Alert.alert("Start workout", "Mocked action only. Workout flow is not implemented yet.");
+  const todayDate = formatLocalDate(new Date());
+  const todayPlannedDay = weeklyWorkoutPlans
+    .flatMap((plan) => plan.plannedDays)
+    .find((plannedDay) => plannedDay.dayDate === todayDate);
+  const todayPlannedWorkout = todayPlannedDay
+    ? workouts.find((workout) => workout.id === todayPlannedDay.workoutId) ?? null
+    : null;
+
+  const handleStartPlannedOrRandomWorkout = () => {
+    if (todayPlannedWorkout) {
+      onStartWorkout(todayPlannedWorkout.id);
+      return;
+    }
+
+    if (workouts.length === 0) {
+      Alert.alert("No workouts", "No mocked workouts are available right now.");
+      return;
+    }
+
+    const randomWorkout = workouts[Math.floor(Math.random() * workouts.length)];
+    onStartWorkout(randomWorkout.id);
   };
 
   const handleOpenCoachLater = () => {
@@ -106,27 +142,47 @@ export function HomeScreen({ workoutLogs }: HomeScreenProps) {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardTitle}>Planned workout</Text>
-            <View style={styles.difficultyBadge}>
-              <Text style={styles.difficultyText}>{mockPlannedWorkout.difficulty}</Text>
-            </View>
+            {todayPlannedWorkout ? (
+              <View style={styles.difficultyBadge}>
+                <Text style={styles.difficultyText}>{todayPlannedWorkout.difficulty}</Text>
+              </View>
+            ) : null}
           </View>
 
-          <Text style={styles.workoutName}>{mockPlannedWorkout.name}</Text>
-          <Text style={styles.workoutFocus}>{mockPlannedWorkout.focus}</Text>
+          {todayPlannedWorkout ? (
+            <>
+              <Text style={styles.workoutName}>{todayPlannedWorkout.title}</Text>
+              <Text style={styles.workoutFocus}>
+                {todayPlannedWorkout.description || "No workout description available."}
+              </Text>
 
-          <View style={styles.metricsRow}>
-            <View style={styles.metricPill}>
-              <Text style={styles.metricLabel}>Duration</Text>
-              <Text style={styles.metricValue}>{mockPlannedWorkout.durationMinutes} min</Text>
-            </View>
-            <View style={styles.metricPill}>
-              <Text style={styles.metricLabel}>Exercises</Text>
-              <Text style={styles.metricValue}>{mockPlannedWorkout.exercisesCount}</Text>
-            </View>
-          </View>
+              <View style={styles.metricsRow}>
+                <View style={styles.metricPill}>
+                  <Text style={styles.metricLabel}>Category</Text>
+                  <Text style={styles.metricValue}>{todayPlannedWorkout.category}</Text>
+                </View>
+                <View style={styles.metricPill}>
+                  <Text style={styles.metricLabel}>Duration</Text>
+                  <Text style={styles.metricValue}>
+                    {todayPlannedWorkout.totalDurationMinutes} min
+                  </Text>
+                </View>
+                <View style={styles.metricPill}>
+                  <Text style={styles.metricLabel}>Exercises</Text>
+                  <Text style={styles.metricValue}>{todayPlannedWorkout.exercises.length}</Text>
+                </View>
+              </View>
+            </>
+          ) : (
+            <Text style={styles.workoutFocus}>
+              No training planned today. Have a rest. Or start a random Workout
+            </Text>
+          )}
 
-          <Pressable onPress={handleStartWorkout} style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Start workout</Text>
+          <Pressable onPress={handleStartPlannedOrRandomWorkout} style={styles.primaryButton}>
+            <Text style={styles.primaryButtonText}>
+              {todayPlannedWorkout ? "Start workout" : "Start random workout"}
+            </Text>
           </Pressable>
         </View>
 
@@ -286,13 +342,15 @@ const styles = StyleSheet.create({
   metricsRow: {
     flexDirection: "row",
     gap: 12,
+    flexWrap: "wrap",
   },
   metricPill: {
-    flex: 1,
     backgroundColor: "#f8efe2",
     borderRadius: 14,
     padding: 12,
     gap: 4,
+    minWidth: "30%",
+    flexGrow: 1,
   },
   metricLabel: {
     color: "#8b7355",

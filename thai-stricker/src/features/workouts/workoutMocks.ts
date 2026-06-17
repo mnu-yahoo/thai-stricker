@@ -11,6 +11,11 @@ export type MockExercise = {
 };
 
 export type MockWorkoutDifficulty = "Beginner" | "Intermediate" | "Advanced";
+export const MOCK_WORKOUT_DIFFICULTIES: MockWorkoutDifficulty[] = [
+  "Beginner",
+  "Intermediate",
+  "Advanced",
+];
 
 export type MockWorkoutCategory =
   | "Fundamentals"
@@ -18,6 +23,13 @@ export type MockWorkoutCategory =
   | "Defense"
   | "Conditioning"
   | "Footwork";
+export const MOCK_WORKOUT_CATEGORIES: MockWorkoutCategory[] = [
+  "Fundamentals",
+  "Striking",
+  "Defense",
+  "Conditioning",
+  "Footwork",
+];
 
 export type MockWorkout = {
   id: string;
