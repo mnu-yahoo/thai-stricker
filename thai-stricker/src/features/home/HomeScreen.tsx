@@ -5,6 +5,7 @@ import {
   mockMonthlySummary,
   type MockWorkoutStatus,
 } from "./homeMocks";
+import type { MockCoachTip } from "../aiCoach/coachTipsMocks";
 import type { MockWorkoutLogEntry } from "../workoutLogging/workoutLogMocks";
 import type { MockWeeklyWorkoutPlan } from "../plannedWorkouts/plannedWorkoutMocks";
 import type { MockWorkout } from "../workouts/workoutMocks";
@@ -25,10 +26,12 @@ type CalendarCell = {
 };
 
 type HomeScreenProps = {
+  randomCoachTip: MockCoachTip;
   workoutLogs: MockWorkoutLogEntry[];
   weeklyWorkoutPlans: MockWeeklyWorkoutPlan[];
   workouts: MockWorkout[];
   onStartWorkout: (workoutId: string) => void;
+  onOpenAiCoach: () => void;
 };
 
 function formatLocalDate(date: Date) {
@@ -92,10 +95,12 @@ function getDayStyle(status?: MockWorkoutStatus) {
 }
 
 export function HomeScreen({
+  randomCoachTip,
   workoutLogs,
   weeklyWorkoutPlans,
   workouts,
   onStartWorkout,
+  onOpenAiCoach,
 }: HomeScreenProps) {
   const calendarCells = buildCalendarCells(workoutLogs);
   const completedWorkoutsThisMonth = workoutLogs.filter((entry) => {
@@ -124,10 +129,6 @@ export function HomeScreen({
 
     const randomWorkout = workouts[Math.floor(Math.random() * workouts.length)];
     onStartWorkout(randomWorkout.id);
-  };
-
-  const handleOpenCoachLater = () => {
-    Alert.alert("AI Coach", "Placeholder only. AI Coach Chat is not implemented yet.");
   };
 
   return (
@@ -245,18 +246,16 @@ export function HomeScreen({
           </View>
         </View>
 
-        <View style={styles.coachCard}>
+        <Pressable onPress={onOpenAiCoach} style={styles.coachCard}>
           <View style={styles.coachHeader}>
             <Text style={styles.cardTitle}>AI Coach</Text>
-            <Text style={styles.coachTag}>Teaser</Text>
+            <Text style={styles.coachTag}>Local tips</Text>
           </View>
-          <Text style={styles.coachMessage}>
-            Review your last sessions and ask for focused technique tips.
-          </Text>
-          <Pressable onPress={handleOpenCoachLater} style={styles.secondaryButton}>
-            <Text style={styles.secondaryButtonText}>Open coach later</Text>
+          <Text style={styles.coachMessage}>{randomCoachTip.shortTip}</Text>
+          <Pressable onPress={onOpenAiCoach} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>Open coach</Text>
           </Pressable>
-        </View>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );

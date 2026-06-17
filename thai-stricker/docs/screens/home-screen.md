@@ -19,8 +19,10 @@ The app shell includes a bottom navbar with:
 Current behavior:
 
 - Home is active
-- Other tabs are placeholders
-- Placeholder tabs do not navigate yet
+- Workouts opens the mocked Workouts screen
+- Schedule opens the mocked Planned Workout / Schedule screen
+- AI Coach opens the mocked AI Coach screen
+- Settings opens the mocked Settings screen
 
 ## Purpose
 
@@ -95,16 +97,16 @@ Purpose:
 
 - Quick visualization of training consistency
 
-### AI Coach Teaser
+### AI Coach Card
 
 Displays:
 
 - AI Coach title
-- Short description
+- One random short local coach tip
 
 Actions:
 
-- Open coach later
+- Open coach
 
 ## Current Data Source
 
@@ -119,7 +121,7 @@ No:
 - Drizzle
 - API
 - Cloud
-- AI integration
+- External AI integration
 
 ## Future Data Source
 
@@ -182,15 +184,28 @@ Status:
 
 Current behavior:
 
-- Placeholder only
+- Opens the mocked AI Coach screen
+- Home displays one random local coach tip every time the screen is shown
 
 Future behavior:
 
-- Open AI Coach Chat Screen
+- Real AI generation is still not implemented
 
 Status:
 
-- Not implemented
+- Mocked flow implemented
+
+## AI Coach Card
+
+Current behavior:
+- Displays one random local coach tip every time Home is shown
+- Tip comes from developer-provided mocked coach tip data
+- Card opens the AI Coach screen
+
+Not implemented:
+- Real AI generation
+- API-backed coaching
+- Persisted tip history
 
 ## Visual Guidelines
 
@@ -241,7 +256,7 @@ No additional dependencies should be introduced solely for the Home Screen witho
 - Edit Workout Screen
 - In Course Exercise Screen
 - Settings Screen
-- AI Coach Chat Screen
+- AI Coach Screen
 
 These screens are separate concerns and must not be implemented from Home Screen requirements.
 

@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
 import { BottomNavbar, type BottomNavTab } from './src/components/navigation/BottomNavbar';
+import { AiCoachScreen } from './src/features/aiCoach/AiCoachScreen';
+import { mockCoachTips, type MockCoachTip } from './src/features/aiCoach/coachTipsMocks';
 import { HomeScreen } from './src/features/home/HomeScreen';
 import { mockAvailableExercises } from './src/features/exercises/exerciseMocks';
 import {
@@ -42,6 +44,10 @@ type WorkoutRecapState = {
 
 type WorkoutsViewState = 'list' | 'add' | { type: 'edit'; workoutId: string };
 
+function pickRandomCoachTip() {
+  return mockCoachTips[Math.floor(Math.random() * mockCoachTips.length)];
+}
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<BottomNavTab>('Home');
   // Mock-only setting value. This will later come from persisted app settings.
@@ -62,16 +68,30 @@ export default function App() {
   const [weeklyWorkoutPlans, setWeeklyWorkoutPlans] = useState<MockWeeklyWorkoutPlan[]>([]);
   const [workoutFlow, setWorkoutFlow] = useState<WorkoutFlowState | null>(null);
   const [workoutRecap, setWorkoutRecap] = useState<WorkoutRecapState | null>(null);
+  const [homeCoachTip, setHomeCoachTip] = useState<MockCoachTip>(pickRandomCoachTip);
+  const [aiCoachVisitKey, setAiCoachVisitKey] = useState(0);
 
   const handleTabPress = (tab: BottomNavTab) => {
     if (workoutFlow || workoutRecap) {
       return;
     }
 
-    if (tab === 'Home' || tab === 'Workouts' || tab === 'Schedule' || tab === 'Settings') {
+    if (
+      tab === 'Home' ||
+      tab === 'Workouts' ||
+      tab === 'Schedule' ||
+      tab === 'AI Coach' ||
+      tab === 'Settings'
+    ) {
       setActiveTab(tab);
       if (tab !== 'Workouts') {
         setWorkoutsView('list');
+      }
+      if (tab === 'Home') {
+        setHomeCoachTip(pickRandomCoachTip());
+      }
+      if (tab === 'AI Coach') {
+        setAiCoachVisitKey((currentKey) => currentKey + 1);
       }
       return;
     }
@@ -202,6 +222,7 @@ export default function App() {
 
   const handleBackToHome = () => {
     setWorkoutRecap(null);
+    setHomeCoachTip(pickRandomCoachTip());
     setActiveTab('Home');
   };
 
@@ -274,10 +295,12 @@ export default function App() {
   } else if (activeTab === 'Home') {
     content = (
       <HomeScreen
+        randomCoachTip={homeCoachTip}
         workoutLogs={workoutLogs}
         weeklyWorkoutPlans={weeklyWorkoutPlans}
         workouts={workouts}
         onStartWorkout={handleStartWorkout}
+        onOpenAiCoach={() => handleTabPress('AI Coach')}
       />
     );
   } else if (activeTab === 'Workouts') {
@@ -332,6 +355,16 @@ export default function App() {
         workouts={workouts}
         weeklyWorkoutPlans={weeklyWorkoutPlans}
         onSaveWeeklyPlan={handleSaveWeeklyPlan}
+      />
+    );
+  } else if (activeTab === 'AI Coach') {
+    content = (
+      <AiCoachScreen
+        availableExercises={availableExercises}
+        coachTips={mockCoachTips}
+        visitKey={aiCoachVisitKey}
+        weeklyWorkoutPlans={weeklyWorkoutPlans}
+        workouts={workouts}
       />
     );
   } else {

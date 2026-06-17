@@ -3,9 +3,9 @@
 ## Approved Scope
 
 - Private Android Muay Thai Boxing coaching app
-- AI coaching chat planned
+- AI coaching with local mocked data only
 - Local training data
-- Local coach chat history
+- Local coach tips data
 - Android Emulator development workflow
 - Professional mobile UI later guided by Stitch
 - Home Screen
@@ -15,7 +15,7 @@
 - Edit Workout Screen
 - In Course Exercise Screen
 - Settings Screen
-- AI Coach Chat Screen
+- AI Coach Screen
 
 ## Approved App Shell
 
@@ -37,13 +37,12 @@ Current behavior:
 - Workouts opens the mocked Workouts screen
 - Schedule opens the mocked Planned Workout / Schedule screen
 - Settings opens the mocked Settings screen
-- AI Coach remains a placeholder only
+- AI Coach opens the mocked AI Coach screen
 
 Not implemented:
 
 - Real routing
 - Screen transitions
-- AI Coach Chat Screen
 
 # Approved Screens
 
@@ -59,7 +58,7 @@ Features:
 - Display planned workout for today when available
 - Allow user to start planned workout
 - Display workout statistics for current month
-- Display AI Coach teaser card
+- Display AI Coach card
 
 Current Status:
 
@@ -81,7 +80,7 @@ Not implemented:
 Not Implemented:
 
 - Real database integration
-- AI chat integration
+- External AI integration
 - Navigation
 
 ## Workouts Screen
@@ -350,12 +349,32 @@ Settings and Workouts currently share mocked rest time state.
 
 This is not persisted and does not use SQLite or Drizzle.
 
-## AI Coach Chat Screen
+## AI Coach Screen
 
 Status:
 
-- Planned
-- Not implemented
+- Approved
+- Implemented with local mocked data only
+
+Current behavior:
+
+- Available from Home AI Coach card
+- Available from AI Coach navbar tab
+- Provides tips for today's planned workout exercises
+- If no workout is planned today, selects one random available exercise
+- Uses guided chat-style buttons
+- Uses developer-provided mocked coach tips
+- Home AI Coach card displays a random tip every time Home is shown
+
+Not implemented:
+
+- Real LLM
+- OpenAI API
+- Backend
+- Database persistence
+- Open-ended chat input
+- Voice input
+- Speech output
 
 ## Explicitly Out Of Scope
 

@@ -1,6 +1,6 @@
 # Coaching Scope
 
-AI coaching chat is planned, but must stay within safe coaching guidance.
+AI coaching must stay within safe coaching guidance.
 
 ## Allowed
 
@@ -17,3 +17,15 @@ AI coaching chat is planned, but must stay within safe coaching guidance.
 - nutrition advice
 - supplement advice
 - replacing a real coach, doctor, or physiotherapist
+
+## Local Rule-Based Coach
+
+Current behavior:
+- AI Coach uses developer-provided local tip data
+- Tips are matched to today's planned workout exercises
+- If no workout is planned, one random available exercise is selected
+
+Not implemented:
+- Real LLM
+- External API
+- Backend AI
