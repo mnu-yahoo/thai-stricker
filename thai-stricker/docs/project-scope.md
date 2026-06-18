@@ -363,12 +363,14 @@ Current behavior:
 - Settings Theme preference controls active theme.
 - Light preference loads Light Theme.
 - Dark preference loads Dark Theme.
-- Theme tokens are prepared for Google Stitch output.
+- Theme architecture should follow Google Stitch output.
+- Stitch is the source of truth for visual design.
+- Codex may adapt colors, shapes, fonts, controls, pictures, and icons according to Stitch rules.
 
 Not implemented:
 
 - Persistent theme preference
-- Final Stitch token import if Stitch output is not available yet
+- Full app-wide Stitch adaptation unless explicitly requested
 
 ## AI Coach Screen
 

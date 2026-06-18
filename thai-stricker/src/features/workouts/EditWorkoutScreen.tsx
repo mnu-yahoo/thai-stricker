@@ -21,8 +21,10 @@ import {
   type MockWorkoutCategory,
   type MockWorkoutDifficulty,
 } from "./workoutMocks";
+import type { AppTheme } from "../../styles/theme";
 
 type EditWorkoutScreenProps = {
+  theme: AppTheme;
   availableExercises: MockAvailableExercise[];
   workout: MockWorkout | null;
   maxExercisesPerWorkout: number;
@@ -37,11 +39,14 @@ function OptionGroup<T extends string>({
   options,
   selectedValue,
   onSelect,
+  theme,
 }: {
   options: readonly T[];
   selectedValue: T;
   onSelect: (value: T) => void;
+  theme: AppTheme;
 }) {
+  const styles = getStyles(theme);
   return (
     <View style={styles.optionGroup}>
       {options.map((option) => {
@@ -91,6 +96,7 @@ function calculateWorkoutTotalDurationMinutes(
 }
 
 export function EditWorkoutScreen({
+  theme,
   availableExercises,
   workout,
   maxExercisesPerWorkout,
@@ -100,6 +106,7 @@ export function EditWorkoutScreen({
   onBackToWorkouts,
   onSaveWorkout,
 }: EditWorkoutScreenProps) {
+  const styles = getStyles(theme);
   const [title, setTitle] = useState(workout?.title ?? "");
   const [description, setDescription] = useState(workout?.description ?? "");
   const [difficulty, setDifficulty] = useState<MockWorkoutDifficulty>(
@@ -230,7 +237,7 @@ export function EditWorkoutScreen({
               value={title}
               onChangeText={setTitle}
               placeholder="Enter workout title"
-              placeholderTextColor="#9f907b"
+              placeholderTextColor={theme.colors.textMuted}
               style={styles.textInput}
             />
           </View>
@@ -241,7 +248,7 @@ export function EditWorkoutScreen({
               value={description}
               onChangeText={setDescription}
               placeholder="Describe the goal of this workout"
-              placeholderTextColor="#9f907b"
+              placeholderTextColor={theme.colors.textMuted}
               multiline
               textAlignVertical="top"
               style={[styles.textInput, styles.multilineInput]}
@@ -254,6 +261,7 @@ export function EditWorkoutScreen({
               options={MOCK_WORKOUT_DIFFICULTIES}
               selectedValue={difficulty}
               onSelect={setDifficulty}
+              theme={theme}
             />
           </View>
 
@@ -263,6 +271,7 @@ export function EditWorkoutScreen({
               options={MOCK_WORKOUT_CATEGORIES}
               selectedValue={category}
               onSelect={setCategory}
+              theme={theme}
             />
           </View>
 
@@ -441,10 +450,11 @@ export function EditWorkoutScreen({
   );
 }
 
-const styles = StyleSheet.create({
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4efe6",
+    backgroundColor: theme.colors.appBackground,
   },
   content: {
     paddingHorizontal: 20,
@@ -456,32 +466,32 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   eyebrow: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   title: {
-    color: "#1f1f1f",
+    color: theme.colors.textPrimary,
     fontSize: 34,
     fontWeight: "800",
   },
   subtitle: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 16,
     lineHeight: 22,
   },
   card: {
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.card,
     borderRadius: 18,
     padding: 18,
     gap: 14,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
   },
   cardTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontWeight: "700",
   },
@@ -489,7 +499,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   fieldLabel: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -497,25 +507,25 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#c9b69b",
-    backgroundColor: "#fffdf9",
+    borderColor: theme.colors.inputBorder,
+    backgroundColor: theme.colors.inputBackground,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 14,
   },
   readOnlyValue: {
     minHeight: 48,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#d8cab3",
-    backgroundColor: "#f8efe2",
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surfaceMuted,
     paddingHorizontal: 14,
     alignItems: "flex-start",
     justifyContent: "center",
   },
   readOnlyValueText: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -532,66 +542,66 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#c9b69b",
+    borderColor: theme.colors.inputBorder,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.surface,
   },
   optionButtonSelected: {
-    backgroundColor: "#bf5b22",
-    borderColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   optionText: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     fontWeight: "700",
   },
   optionTextSelected: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
   },
   helperText: {
-    color: "#6b5f51",
+    color: theme.colors.textSecondary,
     fontSize: 13,
     lineHeight: 19,
   },
   errorBox: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#d65a41",
-    backgroundColor: "#fff1ec",
+    borderColor: theme.colors.danger,
+    backgroundColor: theme.colors.surfaceMuted,
     padding: 14,
     gap: 4,
   },
   errorTitle: {
-    color: "#9b2c1c",
+    color: theme.colors.danger,
     fontSize: 14,
     fontWeight: "700",
   },
   errorText: {
-    color: "#9b2c1c",
+    color: theme.colors.danger,
     fontSize: 13,
     lineHeight: 19,
   },
   secondaryButton: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#bf5b22",
+    borderColor: theme.colors.primary,
     minHeight: 48,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff7f1",
+    backgroundColor: theme.colors.surface,
   },
   secondaryButtonText: {
-    color: "#bf5b22",
+    color: theme.colors.primary,
     fontSize: 15,
     fontWeight: "700",
   },
   secondaryButtonDisabled: {
-    borderColor: "#d8cab3",
-    backgroundColor: "#f3eadc",
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surfaceMuted,
   },
   secondaryButtonTextDisabled: {
-    color: "#a99983",
+    color: theme.colors.textMuted,
   },
   paginationRow: {
     flexDirection: "row",
@@ -600,7 +610,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   paginationText: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "700",
   },
@@ -611,24 +621,24 @@ const styles = StyleSheet.create({
   paginationButton: {
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#c9b69b",
-    backgroundColor: "#fffaf3",
+    borderColor: theme.colors.inputBorder,
+    backgroundColor: theme.colors.surface,
     minHeight: 40,
     paddingHorizontal: 14,
     alignItems: "center",
     justifyContent: "center",
   },
   paginationButtonDisabled: {
-    borderColor: "#d8cab3",
-    backgroundColor: "#f3eadc",
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surfaceMuted,
   },
   paginationButtonText: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     fontWeight: "700",
   },
   paginationButtonTextDisabled: {
-    color: "#a99983",
+    color: theme.colors.textMuted,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -637,18 +647,18 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionMeta: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "700",
   },
   exerciseCard: {
-    backgroundColor: "#f8efe2",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 14,
     padding: 14,
     gap: 10,
   },
   availableExerciseCard: {
-    backgroundColor: "#f8efe2",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 14,
     padding: 14,
     gap: 12,
@@ -675,41 +685,41 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   exerciseOrder: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 12,
     fontWeight: "700",
     textTransform: "uppercase",
   },
   exerciseTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 17,
     fontWeight: "700",
   },
   exerciseDescription: {
-    color: "#4f4538",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
   exerciseHelp: {
-    color: "#6b5f51",
+    color: theme.colors.textMuted,
     fontSize: 13,
     lineHeight: 19,
   },
   exerciseTarget: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "700",
   },
   removeButton: {
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: "#c9825f",
+    borderColor: theme.colors.danger,
     paddingHorizontal: 10,
     paddingVertical: 8,
-    backgroundColor: "#fff7f1",
+    backgroundColor: theme.colors.surface,
   },
   removeButtonText: {
-    color: "#a34b1b",
+    color: theme.colors.danger,
     fontSize: 13,
     fontWeight: "700",
   },
@@ -720,26 +730,26 @@ const styles = StyleSheet.create({
   ghostButton: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#c9b69b",
+    borderColor: theme.colors.inputBorder,
     minHeight: 50,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.surface,
   },
   ghostButtonText: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 15,
     fontWeight: "700",
   },
   primaryButton: {
-    backgroundColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
     borderRadius: 14,
     minHeight: 50,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryButtonText: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -749,11 +759,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: 16,
-    backgroundColor: "#f4efe6",
+    backgroundColor: theme.colors.appBackground,
   },
   missingStateTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 22,
     fontWeight: "800",
   },
 });
+}

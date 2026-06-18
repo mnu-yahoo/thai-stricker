@@ -48,12 +48,22 @@ A user should be able to:
 
 ## Layout Structure
 
+Saved dark dashboard reference:
+
+- [docs/design/dashboard-dark-theme.md](/C:/Users/mathieu.nussbaumer/Documents/ThaiStricker/thai-stricker/docs/design/dashboard-dark-theme.md)
+
 ### Header
 
 Displays:
 
 - App name: Thai Stricker
 - Tagline: Train sharp. Stay consistent.
+
+Dark dashboard implementation also includes:
+
+- user badge icon
+- `TRAINING HUB` top bar label
+- notification icon
 
 ### Planned Workout Card
 
@@ -80,12 +90,14 @@ Displays:
 - Planned workouts count
 - Missed workouts count
 
-### Monthly Calendar Preview
+### Weekly Calendar Preview
 
 Displays:
 
-- Current month
-- Days containing workouts
+- Current selected week only
+- Previous / next week controls
+- Current month and year
+- Days in the selected week containing workouts
 
 Workout statuses:
 
@@ -103,6 +115,8 @@ Displays:
 
 - AI Coach title
 - One random short local coach tip
+- Large dark-dashboard quote treatment in dark mode
+- Google Material Symbol accents in dark mode
 
 Actions:
 
@@ -217,6 +231,14 @@ The screen should:
 - Use card-based sections
 - Avoid visual clutter
 - Prioritize training information
+
+Current saved dark dashboard style:
+
+- charcoal and cyan palette
+- Google Material Symbols for dashboard iconography
+- compact athletic typography
+- weekly calendar strip instead of a full monthly grid
+- AI Coach card with strong quote-led hierarchy
 
 ## Out Of Scope
 

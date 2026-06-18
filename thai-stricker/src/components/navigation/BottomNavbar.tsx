@@ -38,41 +38,47 @@ export function BottomNavbar({ activeTab, onTabPress, theme }: BottomNavbarProps
 }
 
 function getStyles(theme: AppTheme) {
+  const isDarkTheme = theme.name === "dark";
+
   return StyleSheet.create({
     wrapper: {
-    backgroundColor: theme.colors.appBackground,
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 14,
-  },
-  bar: {
-    flexDirection: "row",
-    backgroundColor: theme.colors.navbarBackground,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: 6,
-    gap: 6,
-  },
-  item: {
-    flex: 1,
-    minHeight: 52,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 4,
-  },
-  itemActive: {
-    backgroundColor: theme.colors.navbarActive,
-  },
-  label: {
-    color: theme.colors.navbarInactive,
-    fontSize: 12,
-    fontWeight: "700",
-    textAlign: "center",
-  },
-  labelActive: {
-    color: theme.colors.primaryText,
-  },
+      backgroundColor: theme.colors.appBackground,
+      paddingHorizontal: 12,
+      paddingTop: 8,
+      paddingBottom: 14,
+    },
+    bar: {
+      flexDirection: "row",
+      backgroundColor: isDarkTheme ? "#17171A" : theme.colors.navbarBackground,
+      borderRadius: 24,
+      borderTopWidth: 1,
+      borderTopColor: isDarkTheme ? "#34363A" : theme.colors.border,
+      paddingHorizontal: 6,
+      paddingVertical: 10,
+      gap: 4,
+    },
+    item: {
+      flex: 1,
+      minHeight: 56,
+      borderRadius: 16,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 2,
+      paddingVertical: 10,
+    },
+    itemActive: {
+      backgroundColor: isDarkTheme ? "#18363C" : theme.colors.navbarActive,
+    },
+    label: {
+      color: isDarkTheme ? "#E6E0D4" : theme.colors.navbarInactive,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 0.2,
+      textAlign: "center",
+      flexShrink: 1,
+    },
+    labelActive: {
+      color: isDarkTheme ? theme.colors.primary : theme.colors.primaryText,
+    },
   });
 }

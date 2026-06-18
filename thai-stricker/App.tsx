@@ -1,3 +1,5 @@
+import { MaterialSymbols_400Regular } from '@expo-google-fonts/material-symbols/400Regular';
+import { useFonts } from '@expo-google-fonts/material-symbols/useFonts';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
@@ -51,6 +53,9 @@ function pickRandomCoachTip() {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    MaterialSymbols_400Regular,
+  });
   const [activeTab, setActiveTab] = useState<BottomNavTab>('Home');
   // Mock-only setting value. This will later come from persisted app settings.
   const [restSecondsBetweenExercises, setRestSecondsBetweenExercises] = useState<
@@ -73,6 +78,10 @@ export default function App() {
   const [workoutRecap, setWorkoutRecap] = useState<WorkoutRecapState | null>(null);
   const [homeCoachTip, setHomeCoachTip] = useState<MockCoachTip>(pickRandomCoachTip);
   const [aiCoachVisitKey, setAiCoachVisitKey] = useState(0);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const handleTabPress = (tab: BottomNavTab) => {
     if (workoutFlow || workoutRecap) {
@@ -276,6 +285,7 @@ export default function App() {
   if (workoutFlow && activeWorkout) {
     content = (
       <StartWorkoutScreen
+        theme={theme}
         workout={activeWorkout}
         currentExerciseIndex={workoutFlow.currentExerciseIndex}
         currentStep={workoutFlow.currentStep}
@@ -288,6 +298,7 @@ export default function App() {
   } else if (workoutRecap && recapWorkout) {
     content = (
       <WorkoutFinishedRecapScreen
+        theme={theme}
         workoutTitle={recapWorkout.title}
         totalExercises={recapWorkout.exercises.length}
         completedExerciseCount={workoutRecap.completedExerciseCount}
@@ -312,6 +323,7 @@ export default function App() {
     content =
       workoutsView === 'add' ? (
         <AddWorkoutScreen
+          theme={theme}
           availableExercises={availableExercises}
           maxExercisesPerWorkout={maxExercisesPerWorkout}
           numberOfExercisesPerPage={numberOfExercisesPerPage}
@@ -332,6 +344,7 @@ export default function App() {
         />
       ) : typeof workoutsView === 'object' && workoutsView.type === 'edit' ? (
         <EditWorkoutScreen
+          theme={theme}
           availableExercises={availableExercises}
           workout={
             workouts.find((currentWorkout) => currentWorkout.id === workoutsView.workoutId) ??
@@ -357,6 +370,7 @@ export default function App() {
   } else if (activeTab === 'Schedule') {
     content = (
       <ScheduleScreen
+        theme={theme}
         trainingDaysPerWeek={trainingDaysPerWeek}
         workouts={workouts}
         weeklyWorkoutPlans={weeklyWorkoutPlans}
@@ -366,6 +380,7 @@ export default function App() {
   } else if (activeTab === 'AI Coach') {
     content = (
       <AiCoachScreen
+        theme={theme}
         availableExercises={availableExercises}
         coachTips={mockCoachTips}
         visitKey={aiCoachVisitKey}

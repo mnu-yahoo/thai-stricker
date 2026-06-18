@@ -28,6 +28,10 @@ A user should be able to:
 
 ## Layout Structure
 
+Saved dark dashboard reference:
+
+- [docs/design/dashboard-dark-theme.md](/C:/Users/mathieu.nussbaumer/Documents/ThaiStricker/thai-stricker/docs/design/dashboard-dark-theme.md)
+
 ### Header
 
 Displays:
@@ -35,6 +39,13 @@ Displays:
 - Screen title
 - Short explanatory subtitle
 - Add workout action
+
+Dark dashboard implementation also includes:
+
+- user badge icon
+- `TRAINING HUB` top bar label
+- notification icon
+- cyan-accent add action
 
 ### Workout List
 
@@ -47,6 +58,14 @@ Displays for each workout:
 - Total duration
 - Number of exercises
 - Rest time between exercises
+
+Dark dashboard styling:
+
+- charcoal section cards
+- cyan-accent difficulty chips
+- glass-style metadata pills
+- Google Material Symbols in action buttons
+- uppercase, high-contrast action emphasis in dark mode
 
 Actions:
 
@@ -100,6 +119,12 @@ Current implementation:
 - Rest time displayed in workouts comes from the mocked Settings screen state
 - The value is shared in app-level mocked state
 - This does not use the database yet
+
+Current dark-mode visual system:
+
+- reuses the same saved dashboard theme direction as Home
+- reuses Google Material Symbols through the shared icon wrapper
+- reuses the cyan-on-charcoal palette from the shared dark theme tokens
 
 Included mocked workouts:
 

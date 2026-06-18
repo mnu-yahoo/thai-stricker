@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 
+import type { AppTheme } from "../../styles/theme";
 import type { MockAvailableExercise } from "../exercises/exerciseMocks";
 import type { MockWeeklyWorkoutPlan } from "../plannedWorkouts/plannedWorkoutMocks";
 import type { MockWorkout, MockExercise } from "../workouts/workoutMocks";
@@ -17,6 +18,7 @@ type CoachExerciseContext = {
 };
 
 type AiCoachScreenProps = {
+  theme: AppTheme;
   availableExercises: MockAvailableExercise[];
   coachTips: MockCoachTip[];
   visitKey: number;
@@ -104,12 +106,14 @@ function getPromptResponse(
 }
 
 export function AiCoachScreen({
+  theme,
   availableExercises,
   coachTips,
   visitKey,
   weeklyWorkoutPlans,
   workouts,
 }: AiCoachScreenProps) {
+  const styles = getStyles(theme);
   const context = useMemo(() => {
     const todayDate = formatLocalDate(new Date());
     const todayPlannedDay = weeklyWorkoutPlans
@@ -283,10 +287,11 @@ export function AiCoachScreen({
   );
 }
 
-const styles = StyleSheet.create({
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4efe6",
+    backgroundColor: theme.colors.appBackground,
   },
   content: {
     paddingHorizontal: 20,
@@ -299,38 +304,38 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   title: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 32,
     fontWeight: "800",
   },
   subtitle: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 16,
     lineHeight: 22,
   },
   card: {
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.card,
     borderRadius: 18,
     padding: 18,
     gap: 14,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
   },
   contextLabel: {
-    color: "#8b7355",
+    color: theme.colors.textMuted,
     fontSize: 12,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   contextMessage: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontWeight: "700",
     lineHeight: 28,
   },
   contextHint: {
-    color: "#6b5f51",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
@@ -341,12 +346,12 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   cardTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontWeight: "700",
   },
   sectionMeta: {
-    color: "#8b7355",
+    color: theme.colors.textMuted,
     fontSize: 13,
     fontWeight: "700",
   },
@@ -354,35 +359,35 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   exerciseCard: {
-    backgroundColor: "#f8efe2",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 16,
     padding: 14,
     gap: 6,
     borderWidth: 1,
-    borderColor: "#eddcc5",
+    borderColor: theme.colors.border,
   },
   exerciseCardSelected: {
-    backgroundColor: "#bf5b22",
-    borderColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   exerciseTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 16,
     fontWeight: "700",
   },
   exerciseTitleSelected: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
   },
   exerciseTip: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
   exerciseTipSelected: {
-    color: "#fff1e6",
+    color: theme.colors.primaryText,
   },
   emptyState: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 15,
     lineHeight: 21,
   },
@@ -392,38 +397,38 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   promptButton: {
-    backgroundColor: "#f8efe2",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 999,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
     paddingHorizontal: 14,
     paddingVertical: 10,
   },
   promptButtonActive: {
-    backgroundColor: "#bf5b22",
-    borderColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
   },
   promptButtonText: {
-    color: "#7c4f1f",
+    color: theme.colors.accent,
     fontSize: 14,
     fontWeight: "700",
   },
   promptButtonTextActive: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
   },
   responseCard: {
-    backgroundColor: "#f8f3ea",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 16,
     padding: 14,
     gap: 8,
   },
   responseTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 16,
     fontWeight: "700",
   },
   responseLine: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
@@ -431,31 +436,32 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   selectedSummaryLabel: {
-    color: "#8b7355",
+    color: theme.colors.textMuted,
     fontSize: 12,
     fontWeight: "700",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   selectedSummaryText: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 15,
     lineHeight: 21,
   },
   safetyCard: {
-    backgroundColor: "#1f3c36",
+    backgroundColor: theme.colors.cardElevated,
     borderRadius: 18,
     padding: 18,
     gap: 8,
   },
   safetyTitle: {
-    color: "#eef7f1",
+    color: theme.colors.textPrimary,
     fontSize: 18,
     fontWeight: "700",
   },
   safetyText: {
-    color: "#dce9e2",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
 });
+}

@@ -9,17 +9,21 @@ import {
   View,
 } from "react-native";
 
+import type { AppTheme } from "../../styles/theme";
 import { type MockAvailableExercise } from "./exerciseMocks";
 
 type AddExerciseScreenProps = {
+  theme: AppTheme;
   onBackToAddWorkout: () => void;
   onSaveExercise: (exercise: MockAvailableExercise) => void;
 };
 
 export function AddExerciseScreen({
+  theme,
   onBackToAddWorkout,
   onSaveExercise,
 }: AddExerciseScreenProps) {
+  const styles = getStyles(theme);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [help, setHelp] = useState("");
@@ -74,7 +78,7 @@ export function AddExerciseScreen({
               value={title}
               onChangeText={setTitle}
               placeholder="Enter exercise title"
-              placeholderTextColor="#9f907b"
+              placeholderTextColor={theme.colors.textMuted}
               style={styles.textInput}
             />
           </View>
@@ -85,7 +89,7 @@ export function AddExerciseScreen({
               value={description}
               onChangeText={setDescription}
               placeholder="Describe the exercise"
-              placeholderTextColor="#9f907b"
+              placeholderTextColor={theme.colors.textMuted}
               multiline
               textAlignVertical="top"
               style={[styles.textInput, styles.multilineInput]}
@@ -98,7 +102,7 @@ export function AddExerciseScreen({
               value={help}
               onChangeText={setHelp}
               placeholder="Add coaching help text"
-              placeholderTextColor="#9f907b"
+              placeholderTextColor={theme.colors.textMuted}
               multiline
               textAlignVertical="top"
               style={[styles.textInput, styles.multilineInput]}
@@ -136,10 +140,11 @@ export function AddExerciseScreen({
   );
 }
 
-const styles = StyleSheet.create({
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4efe6",
+    backgroundColor: theme.colors.appBackground,
   },
   content: {
     paddingHorizontal: 20,
@@ -151,32 +156,32 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   eyebrow: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   title: {
-    color: "#1f1f1f",
+    color: theme.colors.textPrimary,
     fontSize: 34,
     fontWeight: "800",
   },
   subtitle: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 16,
     lineHeight: 22,
   },
   card: {
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.card,
     borderRadius: 18,
     padding: 18,
     gap: 14,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
   },
   cardTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 20,
     fontWeight: "700",
   },
@@ -184,7 +189,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   fieldLabel: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 15,
     fontWeight: "700",
   },
@@ -192,11 +197,11 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#c9b69b",
-    backgroundColor: "#fffdf9",
+    borderColor: theme.colors.inputBorder,
+    backgroundColor: theme.colors.inputBackground,
     paddingHorizontal: 14,
     paddingVertical: 12,
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 14,
   },
   multilineInput: {
@@ -206,37 +211,37 @@ const styles = StyleSheet.create({
     minHeight: 48,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#d8cab3",
-    backgroundColor: "#f8efe2",
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surfaceMuted,
     paddingHorizontal: 14,
     alignItems: "flex-start",
     justifyContent: "center",
   },
   readOnlyValueText: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 15,
     fontWeight: "700",
   },
   helperText: {
-    color: "#6b5f51",
+    color: theme.colors.textSecondary,
     fontSize: 13,
     lineHeight: 19,
   },
   errorBox: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#d65a41",
-    backgroundColor: "#fff1ec",
+    borderColor: theme.colors.danger,
+    backgroundColor: theme.colors.surfaceMuted,
     padding: 14,
     gap: 4,
   },
   errorTitle: {
-    color: "#9b2c1c",
+    color: theme.colors.danger,
     fontSize: 14,
     fontWeight: "700",
   },
   errorText: {
-    color: "#9b2c1c",
+    color: theme.colors.danger,
     fontSize: 13,
     lineHeight: 19,
   },
@@ -247,27 +252,28 @@ const styles = StyleSheet.create({
   ghostButton: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#c9b69b",
+    borderColor: theme.colors.inputBorder,
     minHeight: 50,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.surface,
   },
   ghostButtonText: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 15,
     fontWeight: "700",
   },
   primaryButton: {
-    backgroundColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
     borderRadius: 14,
     minHeight: 50,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryButtonText: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
     fontSize: 15,
     fontWeight: "700",
   },
 });
+}

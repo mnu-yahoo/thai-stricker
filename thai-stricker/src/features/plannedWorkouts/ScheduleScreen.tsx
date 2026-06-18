@@ -9,11 +9,13 @@ import {
   View,
 } from "react-native";
 
+import type { AppTheme } from "../../styles/theme";
 import type { TrainingDayOption } from "../settings/SettingsScreen";
 import type { MockWorkout } from "../workouts/workoutMocks";
 import type { MockPlannedWorkoutDay, MockWeeklyWorkoutPlan } from "./plannedWorkoutMocks";
 
 type ScheduleScreenProps = {
+  theme: AppTheme;
   trainingDaysPerWeek: TrainingDayOption;
   workouts: MockWorkout[];
   weeklyWorkoutPlans: MockWeeklyWorkoutPlan[];
@@ -27,7 +29,15 @@ type WeekDay = {
   dayNumber: string;
 };
 
-const DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as const;
+const DAY_NAMES = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+] as const;
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"] as const;
 
 function startOfWeek(date: Date) {
@@ -69,10 +79,6 @@ function formatWeekRange(weekStartDate: Date) {
   const startMonth = MONTH_NAMES[weekStartDate.getMonth()];
   const endMonth = MONTH_NAMES[weekEndDate.getMonth()];
 
-  if (weekStartDate.getMonth() === weekEndDate.getMonth()) {
-    return `${weekStartDate.getDate()} ${startMonth} - ${weekEndDate.getDate()} ${endMonth} ${weekEndDate.getFullYear()}`;
-  }
-
   return `${weekStartDate.getDate()} ${startMonth} - ${weekEndDate.getDate()} ${endMonth} ${weekEndDate.getFullYear()}`;
 }
 
@@ -95,11 +101,13 @@ function toDraftMap(plan: MockWeeklyWorkoutPlan | undefined) {
 }
 
 export function ScheduleScreen({
+  theme,
   trainingDaysPerWeek,
   workouts,
   weeklyWorkoutPlans,
   onSaveWeeklyPlan,
 }: ScheduleScreenProps) {
+  const styles = getStyles(theme);
   const [selectedWeekStart, setSelectedWeekStart] = useState(() => startOfWeek(new Date()));
   const selectedWeekKey = formatDateKey(selectedWeekStart);
 
@@ -324,7 +332,7 @@ export function ScheduleScreen({
                               isWorkoutSelected ? styles.workoutOptionMetaSelected : undefined,
                             ]}
                           >
-                            {workout.category} • {workout.totalDurationMinutes} min
+                            {`${workout.category} • ${workout.totalDurationMinutes} min`}
                           </Text>
                         </Pressable>
                       );
@@ -344,233 +352,237 @@ export function ScheduleScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#f4efe6",
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 24,
-    gap: 16,
-  },
-  header: {
-    gap: 6,
-  },
-  eyebrow: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "600",
-    textTransform: "uppercase",
-    letterSpacing: 0.4,
-  },
-  title: {
-    color: "#1f1f1f",
-    fontSize: 34,
-    fontWeight: "800",
-  },
-  subtitle: {
-    color: "#5f5446",
-    fontSize: 16,
-    lineHeight: 22,
-  },
-  weekCard: {
-    backgroundColor: "#fffaf3",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#eadfce",
-    padding: 18,
-    gap: 14,
-  },
-  weekHeader: {
-    gap: 12,
-  },
-  weekMeta: {
-    gap: 4,
-  },
-  weekLabel: {
-    color: "#231f1a",
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  weekRange: {
-    color: "#6b5f51",
-    fontSize: 15,
-    lineHeight: 20,
-  },
-  progressText: {
-    color: "#8b5e34",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  weekActions: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  weekButton: {
-    flex: 1,
-    minHeight: 44,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#c9b69b",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fffaf3",
-  },
-  weekButtonText: {
-    color: "#5f5446",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  summaryCard: {
-    backgroundColor: "#1f3c36",
-    borderRadius: 18,
-    padding: 18,
-    gap: 8,
-  },
-  summaryTitle: {
-    color: "#eef7f1",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  summaryText: {
-    color: "#d7e8df",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  dayCard: {
-    backgroundColor: "#fffaf3",
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: "#eadfce",
-    padding: 16,
-    gap: 14,
-  },
-  dayHeader: {
-    gap: 14,
-  },
-  dayMeta: {
-    flexDirection: "row",
-    gap: 14,
-  },
-  dayBadge: {
-    width: 64,
-    minHeight: 72,
-    borderRadius: 16,
-    backgroundColor: "#f6ebdb",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 2,
-  },
-  dayBadgeLabel: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "700",
-    textTransform: "uppercase",
-  },
-  dayBadgeNumber: {
-    color: "#231f1a",
-    fontSize: 22,
-    fontWeight: "800",
-  },
-  dayDetails: {
-    flex: 1,
-    gap: 4,
-  },
-  dayTitle: {
-    color: "#231f1a",
-    fontSize: 20,
-    fontWeight: "800",
-  },
-  dayDate: {
-    color: "#8b5e34",
-    fontSize: 13,
-    fontWeight: "700",
-  },
-  daySelectionStatus: {
-    color: "#5f5446",
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  toggleButton: {
-    minHeight: 44,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#c9b69b",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#fffaf3",
-  },
-  toggleButtonSelected: {
-    backgroundColor: "#bf5b22",
-    borderColor: "#bf5b22",
-  },
-  toggleButtonDisabled: {
-    backgroundColor: "#f2ece3",
-    borderColor: "#e0d5c4",
-  },
-  toggleButtonText: {
-    color: "#5f5446",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  toggleButtonTextSelected: {
-    color: "#fffaf3",
-  },
-  toggleButtonTextDisabled: {
-    color: "#b2a494",
-  },
-  workoutPicker: {
-    gap: 10,
-  },
-  workoutPickerTitle: {
-    color: "#231f1a",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  workoutOptions: {
-    gap: 10,
-  },
-  workoutOption: {
-    borderRadius: 14,
-    borderWidth: 1,
-    borderColor: "#d9c8b1",
-    padding: 14,
-    gap: 4,
-    backgroundColor: "#fffaf3",
-  },
-  workoutOptionSelected: {
-    borderColor: "#bf5b22",
-    backgroundColor: "#f4dfd0",
-  },
-  workoutOptionTitle: {
-    color: "#231f1a",
-    fontSize: 15,
-    fontWeight: "700",
-  },
-  workoutOptionTitleSelected: {
-    color: "#8a3f14",
-  },
-  workoutOptionMeta: {
-    color: "#6b5f51",
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  workoutOptionMetaSelected: {
-    color: "#8a3f14",
-  },
-  saveButton: {
-    minHeight: 54,
-    borderRadius: 16,
-    backgroundColor: "#bf5b22",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-  },
-  saveButtonText: {
-    color: "#fffaf3",
-    fontSize: 16,
-    fontWeight: "800",
-  },
-});
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: theme.colors.appBackground,
+    },
+    content: {
+      paddingHorizontal: 20,
+      paddingTop: 18,
+      paddingBottom: 24,
+      gap: 16,
+    },
+    header: {
+      gap: 6,
+    },
+    eyebrow: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "600",
+      textTransform: "uppercase",
+      letterSpacing: 0.4,
+    },
+    title: {
+      color: theme.colors.textPrimary,
+      fontSize: 34,
+      fontWeight: "800",
+    },
+    subtitle: {
+      color: theme.colors.textSecondary,
+      fontSize: 16,
+      lineHeight: 22,
+    },
+    weekCard: {
+      backgroundColor: theme.colors.card,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      padding: 18,
+      gap: 14,
+    },
+    weekHeader: {
+      gap: 12,
+    },
+    weekMeta: {
+      gap: 4,
+    },
+    weekLabel: {
+      color: theme.colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+    },
+    weekRange: {
+      color: theme.colors.textSecondary,
+      fontSize: 15,
+      lineHeight: 20,
+    },
+    progressText: {
+      color: theme.colors.accent,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    weekActions: {
+      flexDirection: "row",
+      gap: 10,
+    },
+    weekButton: {
+      flex: 1,
+      minHeight: 44,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.inputBorder,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.surface,
+    },
+    weekButtonText: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    summaryCard: {
+      backgroundColor: theme.colors.cardElevated,
+      borderRadius: 18,
+      padding: 18,
+      gap: 8,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+    },
+    summaryTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    summaryText: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    dayCard: {
+      backgroundColor: theme.colors.card,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      padding: 16,
+      gap: 14,
+    },
+    dayHeader: {
+      gap: 14,
+    },
+    dayMeta: {
+      flexDirection: "row",
+      gap: 14,
+    },
+    dayBadge: {
+      width: 64,
+      minHeight: 72,
+      borderRadius: 16,
+      backgroundColor: theme.colors.surfaceMuted,
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 2,
+    },
+    dayBadgeLabel: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "700",
+      textTransform: "uppercase",
+    },
+    dayBadgeNumber: {
+      color: theme.colors.textPrimary,
+      fontSize: 22,
+      fontWeight: "800",
+    },
+    dayDetails: {
+      flex: 1,
+      gap: 4,
+    },
+    dayTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 20,
+      fontWeight: "800",
+    },
+    dayDate: {
+      color: theme.colors.accent,
+      fontSize: 13,
+      fontWeight: "700",
+    },
+    daySelectionStatus: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      lineHeight: 20,
+    },
+    toggleButton: {
+      minHeight: 44,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.inputBorder,
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: theme.colors.surface,
+    },
+    toggleButtonSelected: {
+      backgroundColor: theme.colors.primary,
+      borderColor: theme.colors.primary,
+    },
+    toggleButtonDisabled: {
+      backgroundColor: theme.colors.surfaceMuted,
+      borderColor: theme.colors.border,
+    },
+    toggleButtonText: {
+      color: theme.colors.textSecondary,
+      fontSize: 14,
+      fontWeight: "700",
+    },
+    toggleButtonTextSelected: {
+      color: theme.colors.primaryText,
+    },
+    toggleButtonTextDisabled: {
+      color: theme.colors.textMuted,
+    },
+    workoutPicker: {
+      gap: 10,
+    },
+    workoutPickerTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    workoutOptions: {
+      gap: 10,
+    },
+    workoutOption: {
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      padding: 14,
+      gap: 4,
+      backgroundColor: theme.colors.surface,
+    },
+    workoutOptionSelected: {
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    workoutOptionTitle: {
+      color: theme.colors.textPrimary,
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    workoutOptionTitleSelected: {
+      color: theme.colors.accent,
+    },
+    workoutOptionMeta: {
+      color: theme.colors.textSecondary,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+    workoutOptionMetaSelected: {
+      color: theme.colors.accent,
+    },
+    saveButton: {
+      minHeight: 54,
+      borderRadius: 16,
+      backgroundColor: theme.colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 16,
+    },
+    saveButtonText: {
+      color: theme.colors.primaryText,
+      fontSize: 16,
+      fontWeight: "800",
+    },
+  });
+}

@@ -1,6 +1,9 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 
+import type { AppTheme } from "../../styles/theme";
+
 type WorkoutFinishedRecapScreenProps = {
+  theme: AppTheme;
   workoutTitle: string;
   totalExercises: number;
   completedExerciseCount: number;
@@ -10,6 +13,7 @@ type WorkoutFinishedRecapScreenProps = {
 };
 
 export function WorkoutFinishedRecapScreen({
+  theme,
   workoutTitle,
   totalExercises,
   completedExerciseCount,
@@ -17,6 +21,8 @@ export function WorkoutFinishedRecapScreen({
   completionDate,
   onBackToHome,
 }: WorkoutFinishedRecapScreenProps) {
+  const styles = getStyles(theme);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.content}>
@@ -44,10 +50,11 @@ export function WorkoutFinishedRecapScreen({
   );
 }
 
-const styles = StyleSheet.create({
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4efe6",
+    backgroundColor: theme.colors.appBackground,
   },
   content: {
     flex: 1,
@@ -57,62 +64,63 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   card: {
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.card,
     borderRadius: 22,
     padding: 22,
     gap: 18,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
   },
   eyebrow: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   title: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 34,
     fontWeight: "800",
   },
   workoutTitle: {
-    color: "#4f4538",
+    color: theme.colors.textSecondary,
     fontSize: 17,
     lineHeight: 23,
   },
   summaryCard: {
-    backgroundColor: "#f8efe2",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 16,
     padding: 16,
     gap: 8,
   },
   summaryLabel: {
-    color: "#8b7355",
+    color: theme.colors.textMuted,
     fontSize: 12,
     fontWeight: "600",
     textTransform: "uppercase",
   },
   summaryValue: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 28,
     fontWeight: "800",
   },
   summaryMeta: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
   },
   primaryButton: {
-    backgroundColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
     borderRadius: 14,
     minHeight: 52,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryButtonText: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
     fontSize: 16,
     fontWeight: "700",
   },
 });
+}

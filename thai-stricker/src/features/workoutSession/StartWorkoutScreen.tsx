@@ -1,11 +1,13 @@
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useEffect, useState } from "react";
 
+import type { AppTheme } from "../../styles/theme";
 import type { MockWorkout } from "../workouts/workoutMocks";
 
 type WorkoutFlowStep = "exercise" | "rest";
 
 type StartWorkoutScreenProps = {
+  theme: AppTheme;
   workout: MockWorkout;
   currentExerciseIndex: number;
   currentStep: WorkoutFlowStep;
@@ -24,6 +26,7 @@ function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
 }
 
 export function StartWorkoutScreen({
+  theme,
   workout,
   currentExerciseIndex,
   currentStep,
@@ -32,6 +35,7 @@ export function StartWorkoutScreen({
   onSkipExercise,
   onFinishRest,
 }: StartWorkoutScreenProps) {
+  const styles = getStyles(theme);
   const exercise = workout.exercises[currentExerciseIndex];
   const nextExercise = workout.exercises[currentExerciseIndex + 1];
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
@@ -141,10 +145,11 @@ export function StartWorkoutScreen({
   );
 }
 
-const styles = StyleSheet.create({
+function getStyles(theme: AppTheme) {
+  return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f4efe6",
+    backgroundColor: theme.colors.appBackground,
   },
   content: {
     flex: 1,
@@ -154,111 +159,112 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   card: {
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.card,
     borderRadius: 22,
     padding: 22,
     gap: 16,
     borderWidth: 1,
-    borderColor: "#eadfce",
+    borderColor: theme.colors.border,
   },
   eyebrow: {
-    color: "#8b5e34",
+    color: theme.colors.accent,
     fontSize: 13,
     fontWeight: "600",
     textTransform: "uppercase",
     letterSpacing: 0.4,
   },
   progressText: {
-    color: "#6b5f51",
+    color: theme.colors.textSecondary,
     fontSize: 14,
     fontWeight: "700",
   },
   exerciseTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 30,
     fontWeight: "800",
   },
   exerciseDescription: {
-    color: "#4f4538",
+    color: theme.colors.textSecondary,
     fontSize: 16,
     lineHeight: 23,
   },
   exerciseHelp: {
-    color: "#6b5f51",
+    color: theme.colors.textMuted,
     fontSize: 14,
     lineHeight: 21,
   },
   targetCard: {
-    backgroundColor: "#f8efe2",
+    backgroundColor: theme.colors.surfaceMuted,
     borderRadius: 16,
     padding: 14,
     gap: 4,
   },
   targetLabel: {
-    color: "#8b7355",
+    color: theme.colors.textMuted,
     fontSize: 12,
     fontWeight: "600",
     textTransform: "uppercase",
   },
   targetValue: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 22,
     fontWeight: "800",
   },
   timerCard: {
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#1f3c36",
+    backgroundColor: theme.colors.cardElevated,
     borderRadius: 18,
     paddingVertical: 22,
     gap: 6,
   },
   timerValue: {
-    color: "#eef7f1",
+    color: theme.colors.primaryText,
     fontSize: 52,
     fontWeight: "800",
     textAlign: "center",
   },
   timerLabel: {
-    color: "#d7e8df",
+    color: theme.colors.textSecondary,
     fontSize: 15,
     fontWeight: "600",
     textAlign: "center",
   },
   restTitle: {
-    color: "#231f1a",
+    color: theme.colors.textPrimary,
     fontSize: 34,
     fontWeight: "800",
   },
   nextExercise: {
-    color: "#4f4538",
+    color: theme.colors.textSecondary,
     fontSize: 16,
     lineHeight: 22,
   },
   primaryButton: {
-    backgroundColor: "#bf5b22",
+    backgroundColor: theme.colors.primary,
     borderRadius: 14,
     minHeight: 52,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryButtonText: {
-    color: "#fffaf3",
+    color: theme.colors.primaryText,
     fontSize: 16,
     fontWeight: "700",
   },
   secondaryButton: {
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: "#c9b69b",
+    borderColor: theme.colors.inputBorder,
     minHeight: 52,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fffaf3",
+    backgroundColor: theme.colors.surface,
   },
   secondaryButtonText: {
-    color: "#5f5446",
+    color: theme.colors.textSecondary,
     fontSize: 15,
     fontWeight: "700",
   },
 });
+}
