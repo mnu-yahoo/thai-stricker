@@ -33,6 +33,15 @@ function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
   return `${target.reps} reps`;
 }
 
+function formatExerciseMeta(
+  difficulty: MockWorkout["difficulty"],
+  target: MockWorkout["exercises"][number]["target"],
+) {
+  const setCount = difficulty === "Advanced" ? 5 : difficulty === "Intermediate" ? 4 : 3;
+
+  return `${setCount} sets • ${formatTarget(target)}`;
+}
+
 export function WorkoutsScreen({
   theme,
   restSecondsBetweenExercises,
@@ -216,7 +225,7 @@ export function WorkoutsScreen({
                 </View>
                 <View style={styles.metaPill}>
                   <Text style={styles.metaLabel}>Last done</Text>
-                  <Text style={styles.metaValue}>
+                  <Text style={[styles.metaValue, isDarkTheme ? styles.metaValueAccent : undefined]}>
                     {workout.lastDoneDate ? workout.lastDoneDate.slice(5).replace("-", " ") : "Not yet"}
                   </Text>
                 </View>
@@ -237,7 +246,7 @@ export function WorkoutsScreen({
                 >
                   <View style={styles.buttonContent}>
                     <Text style={styles.ghostButtonText}>
-                      {isDarkTheme ? "View" : isExpanded ? "Hide content" : "View content"}
+                      {isDarkTheme ? (isExpanded ? "HIDE" : "VIEW") : isExpanded ? "Hide content" : "View content"}
                     </Text>
                   </View>
                 </Pressable>
@@ -259,22 +268,39 @@ export function WorkoutsScreen({
 
               {isExpanded ? (
                 <View style={styles.expandedSection}>
-                  {workout.exercises.map((exercise, index) => {
-                    const isLastExercise = index === workout.exercises.length - 1;
-
+                  <View style={styles.sequenceHeader}>
+                    <Text style={styles.sequenceLabel}>Exercise sequence</Text>
+                    <Text style={styles.sequenceCount}>{workout.exercises.length} total</Text>
+                  </View>
+                  {workout.exercises.map((exercise) => {
                     return (
                       <View key={exercise.id} style={styles.exerciseCard}>
-                        <View style={styles.exerciseHeader}>
-                          <Text style={styles.exerciseTitle}>{exercise.title}</Text>
-                          <Text style={styles.exerciseTarget}>{formatTarget(exercise.target)}</Text>
+                        <View style={styles.exerciseMedia}>
+                          <ImageBackground
+                            imageStyle={styles.exerciseThumbImage}
+                            source={{ uri: WORKOUT_HERO_IMAGE_URI }}
+                            style={styles.exerciseThumb}
+                          >
+                            <View style={styles.exerciseThumbOverlay} />
+                          </ImageBackground>
                         </View>
-                        <Text style={styles.exerciseDescription}>{exercise.description}</Text>
-                        <Text style={styles.exerciseHelp}>{exercise.help}</Text>
-                        {!isLastExercise ? (
-                          <Text style={styles.restNote}>
-                            Rest {restSecondsBetweenExercises} sec before the next exercise
+                        <View style={styles.exerciseBody}>
+                          <View style={styles.exerciseHeader}>
+                            <Text style={styles.exerciseTitle}>{exercise.title}</Text>
+                          </View>
+                          <Text style={styles.exerciseDescription}>{exercise.description}</Text>
+                          <Text style={styles.exerciseTarget}>
+                            {formatExerciseMeta(workout.difficulty, exercise.target)}
                           </Text>
-                        ) : null}
+                        </View>
+                        <View style={styles.exerciseAction}>
+                          <GoogleMaterialSymbol
+                            color={theme.colors.primary}
+                            fallbackName="play-circle"
+                            name="play_arrow"
+                            size={20}
+                          />
+                        </View>
                       </View>
                     );
                   })}
@@ -550,13 +576,13 @@ function getStyles(theme: AppTheme) {
     },
     metaPill: {
       width: "47%",
-      backgroundColor: isDarkTheme ? theme.colors.cardElevated : theme.colors.surfaceMuted,
-      borderRadius: 8,
+      backgroundColor: isDarkTheme ? "#1A191C" : "#FCFDFE",
+      borderRadius: 0,
       paddingHorizontal: 14,
       paddingVertical: 12,
       gap: 4,
-      borderWidth: isDarkTheme ? 1 : 0,
-      borderColor: isDarkTheme ? theme.colors.border : "transparent",
+      borderWidth: 1,
+      borderColor: isDarkTheme ? "rgba(255, 255, 255, 0.03)" : "#F1F4F7",
     },
     metaLabel: {
       color: theme.colors.textMuted,
@@ -570,6 +596,9 @@ function getStyles(theme: AppTheme) {
       fontSize: isDarkTheme ? 15 : 17,
       fontWeight: "700",
       textTransform: isDarkTheme ? "uppercase" : "none",
+    },
+    metaValueAccent: {
+      color: theme.colors.primary,
     },
     actionsRow: {
       flexDirection: isDarkTheme ? "row" : "column",
@@ -645,46 +674,84 @@ function getStyles(theme: AppTheme) {
       gap: 12,
       paddingTop: 4,
     },
+    sequenceHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 12,
+      marginTop: 4,
+    },
+    sequenceLabel: {
+      color: theme.colors.textSecondary,
+      fontSize: 11,
+      fontWeight: "800",
+      textTransform: "uppercase",
+      letterSpacing: 1.2,
+    },
+    sequenceCount: {
+      color: isDarkTheme ? theme.colors.textPrimary : theme.colors.textSecondary,
+      fontSize: 11,
+      fontWeight: "800",
+      textTransform: "uppercase",
+    },
     exerciseCard: {
-      backgroundColor: isDarkTheme ? theme.colors.cardElevated : theme.colors.surfaceMuted,
-      borderRadius: 14,
+      flexDirection: "row",
+      alignItems: "center",
+      backgroundColor: isDarkTheme ? "#1A191C" : theme.colors.surfaceMuted,
+      borderRadius: 10,
       padding: 14,
-      gap: 8,
+      gap: 12,
       borderWidth: isDarkTheme ? 1 : 0,
-      borderColor: isDarkTheme ? theme.colors.border : "transparent",
+      borderColor: isDarkTheme ? "rgba(255, 255, 255, 0.03)" : "transparent",
+    },
+    exerciseMedia: {
+      width: 38,
+      height: 38,
+    },
+    exerciseThumb: {
+      width: 38,
+      height: 38,
+      borderRadius: 6,
+      overflow: "hidden",
+      backgroundColor: theme.colors.cardElevated,
+    },
+    exerciseThumbImage: {
+      borderRadius: 6,
+    },
+    exerciseThumbOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: "rgba(6, 12, 14, 0.35)",
+    },
+    exerciseBody: {
+      flex: 1,
+      gap: 4,
     },
     exerciseHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      gap: 10,
+      gap: 6,
     },
     exerciseTitle: {
       flex: 1,
       color: theme.colors.textPrimary,
-      fontSize: 17,
-      fontWeight: "700",
+      fontSize: 14,
+      fontWeight: "800",
+      textTransform: "uppercase",
     },
     exerciseTarget: {
-      color: theme.colors.accent,
-      fontSize: 13,
+      color: isDarkTheme ? theme.colors.textPrimary : theme.colors.accent,
+      fontSize: 11,
       fontWeight: "700",
       textTransform: "uppercase",
+      letterSpacing: 0.6,
     },
     exerciseDescription: {
       color: theme.colors.textSecondary,
-      fontSize: 14,
-      lineHeight: 20,
+      fontSize: 11,
+      lineHeight: 15,
     },
-    exerciseHelp: {
-      color: theme.colors.textMuted,
-      fontSize: 13,
-      lineHeight: 19,
-    },
-    restNote: {
-      color: isDarkTheme ? theme.colors.primary : theme.colors.accent,
-      fontSize: 12,
-      fontWeight: "600",
+    exerciseAction: {
+      width: 24,
+      alignItems: "center",
+      justifyContent: "center",
     },
   });
 }
