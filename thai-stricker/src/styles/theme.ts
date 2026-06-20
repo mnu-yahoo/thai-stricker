@@ -119,7 +119,7 @@ export const lightTheme: AppTheme = {
     warning: "#F2994A",
     danger: "#EB5757",
     navbarBackground: "#FFFFFF",
-    navbarActive: "#C00018",
+    navbarActive: "#1560C8",
     navbarInactive: "#4A4A4A",
     inputBackground: "#FFFFFF",
     inputBorder: "#E0E0E0",

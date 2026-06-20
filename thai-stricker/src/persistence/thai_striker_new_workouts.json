@@ -1,0 +1,1334 @@
+[
+    {
+        "title": "Guard And Strike Builder",
+        "description": "A mixed fundamentals workout combining punches, kicks and basic defensive reactions.",
+        "difficulty": "Beginner",
+        "category": "Fundamentals",
+        "restSecondsBetweenExercises": 30,
+        "exercises": [
+            {
+                "title": "High Guard \u2192 Jab",
+                "description": "Set a tight high guard, then fire a jab.",
+                "help": "Return the lead hand to your guard after every jab.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Jab \u2192 Cross",
+                "description": "Throw a basic one-two punch combination.",
+                "help": "Keep your chin tucked and rotate on the cross.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Cross",
+                "description": "Check an imagined low kick, then answer with a cross.",
+                "help": "Land balanced before throwing the punch.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Teep",
+                "description": "Use the lead leg to push forward.",
+                "help": "Drive through the ball of the foot.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Step Back \u2192 Jab",
+                "description": "Step out of range and return with a jab.",
+                "help": "Do not cross your feet while retreating.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Cross \u2192 Lead Hook",
+                "description": "Throw a rear straight followed by a lead hook.",
+                "help": "Shift weight smoothly into the hook.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Low Kick",
+                "description": "Throw controlled low kicks to the thigh line.",
+                "help": "Strike with the shin and return to stance.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Rear Teep",
+                "description": "Frame with the lead arm, then push with the rear teep.",
+                "help": "Keep the frame active before kicking.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Slip Outside \u2192 Cross",
+                "description": "Move your head outside the center line and counter with a cross.",
+                "help": "Bend slightly through the knees, not the waist.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Body Kick",
+                "description": "Throw round kicks to the body.",
+                "help": "Turn your hip over and keep your opposite hand high.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            }
+        ]
+    },
+    {
+        "title": "Kick Punch Defense Circuit",
+        "description": "A beginner striking circuit that alternates simple attacks with defensive movement.",
+        "difficulty": "Beginner",
+        "category": "Striking",
+        "restSecondsBetweenExercises": 30,
+        "exercises": [
+            {
+                "title": "Jab \u2192 Lead Teep",
+                "description": "Use the jab to set up a lead push kick.",
+                "help": "Keep the jab sharp and the teep straight.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "High Guard \u2192 Cross",
+                "description": "Cover high, then fire a rear straight punch.",
+                "help": "Do not drop the lead hand during the cross.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Low Kick",
+                "description": "Check a kick and immediately return a low kick.",
+                "help": "Return the kick without overstepping.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Jab \u2192 Cross \u2192 Body Kick",
+                "description": "Punch into a body kick finish.",
+                "help": "Let the cross rotation load the kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Jab",
+                "description": "Parry an incoming teep and answer with a jab.",
+                "help": "Redirect lightly instead of swatting hard.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Hook \u2192 Rear Teep",
+                "description": "Throw a lead hook followed by a rear push kick.",
+                "help": "Reset your stance before the teep.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Cross",
+                "description": "Angle away and counter with a cross.",
+                "help": "Move your lead foot first when stepping off-line.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Rear Hook \u2192 Low Kick",
+                "description": "Throw a rear hook and finish with a low kick.",
+                "help": "Keep your weight under control after the hook.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Body Kick",
+                "description": "Use long guard to measure range, then kick the body.",
+                "help": "Retract the guard as the kick turns over.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Pull Back \u2192 Jab \u2192 Cross",
+                "description": "Lean out of range and return with a one-two.",
+                "help": "Keep the pull short so you can counter quickly.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Balanced Eight Limbs Starter",
+        "description": "A fundamentals workout blending punches, kicks, knees, elbows and defenses.",
+        "difficulty": "Beginner",
+        "category": "Fundamentals",
+        "restSecondsBetweenExercises": 45,
+        "exercises": [
+            {
+                "title": "Jab \u2192 Cross",
+                "description": "Practice the basic straight punch combination.",
+                "help": "Keep both punches direct and clean.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "High Guard \u2192 Lead Hook",
+                "description": "Cover, then throw a lead hook.",
+                "help": "Rotate your lead foot as the hook lands.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Teep",
+                "description": "Push forward with the lead leg.",
+                "help": "Bring the knee up before extending the kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Shin Check",
+                "description": "Lift the leg to block low kicks.",
+                "help": "Point your knee slightly outward.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Cross \u2192 Body Kick",
+                "description": "Use the cross to set up a body kick.",
+                "help": "Let the hip rotation flow into the kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Straight Knee",
+                "description": "Drive the knee forward from stance.",
+                "help": "Extend your hips through the target.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Long Guard",
+                "description": "Use the lead arm to manage distance.",
+                "help": "Keep your rear hand close to your cheek.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Horizontal Elbow",
+                "description": "Throw compact horizontal elbows.",
+                "help": "Step in before rotating the elbow.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Back \u2192 Rear Teep",
+                "description": "Create distance, then push back with the rear teep.",
+                "help": "Stay tall as the teep extends.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Jab \u2192 Lead Hook \u2192 Low Kick",
+                "description": "Mix hand strikes with a low kick finish.",
+                "help": "Keep the combination smooth, not rushed.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Defensive Striker Mix",
+        "description": "An intermediate workout built around defensive reactions followed by mixed attacks.",
+        "difficulty": "Intermediate",
+        "category": "Defense",
+        "restSecondsBetweenExercises": 45,
+        "exercises": [
+            {
+                "title": "Slip Inside \u2192 Lead Hook",
+                "description": "Slip inside a straight punch and counter with a hook.",
+                "help": "Keep your eyes forward during the slip.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Cross \u2192 Low Kick",
+                "description": "Block a kick, punch, then return a low kick.",
+                "help": "Land the checking leg before countering.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Body Kick",
+                "description": "Redirect a teep and answer with a body kick.",
+                "help": "Step outside after the parry.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Jab \u2192 Cross",
+                "description": "Control range, then enter with straight punches.",
+                "help": "Do not collapse your long guard.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Pull Back \u2192 Rear Teep",
+                "description": "Pull away from an attack and push back with the rear leg.",
+                "help": "Keep your shoulders over your hips.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "High Guard \u2192 Lead Hook \u2192 Cross",
+                "description": "Shell up, then return with hook-cross.",
+                "help": "Open your guard only when you strike.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Kick Catch \u2192 Straight Knee",
+                "description": "Catch an imagined body kick and counter with a knee.",
+                "help": "Keep posture strong while controlling the leg.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Body Kick",
+                "description": "Move to an angle and kick the body.",
+                "help": "Turn your hips fully after stepping.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Forearm Frame \u2192 Horizontal Elbow",
+                "description": "Frame to create space, then throw an elbow.",
+                "help": "Keep the elbow short and sharp.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Angle Step \u2192 Jab \u2192 Low Kick",
+                "description": "Step to an angle, jab and finish with a low kick.",
+                "help": "Keep the kick balanced after the angle step.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Cross Parry \u2192 Cross",
+                "description": "Parry a rear straight and answer with your own cross.",
+                "help": "Use a small parry and fire straight back.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lean Back vs Kick \u2192 High Kick",
+                "description": "Lean away from a kick and return high.",
+                "help": "Reset your base before kicking.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Pressure Punch Kick Defense",
+        "description": "A striking workout that builds pressure combinations while reinforcing defensive habits.",
+        "difficulty": "Intermediate",
+        "category": "Striking",
+        "restSecondsBetweenExercises": 45,
+        "exercises": [
+            {
+                "title": "Jab \u2192 Jab \u2192 Low Kick",
+                "description": "Double jab to enter and finish with a low kick.",
+                "help": "Use the second jab to cover distance.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "High Guard \u2192 Cross \u2192 Lead Hook",
+                "description": "Cover first, then throw a two-punch counter.",
+                "help": "Stay tight before opening to punch.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Teep \u2192 Cross",
+                "description": "Push the opponent back and follow with a cross.",
+                "help": "Place the kicking foot down in stance before punching.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Jab \u2192 Body Kick",
+                "description": "Defend a low kick, jab and kick the body.",
+                "help": "Use the jab to hide the body kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Rear Hook \u2192 Lead Teep",
+                "description": "Throw a rear hook and push away with the lead teep.",
+                "help": "Do not over-rotate the hook.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Slip Outside \u2192 Cross \u2192 Low Kick",
+                "description": "Slip, counter straight and kick low.",
+                "help": "The cross should load the low kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Rear Teep",
+                "description": "Use long guard to hold range, then rear teep.",
+                "help": "Keep the rear hand ready to defend.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Jab \u2192 Cross \u2192 High Kick",
+                "description": "Use straight punches to set up the high kick.",
+                "help": "Keep your guard high as the kick rises.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Jab \u2192 Cross",
+                "description": "Parry a push kick and answer with a one-two.",
+                "help": "Step forward immediately after the parry.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Body Kick \u2192 High Guard",
+                "description": "Kick the body and recover into high guard.",
+                "help": "Return to stance before covering.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Lead Hook \u2192 Rear Hook \u2192 Shin Check",
+                "description": "Throw hooks and finish by checking a kick.",
+                "help": "Stay balanced enough to lift the checking leg.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Back \u2192 Jab \u2192 Rear Teep",
+                "description": "Retreat, jab and push with the rear leg.",
+                "help": "Use the jab to interrupt forward pressure.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Footwork Counter Flow",
+        "description": "A movement-focused workout combining footwork, counters, kicks and punches.",
+        "difficulty": "Intermediate",
+        "category": "Footwork",
+        "restSecondsBetweenExercises": 30,
+        "exercises": [
+            {
+                "title": "Step Back \u2192 Jab",
+                "description": "Retreat just out of range and fire a jab.",
+                "help": "Keep the step short and balanced.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Angle Step \u2192 Cross",
+                "description": "Create an angle and throw the rear straight.",
+                "help": "Point your lead foot toward the target.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Circle Out \u2192 Lead Teep",
+                "description": "Circle away and push with the lead teep.",
+                "help": "Do not let your stance square up.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "V-Step \u2192 Low Kick",
+                "description": "Step diagonally back and return a low kick.",
+                "help": "Kick after your base is stable.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "L-Step \u2192 Jab \u2192 Cross",
+                "description": "Use an L-step to exit and answer with straight punches.",
+                "help": "Keep your eyes forward through the movement.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Body Kick",
+                "description": "Step outside the center line and kick the body.",
+                "help": "Let the step set the angle for the kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Pivot Escape \u2192 Lead Hook",
+                "description": "Pivot away and return with a lead hook.",
+                "help": "Keep the hook tight after the pivot.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lateral Movement \u2192 Rear Teep",
+                "description": "Move sideways and push with the rear teep.",
+                "help": "Reset your stance before extending the teep.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Angle Step \u2192 Shin Check",
+                "description": "Angle out and check an incoming kick.",
+                "help": "Lift the check from a strong base.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Retreat And Reset \u2192 Jab \u2192 Low Kick",
+                "description": "Reset your stance, jab and kick low.",
+                "help": "Do not rush after the retreat.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Advanced Defensive Chains",
+        "description": "An advanced defense workout that links evasions, blocks and mixed counters.",
+        "difficulty": "Advanced",
+        "category": "Defense",
+        "restSecondsBetweenExercises": 60,
+        "exercises": [
+            {
+                "title": "Slip Outside \u2192 Cross \u2192 Body Kick",
+                "description": "Slip a straight punch, counter with a cross and finish with a kick.",
+                "help": "Keep the counter compact so the kick follows smoothly.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "High Guard \u2192 Lead Hook \u2192 Rear Teep",
+                "description": "Absorb pressure, hook and push away.",
+                "help": "Do not stay shelled after defending.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Cross \u2192 Lead Hook",
+                "description": "Check a kick and return with two punches.",
+                "help": "Place the checking foot down before punching.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Kick Catch \u2192 Dump",
+                "description": "Catch an imagined kick and complete a dump motion.",
+                "help": "Turn the opponent's balance line as you dump.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Low Kick \u2192 Cross",
+                "description": "Parry the teep, kick low and punch straight.",
+                "help": "Step outside before kicking.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Diagonal Knee",
+                "description": "Frame at range and enter with a diagonal knee.",
+                "help": "Pull slightly with the frame as the knee rises.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Forearm Frame \u2192 Diagonal Down Elbow",
+                "description": "Frame to create space and cut down with the elbow.",
+                "help": "Keep the elbow strike short and balanced.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Pull Back \u2192 Cross \u2192 High Kick",
+                "description": "Pull away from a punch, cross and kick high.",
+                "help": "Reset the stance before the high kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Cross Parry \u2192 Cross \u2192 Low Kick",
+                "description": "Parry, counter straight and chop the leg.",
+                "help": "Use a small parry to keep the counter fast.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Lean Away vs Knee \u2192 Lead Hook",
+                "description": "Move the hips away from a knee and counter with a hook.",
+                "help": "Do not lean so far that you lose balance.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Horizontal Elbow",
+                "description": "Angle outside and enter with a horizontal elbow.",
+                "help": "Step close enough before rotating.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Kick Catch \u2192 Knee \u2192 Cross",
+                "description": "Catch a kick, knee and finish with a cross.",
+                "help": "Keep posture tall during the knee.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Conditioned Counter Rounds",
+        "description": "A high-volume conditioning workout using mixed Muay Thai counters.",
+        "difficulty": "Advanced",
+        "category": "Conditioning",
+        "restSecondsBetweenExercises": 15,
+        "exercises": [
+            {
+                "title": "Jab \u2192 Cross \u2192 Low Kick",
+                "description": "High-repetition punch-to-kick combination.",
+                "help": "Keep every rep sharp, not sloppy.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "High Guard \u2192 Cross",
+                "description": "Cover and counter with the rear hand.",
+                "help": "Recover guard immediately after the cross.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Body Kick",
+                "description": "Check and return a body kick.",
+                "help": "Kick back as soon as your foot lands.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Lead Teep \u2192 Rear Teep",
+                "description": "Alternate lead and rear push kicks.",
+                "help": "Stay tall and balanced.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Slip Outside \u2192 Cross",
+                "description": "Slip and fire the rear straight.",
+                "help": "Use the legs to move your head.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Lead Hook \u2192 Body Kick",
+                "description": "Hook into a body kick.",
+                "help": "Let the hook rotation load your kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Straight Knee",
+                "description": "Frame and drive a straight knee.",
+                "help": "Push the hips through the target.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Jab",
+                "description": "Parry a teep and answer with a jab.",
+                "help": "Keep the parry small and efficient.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Low Kick \u2192 High Guard",
+                "description": "Kick low and recover into high guard.",
+                "help": "Protect your head on the exit.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Cross \u2192 Lead Hook \u2192 Rear Teep",
+                "description": "Punch twice and push away.",
+                "help": "Reset before launching the teep.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Step Back \u2192 Jab \u2192 Cross",
+                "description": "Retreat and counter with straight punches.",
+                "help": "Keep pressure without rushing forward.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            },
+            {
+                "title": "Horizontal Elbow \u2192 Shin Check",
+                "description": "Throw an elbow and finish with a defensive check.",
+                "help": "Stay compact after the elbow.",
+                "target": {
+                    "type": "reps",
+                    "reps": 30
+                }
+            }
+        ]
+    },
+    {
+        "title": "Intermediate Range Control",
+        "description": "A range-control workout using teeps, long guard, straight punches and defensive checks.",
+        "difficulty": "Intermediate",
+        "category": "Fundamentals",
+        "restSecondsBetweenExercises": 45,
+        "exercises": [
+            {
+                "title": "Long Guard \u2192 Jab",
+                "description": "Use the long guard to measure before jabbing.",
+                "help": "Keep your rear hand ready to defend.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Lead Teep \u2192 Jab",
+                "description": "Push with the lead leg and follow with a jab.",
+                "help": "Set the kicking foot down under control.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Rear Teep \u2192 Cross",
+                "description": "Push with the rear leg and punch straight.",
+                "help": "Do not fall forward after the teep.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Lead Teep",
+                "description": "Redirect a teep and return your own lead teep.",
+                "help": "Counter before the opponent resets.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Back \u2192 Body Kick",
+                "description": "Step away and kick the body as the opponent advances.",
+                "help": "Keep the kick long and balanced.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Jab",
+                "description": "Check the kick and answer with a jab.",
+                "help": "Return to stance before punching.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Cross \u2192 Rear Teep",
+                "description": "Throw a cross and push away with the rear teep.",
+                "help": "Use the teep to regain range.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Hook \u2192 Low Kick",
+                "description": "Hook upstairs and finish low.",
+                "help": "Keep your hook tight and your kick committed.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Pull Back \u2192 Lead Teep",
+                "description": "Pull out of range and push the opponent back.",
+                "help": "Do not lean too far over your rear leg.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Jab \u2192 Cross \u2192 Long Guard",
+                "description": "Punch in, then recover to long guard.",
+                "help": "Finish with structure, not loose hands.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Angle Step \u2192 Low Kick",
+                "description": "Create an angle and kick the lead leg.",
+                "help": "Kick from outside the center line.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            }
+        ]
+    },
+    {
+        "title": "Close Range Striker Defense",
+        "description": "An intermediate workout blending punches, elbows, knees, kicks and defensive framing.",
+        "difficulty": "Intermediate",
+        "category": "Striking",
+        "restSecondsBetweenExercises": 60,
+        "exercises": [
+            {
+                "title": "High Guard \u2192 Lead Hook",
+                "description": "Cover tight and counter with a lead hook.",
+                "help": "Keep the hook compact in close range.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Forearm Frame \u2192 Straight Knee",
+                "description": "Frame to make space and drive a knee forward.",
+                "help": "Keep your posture tall.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Jab \u2192 Cross \u2192 Horizontal Elbow",
+                "description": "Enter with straight punches and finish with an elbow.",
+                "help": "Step in before throwing the elbow.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Diagonal Knee",
+                "description": "Control range and attack with a diagonal knee.",
+                "help": "Turn your hip slightly into the knee.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Rear Hook",
+                "description": "Check the kick and return with a rear hook.",
+                "help": "Do not swing wide after the check.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Upward Elbow",
+                "description": "Angle off and drive the elbow upward.",
+                "help": "Keep your opposite hand high.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Teep \u2192 Cross",
+                "description": "Push to manage range, then throw a cross.",
+                "help": "Keep the teep straight and controlled.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Kick Catch \u2192 Curved Knee",
+                "description": "Catch a body kick and answer with a curved knee.",
+                "help": "Pull the target slightly into the knee line.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Rear Uppercut \u2192 Lead Hook \u2192 Low Kick",
+                "description": "Punch in close and exit with a low kick.",
+                "help": "Keep your head protected between punches.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Frame Escape \u2192 Body Kick",
+                "description": "Create space with a frame and kick the body.",
+                "help": "Separate before turning the kick over.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Pull Back \u2192 Cross \u2192 Straight Knee",
+                "description": "Pull away, punch back and step into a knee.",
+                "help": "Use the cross to close distance again.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "High Guard \u2192 Downward Elbow",
+                "description": "Cover and chop downward with the elbow.",
+                "help": "Keep the motion controlled and compact.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Advanced Full Arsenal Flow",
+        "description": "A complete advanced Muay Thai workout mixing punches, kicks, elbows, knees and defense.",
+        "difficulty": "Advanced",
+        "category": "Striking",
+        "restSecondsBetweenExercises": 90,
+        "exercises": [
+            {
+                "title": "Jab \u2192 Cross \u2192 Body Kick",
+                "description": "Use straight punches to set up a powerful body kick.",
+                "help": "Turn the kick over immediately after the cross.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Cross \u2192 Lead Hook",
+                "description": "Check a kick and counter with a two-punch combination.",
+                "help": "Keep your balance after the check.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Lead Teep \u2192 Rear Hook \u2192 Low Kick",
+                "description": "Push, punch and finish low.",
+                "help": "Do not let the hook pull you off balance.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Straight Knee \u2192 Horizontal Elbow",
+                "description": "Frame into a knee and finish with an elbow.",
+                "help": "Step in tightly before the elbow.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Cross \u2192 High Kick",
+                "description": "Parry a teep, punch and kick high.",
+                "help": "Use the cross to hide the high kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Slip Outside \u2192 Rear Uppercut \u2192 Lead Hook",
+                "description": "Slip and counter with an uppercut-hook combination.",
+                "help": "Keep your knees bent through the slip.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Kick Catch \u2192 Dump \u2192 Jab",
+                "description": "Catch, dump and reset with a jab.",
+                "help": "Complete the dump before striking again.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Diagonal Down Elbow",
+                "description": "Angle away and cut down with the elbow.",
+                "help": "Enter close enough before striking.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Pull Back \u2192 Cross \u2192 Rear Teep",
+                "description": "Evade, punch and push the opponent back.",
+                "help": "Keep the pull short and controlled.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Body Kick \u2192 High Guard \u2192 Cross",
+                "description": "Kick, recover defensively and counter straight.",
+                "help": "Return to guard before punching.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Angle Step \u2192 Jab \u2192 Low Kick",
+                "description": "Step to an angle, jab and chop the leg.",
+                "help": "Use the angle to make the low kick safer.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Frame Escape \u2192 Curved Knee \u2192 Lead Hook",
+                "description": "Frame out, knee and finish with a hook.",
+                "help": "Stay upright during the knee.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Cross Parry \u2192 Cross \u2192 Body Kick",
+                "description": "Parry, counter straight and kick the body.",
+                "help": "Keep the counter immediate.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "High Guard \u2192 Spinning Elbow",
+                "description": "Cover first, then rotate into a spinning elbow.",
+                "help": "Spot the target before releasing the elbow.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Jab \u2192 Rear Uppercut \u2192 High Kick",
+                "description": "Punch up the middle and finish high.",
+                "help": "Keep the uppercut tight to avoid overexposure.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    },
+    {
+        "title": "Beginner Defensive Movement Mix",
+        "description": "A beginner-friendly workout that teaches movement, basic defense and simple counters.",
+        "difficulty": "Beginner",
+        "category": "Defense",
+        "restSecondsBetweenExercises": 30,
+        "exercises": [
+            {
+                "title": "High Guard",
+                "description": "Practice setting a tight high guard.",
+                "help": "Keep your elbows close and chin tucked.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "High Guard \u2192 Jab",
+                "description": "Cover, then fire a lead-hand straight punch.",
+                "help": "Return quickly to guard.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Step Back \u2192 Cross",
+                "description": "Move backward and counter with a cross.",
+                "help": "Do not lean backward as you punch.",
+                "target": {
+                    "type": "reps",
+                    "reps": 22
+                }
+            },
+            {
+                "title": "Shin Check",
+                "description": "Practice checking low kicks.",
+                "help": "Keep your standing leg strong.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Shin Check \u2192 Low Kick",
+                "description": "Block and return a low kick.",
+                "help": "Land and kick back with control.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Lead Teep",
+                "description": "Use the lead teep to manage distance.",
+                "help": "Bring the foot back to stance.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Teep Parry",
+                "description": "Redirect an incoming push kick.",
+                "help": "Parry across the center line with a small motion.",
+                "target": {
+                    "type": "reps",
+                    "reps": 24
+                }
+            },
+            {
+                "title": "Teep Parry \u2192 Jab",
+                "description": "Parry and immediately return a jab.",
+                "help": "Keep the counter straight and fast.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Long Guard \u2192 Rear Teep",
+                "description": "Frame for range, then push with the rear leg.",
+                "help": "Stay tall and balanced.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            },
+            {
+                "title": "Step Off-Line \u2192 Body Kick",
+                "description": "Move off the center line and kick the body.",
+                "help": "Step first, then rotate the kick.",
+                "target": {
+                    "type": "reps",
+                    "reps": 20
+                }
+            }
+        ]
+    }
+]

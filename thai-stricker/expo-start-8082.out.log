@@ -3,3 +3,213 @@ Starting Metro Bundler
 
 Waiting on http://localhost:8082
 Logs for your project will appear below.
+Android Bundled 5187ms index.ts (789 modules)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Unable to resolve "./src/features/workoutSession/StartWorkoutScreen" from "App.tsx"
+[0m [90m 22 |[39m [36mimport[39m { type [33mMockWeeklyWorkoutPlan[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/plannedWorkoutMocks'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mWorkoutFinishedRecapScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/WorkoutFinishedRecapScreen'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mStartWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/StartWorkoutScreen'[39m[33m;[39m
+ [90m    |[39m                                     [31m[1m^[22m[39m
+ [90m 25 |[39m [36mimport[39m {
+ [90m 26 |[39m   mockWorkoutLogs[33m,[39m
+ [90m 27 |[39m   type [33mMockWorkoutLogEntry[39m[33m,[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/workoutSession/StartWorkoutScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Android Bundled 107ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 128ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 75ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 110ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Unable to resolve "./src/features/workoutSession/WorkoutFinishedRecapScreen" from "App.tsx"
+[0m [90m 21 |[39m [36mimport[39m { [33mScheduleScreen[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/ScheduleScreen'[39m[33m;[39m
+ [90m 22 |[39m [36mimport[39m { type [33mMockWeeklyWorkoutPlan[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/plannedWorkoutMocks'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 23 |[39m [36mimport[39m { [33mWorkoutFinishedRecapScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/WorkoutFinishedRecapScreen'[39m[33m;[39m
+ [90m    |[39m                                             [31m[1m^[22m[39m
+ [90m 24 |[39m [36mimport[39m { [33mStartWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/StartWorkoutScreen'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m {
+ [90m 26 |[39m   mockWorkoutLogs[33m,[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/workoutSession/WorkoutFinishedRecapScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/workouts/AddWorkoutScreen" from "App.tsx"
+[0m [90m 27 |[39m   type [33mMockWorkoutLogEntry[39m[33m,[39m
+ [90m 28 |[39m } [36mfrom[39m [32m'./src/features/workoutLogging/workoutLogMocks'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 29 |[39m [36mimport[39m { [33mAddWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workouts/AddWorkoutScreen'[39m[33m;[39m
+ [90m    |[39m                                   [31m[1m^[22m[39m
+ [90m 30 |[39m [36mimport[39m { [33mEditWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workouts/EditWorkoutScreen'[39m[33m;[39m
+ [90m 31 |[39m [36mimport[39m { [33mWorkoutsScreen[39m } [36mfrom[39m [32m'./src/features/workouts/WorkoutsScreen'[39m[33m;[39m
+ [90m 32 |[39m [36mimport[39m { mockWorkouts[33m,[39m type [33mMockWorkout[39m } [36mfrom[39m [32m'./src/features/workouts/workoutMocks'[39m[33m;[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/workouts/AddWorkoutScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/plannedWorkouts/ScheduleScreen" from "App.tsx"
+[0m [90m 19 |[39m } [36mfrom[39m [32m'./src/features/settings/SettingsScreen'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { getTheme } [36mfrom[39m [32m'./src/styles/theme'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m { [33mScheduleScreen[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/ScheduleScreen'[39m[33m;[39m
+ [90m    |[39m                                 [31m[1m^[22m[39m
+ [90m 22 |[39m [36mimport[39m { type [33mMockWeeklyWorkoutPlan[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/plannedWorkoutMocks'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mWorkoutFinishedRecapScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/WorkoutFinishedRecapScreen'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mStartWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/StartWorkoutScreen'[39m[33m;[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/plannedWorkouts/ScheduleScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/aiCoach/AiCoachScreen" from "App.tsx"
+[0m [90m  6 |[39m
+ [90m  7 |[39m [36mimport[39m { [33mBottomNavbar[39m[33m,[39m type [33mBottomNavTab[39m } [36mfrom[39m [32m'./src/components/navigation/BottomNavbar'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mAiCoachScreen[39m } [36mfrom[39m [32m'./src/features/aiCoach/AiCoachScreen'[39m[33m;[39m
+ [90m    |[39m                                [31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m { mockCoachTips[33m,[39m type [33mMockCoachTip[39m } [36mfrom[39m [32m'./src/features/aiCoach/coachTipsMocks'[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { [33mHomeScreen[39m } [36mfrom[39m [32m'./src/features/home/HomeScreen'[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m { mockAvailableExercises } [36mfrom[39m [32m'./src/features/exercises/exerciseMocks'[39m[33m;[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/aiCoach/AiCoachScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/settings/SettingsScreen" from "App.tsx"
+[0m [90m 17 |[39m   type [33mThemePreferenceOption[39m[33m,[39m
+ [90m 18 |[39m   type [33mTrainingDayOption[39m[33m,[39m
+[31m[1m>[22m[39m[90m 19 |[39m } [36mfrom[39m [32m'./src/features/settings/SettingsScreen'[39m[33m;[39m
+ [90m    |[39m         [31m[1m^[22m[39m
+ [90m 20 |[39m [36mimport[39m { getTheme } [36mfrom[39m [32m'./src/styles/theme'[39m[33m;[39m
+ [90m 21 |[39m [36mimport[39m { [33mScheduleScreen[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/ScheduleScreen'[39m[33m;[39m
+ [90m 22 |[39m [36mimport[39m { type [33mMockWeeklyWorkoutPlan[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/plannedWorkoutMocks'[39m[33m;[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/settings/SettingsScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/home/HomeScreen" from "App.tsx"
+[0m [90m  8 |[39m [36mimport[39m { [33mAiCoachScreen[39m } [36mfrom[39m [32m'./src/features/aiCoach/AiCoachScreen'[39m[33m;[39m
+ [90m  9 |[39m [36mimport[39m { mockCoachTips[33m,[39m type [33mMockCoachTip[39m } [36mfrom[39m [32m'./src/features/aiCoach/coachTipsMocks'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 10 |[39m [36mimport[39m { [33mHomeScreen[39m } [36mfrom[39m [32m'./src/features/home/HomeScreen'[39m[33m;[39m
+ [90m    |[39m                             [31m[1m^[22m[39m
+ [90m 11 |[39m [36mimport[39m { mockAvailableExercises } [36mfrom[39m [32m'./src/features/exercises/exerciseMocks'[39m[33m;[39m
+ [90m 12 |[39m [36mimport[39m {
+ [90m 13 |[39m   type [33mDefaultRepsExerciseDurationOption[39m[33m,[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/home/HomeScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/workouts/WorkoutsScreen" from "App.tsx"
+[0m [90m 29 |[39m [36mimport[39m { [33mAddWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workouts/AddWorkoutScreen'[39m[33m;[39m
+ [90m 30 |[39m [36mimport[39m { [33mEditWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workouts/EditWorkoutScreen'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 31 |[39m [36mimport[39m { [33mWorkoutsScreen[39m } [36mfrom[39m [32m'./src/features/workouts/WorkoutsScreen'[39m[33m;[39m
+ [90m    |[39m                                 [31m[1m^[22m[39m
+ [90m 32 |[39m [36mimport[39m { mockWorkouts[33m,[39m type [33mMockWorkout[39m } [36mfrom[39m [32m'./src/features/workouts/workoutMocks'[39m[33m;[39m
+ [90m 33 |[39m
+ [90m 34 |[39m type [33mWorkoutFlowState[39m [33m=[39m {[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/workouts/WorkoutsScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/plannedWorkouts/ScheduleScreen" from "App.tsx"
+[0m [90m 19 |[39m } [36mfrom[39m [32m'./src/features/settings/SettingsScreen'[39m[33m;[39m
+ [90m 20 |[39m [36mimport[39m { getTheme } [36mfrom[39m [32m'./src/styles/theme'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 21 |[39m [36mimport[39m { [33mScheduleScreen[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/ScheduleScreen'[39m[33m;[39m
+ [90m    |[39m                                 [31m[1m^[22m[39m
+ [90m 22 |[39m [36mimport[39m { type [33mMockWeeklyWorkoutPlan[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/plannedWorkoutMocks'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mWorkoutFinishedRecapScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/WorkoutFinishedRecapScreen'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mStartWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/StartWorkoutScreen'[39m[33m;[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/plannedWorkouts/ScheduleScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+Unable to resolve "./src/features/workoutSession/StartWorkoutScreen" from "App.tsx"
+[0m [90m 22 |[39m [36mimport[39m { type [33mMockWeeklyWorkoutPlan[39m } [36mfrom[39m [32m'./src/features/plannedWorkouts/plannedWorkoutMocks'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mWorkoutFinishedRecapScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/WorkoutFinishedRecapScreen'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mStartWorkoutScreen[39m } [36mfrom[39m [32m'./src/features/workoutSession/StartWorkoutScreen'[39m[33m;[39m
+ [90m    |[39m                                     [31m[1m^[22m[39m
+ [90m 25 |[39m [36mimport[39m {
+ [90m 26 |[39m   mockWorkoutLogs[33m,[39m
+ [90m 27 |[39m   type [33mMockWorkoutLogEntry[39m[33m,[39m[0m
+
+Import stack:
+
+ App.tsx
+ | import "./src/features/workoutSession/StartWorkoutScreen"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
