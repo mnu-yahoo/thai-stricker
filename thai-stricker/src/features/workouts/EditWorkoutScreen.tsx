@@ -13,6 +13,8 @@ import {
 
 import { GoogleMaterialSymbol } from "../../components/icons/GoogleMaterialSymbol";
 import type { AppTheme } from "../../styles/theme";
+import { AddExerciseScreen } from "../exercises/AddExerciseScreen";
+import { EditExerciseScreen } from "../exercises/EditExerciseScreen";
 import { type MockAvailableExercise } from "../exercises/exerciseMocks";
 import { type NumberOfExercisesPerPageOption } from "../settings/SettingsScreen";
 import {
@@ -30,6 +32,11 @@ const EXERCISE_THUMB_URI =
 
 type OptionGroupVariant = "segmented" | "chip";
 
+type EditWorkoutMode =
+  | { type: "form" }
+  | { type: "addExercise" }
+  | { type: "editExercise"; exerciseId: string };
+
 type EditWorkoutScreenProps = {
   theme: AppTheme;
   availableExercises: MockAvailableExercise[];
@@ -38,6 +45,8 @@ type EditWorkoutScreenProps = {
   numberOfExercisesPerPage: NumberOfExercisesPerPageOption;
   restSecondsBetweenExercises: number;
   defaultRepsExerciseDurationMinutes: number;
+  onAddAvailableExercise: (exercise: MockAvailableExercise) => void;
+  onUpdateAvailableExercise: (exercise: MockAvailableExercise) => void;
   onBackToWorkouts: () => void;
   onSaveWorkout: (workout: MockWorkout) => void;
 };
@@ -147,6 +156,8 @@ export function EditWorkoutScreen({
   numberOfExercisesPerPage,
   restSecondsBetweenExercises,
   defaultRepsExerciseDurationMinutes,
+  onAddAvailableExercise,
+  onUpdateAvailableExercise,
   onBackToWorkouts,
   onSaveWorkout,
 }: EditWorkoutScreenProps) {
@@ -162,6 +173,7 @@ export function EditWorkoutScreen({
   );
   const [exercises, setExercises] = useState<MockExercise[]>(workout?.exercises ?? []);
   const [availableExercisesPage, setAvailableExercisesPage] = useState(1);
+  const [mode, setMode] = useState<EditWorkoutMode>({ type: "form" });
   const [workoutErrorMessage, setWorkoutErrorMessage] = useState<string | null>(null);
   const [selectionErrorMessage, setSelectionErrorMessage] = useState<string | null>(null);
   const calculatedTotalDurationMinutes = calculateWorkoutTotalDurationMinutes(
@@ -196,12 +208,12 @@ export function EditWorkoutScreen({
     );
   }
 
-  const handleOpenAddExercisePlaceholder = () => {
-    Alert.alert("Coming soon", "Add Exercise screen is not implemented yet.");
+  const handleOpenAddExercise = () => {
+    setMode({ type: "addExercise" });
   };
 
-  const handleOpenEditExercisePlaceholder = () => {
-    Alert.alert("Coming soon", "Edit Exercise screen is not implemented yet.");
+  const handleOpenEditExercise = (exerciseId: string) => {
+    setMode({ type: "editExercise", exerciseId });
   };
 
   const handleAddExercise = (exercise: MockAvailableExercise) => {
@@ -222,6 +234,23 @@ export function EditWorkoutScreen({
     ]);
     setSelectionErrorMessage(null);
     setWorkoutErrorMessage(null);
+  };
+
+  const handleBackToEditWorkoutForm = () => {
+    setMode({ type: "form" });
+  };
+
+  const handleSaveAddedExercise = (newExercise: MockAvailableExercise) => {
+    onAddAvailableExercise(newExercise);
+    const nextExercisesLength = availableExercises.length + 1;
+    const finalPage = Math.max(1, Math.ceil(nextExercisesLength / numberOfExercisesPerPage));
+    setAvailableExercisesPage(finalPage);
+    setMode({ type: "form" });
+  };
+
+  const handleSaveEditedExercise = (updatedExercise: MockAvailableExercise) => {
+    onUpdateAvailableExercise(updatedExercise);
+    setMode({ type: "form" });
   };
 
   const handleRemoveExercise = (exerciseId: string) => {
@@ -262,6 +291,32 @@ export function EditWorkoutScreen({
       exercises,
     });
   };
+
+  const activeExercise =
+    mode.type === "editExercise"
+      ? availableExercises.find((exercise) => exercise.id === mode.exerciseId) ?? null
+      : null;
+
+  if (mode.type === "addExercise") {
+    return (
+      <AddExerciseScreen
+        theme={theme}
+        onBackToAddWorkout={handleBackToEditWorkoutForm}
+        onSaveExercise={handleSaveAddedExercise}
+      />
+    );
+  }
+
+  if (mode.type === "editExercise" && activeExercise) {
+    return (
+      <EditExerciseScreen
+        theme={theme}
+        exercise={activeExercise}
+        onBackToAddWorkout={handleBackToEditWorkoutForm}
+        onSaveExercise={handleSaveEditedExercise}
+      />
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -398,7 +453,7 @@ export function EditWorkoutScreen({
           <View style={!isDarkTheme ? styles.lightPanelCard : undefined}>
             <View style={styles.sectionToolbar}>
               <Text style={styles.sectionMetaText}>Max exercises allowed: {maxExercisesPerWorkout}</Text>
-              <Pressable onPress={handleOpenAddExercisePlaceholder} style={styles.inlineAction}>
+              <Pressable onPress={handleOpenAddExercise} style={styles.inlineAction}>
                 <GoogleMaterialSymbol
                   color={theme.colors.primary}
                   fallbackName="add-circle-outline"
@@ -512,7 +567,7 @@ export function EditWorkoutScreen({
                         </Text>
                       </Pressable>
                       <Pressable
-                        onPress={handleOpenEditExercisePlaceholder}
+                        onPress={() => handleOpenEditExercise(exercise.id)}
                         style={styles.libraryEditButton}
                       >
                         <Text style={styles.libraryEditButtonText}>Edit</Text>

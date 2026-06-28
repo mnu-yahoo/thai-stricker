@@ -756,6 +756,8 @@ export default function App() {
           numberOfExercisesPerPage={numberOfExercisesPerPage}
           restSecondsBetweenExercises={restSecondsBetweenExercises}
           defaultRepsExerciseDurationMinutes={defaultRepsExerciseDurationMinutes}
+          onAddAvailableExercise={handleAddAvailableExercise}
+          onUpdateAvailableExercise={handleUpdateAvailableExercise}
           onBackToWorkouts={handleBackToWorkouts}
           onSaveWorkout={handleSaveEditedWorkout}
         />
