@@ -288,249 +288,311 @@ export function EditWorkoutScreen({
               />
             </Pressable>
           </View>
-        ) : null}
+        ) : (
+          <View style={styles.lightTopBar}>
+            <Pressable onPress={onBackToWorkouts} style={styles.lightIconButton}>
+              <GoogleMaterialSymbol
+                color="#1560C8"
+                fallbackName="arrow-back"
+                name="arrow_back"
+                size={24}
+              />
+            </Pressable>
+            <Text style={styles.lightTopTitle}>Edit Workout</Text>
+            <Pressable style={styles.lightIconButton}>
+              <GoogleMaterialSymbol
+                color="#1560C8"
+                fallbackName="settings"
+                name="settings"
+                size={24}
+              />
+            </Pressable>
+          </View>
+        )}
 
         <View style={styles.header}>
           <Text style={styles.eyebrow}>Private coaching app</Text>
           <Text style={styles.screenTitle}>{isDarkTheme ? "EDIT WORKOUT" : "Edit Workout"}</Text>
+          {!isDarkTheme ? (
+            <Text style={styles.lightHeaderSupport}>
+              Fine-tune your title, structure, and drill selection before saving the session.
+            </Text>
+          ) : null}
         </View>
 
-        <View style={styles.fieldBlock}>
-          <Text style={styles.fieldLabel}>Workout title</Text>
-          <TextInput
-            value={title}
-            onChangeText={setTitle}
-            placeholder="Enter workout title"
-            placeholderTextColor={theme.colors.textMuted}
-            style={styles.textInput}
-          />
-        </View>
-
-        <View style={styles.fieldBlock}>
-          <Text style={styles.fieldLabel}>Description</Text>
-          <TextInput
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Describe the goal of this workout"
-            placeholderTextColor={theme.colors.textMuted}
-            multiline
-            textAlignVertical="top"
-            style={[styles.textInput, styles.multilineInput]}
-          />
-        </View>
-
-        <View style={styles.metricsRow}>
-          <View style={styles.metricsColumn}>
-            <Text style={styles.fieldLabel}>Difficulty</Text>
-            <OptionGroup
-              options={MOCK_WORKOUT_DIFFICULTIES}
-              selectedValue={difficulty}
-              onSelect={setDifficulty}
-              theme={theme}
-              variant="segmented"
+        <View style={!isDarkTheme ? styles.lightPanelCard : undefined}>
+          <View style={styles.fieldBlock}>
+            <Text style={styles.fieldLabel}>Workout title</Text>
+            <TextInput
+              value={title}
+              onChangeText={setTitle}
+              placeholder="Enter workout title"
+              placeholderTextColor={theme.colors.textMuted}
+              style={styles.textInput}
             />
           </View>
 
-          <View style={styles.durationColumn}>
-            <Text style={styles.fieldLabel}>Duration</Text>
-            <View style={styles.durationDisplay}>
-              <Text style={styles.durationDisplayText}>{calculatedTotalDurationMinutes} mins</Text>
-            </View>
+          <View style={styles.fieldBlock}>
+            <Text style={styles.fieldLabel}>Description</Text>
+            <TextInput
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Describe the goal of this workout"
+              placeholderTextColor={theme.colors.textMuted}
+              multiline
+              textAlignVertical="top"
+              style={[styles.textInput, styles.multilineInput]}
+            />
           </View>
-        </View>
 
-        <View style={styles.fieldBlock}>
-          <Text style={styles.fieldLabel}>Category</Text>
-          <OptionGroup
-            options={MOCK_WORKOUT_CATEGORIES}
-            selectedValue={category}
-            onSelect={setCategory}
-            theme={theme}
-            variant="chip"
-          />
-        </View>
+          {!isDarkTheme ? <View style={styles.lightDivider} /> : null}
 
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Exercise library</Text>
-          <View style={styles.sectionToolbar}>
-            <Text style={styles.sectionMetaText}>Max exercises allowed: {maxExercisesPerWorkout}</Text>
-            <Pressable onPress={handleOpenAddExercisePlaceholder} style={styles.inlineAction}>
-              <GoogleMaterialSymbol
-                color={theme.colors.primary}
-                fallbackName="add-circle-outline"
-                name="add_circle"
-                size={16}
+          <View style={styles.metricsRow}>
+            <View style={styles.metricsColumn}>
+              <Text style={styles.fieldLabel}>Difficulty</Text>
+              <OptionGroup
+                options={MOCK_WORKOUT_DIFFICULTIES}
+                selectedValue={difficulty}
+                onSelect={setDifficulty}
+                theme={theme}
+                variant="segmented"
               />
-              <Text style={styles.inlineActionText}>Add new drill</Text>
-            </Pressable>
-          </View>
-
-          {selectionErrorMessage ? (
-            <View style={styles.errorBox}>
-              <Text style={styles.errorTitle}>Selection error</Text>
-              <Text style={styles.errorText}>{selectionErrorMessage}</Text>
             </View>
-          ) : null}
 
-          <View style={styles.libraryPanel}>
-            <View style={styles.libraryHeader}>
-              <Text style={styles.libraryPageText}>
-                Page {availableExercisesPage} of {totalAvailableExercisePages}
-              </Text>
-              <View style={styles.libraryNav}>
-                <Pressable
-                  onPress={() =>
-                    setAvailableExercisesPage((currentPage) => Math.max(1, currentPage - 1))
-                  }
-                  disabled={availableExercisesPage === 1}
-                  style={[
-                    styles.libraryNavButton,
-                    availableExercisesPage === 1 ? styles.libraryNavButtonDisabled : undefined,
-                  ]}
-                >
-                  <GoogleMaterialSymbol
-                    color={
-                      availableExercisesPage === 1 ? theme.colors.textMuted : theme.colors.textPrimary
-                    }
-                    fallbackName="chevron-left"
-                    name="chevron_left"
-                    size={18}
-                  />
-                </Pressable>
-                <Pressable
-                  onPress={() =>
-                    setAvailableExercisesPage((currentPage) =>
-                      Math.min(totalAvailableExercisePages, currentPage + 1),
-                    )
-                  }
-                  disabled={availableExercisesPage === totalAvailableExercisePages}
-                  style={[
-                    styles.libraryNavButton,
-                    availableExercisesPage === totalAvailableExercisePages
-                      ? styles.libraryNavButtonDisabled
-                      : undefined,
-                  ]}
-                >
-                  <GoogleMaterialSymbol
-                    color={
-                      availableExercisesPage === totalAvailableExercisePages
-                        ? theme.colors.textMuted
-                        : theme.colors.primary
-                    }
-                    fallbackName="chevron-right"
-                    name="chevron_right"
-                    size={18}
-                  />
-                </Pressable>
+            <View style={styles.durationColumn}>
+              <Text style={styles.fieldLabel}>Duration</Text>
+              <View style={styles.durationDisplay}>
+                <Text style={styles.durationDisplayText}>{calculatedTotalDurationMinutes} mins</Text>
               </View>
             </View>
+          </View>
 
-            {visibleAvailableExercises.map((exercise) => {
-              const isAtLimit = exercises.length >= maxExercisesPerWorkout;
+          {!isDarkTheme ? <View style={styles.lightDivider} /> : null}
 
-              return (
-                <View key={exercise.id} style={styles.libraryItem}>
-                  <ImageBackground
-                    imageStyle={styles.libraryThumbImage}
-                    source={{ uri: EXERCISE_THUMB_URI }}
-                    style={styles.libraryThumb}
-                  >
-                    <View style={styles.libraryThumbOverlay} />
-                  </ImageBackground>
-
-                  <View style={styles.libraryCopy}>
-                    <Text numberOfLines={1} style={styles.libraryItemTitle}>
-                      {exercise.title}
-                    </Text>
-                    <Text numberOfLines={2} style={styles.libraryItemDescription}>
-                      {exercise.description}
-                    </Text>
-                  </View>
-
-                  <View style={styles.libraryActions}>
-                    <Pressable
-                      onPress={() => handleAddExercise(exercise)}
-                      disabled={isAtLimit}
-                      style={[
-                        styles.libraryAddButton,
-                        isAtLimit ? styles.libraryAddButtonDisabled : undefined,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.libraryAddButtonText,
-                          isAtLimit ? styles.libraryAddButtonTextDisabled : undefined,
-                        ]}
-                      >
-                        Add
-                      </Text>
-                    </Pressable>
-                    <Pressable
-                      onPress={handleOpenEditExercisePlaceholder}
-                      style={styles.libraryEditButton}
-                    >
-                      <Text style={styles.libraryEditButtonText}>Edit</Text>
-                    </Pressable>
-                  </View>
-                </View>
-              );
-            })}
+          <View style={styles.fieldBlock}>
+            <Text style={styles.fieldLabel}>Category</Text>
+            <OptionGroup
+              options={MOCK_WORKOUT_CATEGORIES}
+              selectedValue={category}
+              onSelect={setCategory}
+              theme={theme}
+              variant="chip"
+            />
           </View>
         </View>
 
         <View style={styles.section}>
-          <View style={styles.selectedHeader}>
-            <Text style={styles.sectionTitle}>Selected drills</Text>
-            <View style={styles.selectedCountBadge}>
-              <Text style={styles.selectedCountBadgeText}>
-                {exercises.length} / {maxExercisesPerWorkout}
-              </Text>
-            </View>
-          </View>
-
-          {exercises.length === 0 ? (
-            <View style={styles.emptyState}>
-              <Text style={styles.emptyStateText}>No exercises added yet.</Text>
+          {!isDarkTheme ? (
+            <View style={styles.lightSectionTitleRow}>
+              <GoogleMaterialSymbol
+                color="#1560C8"
+                fallbackName="library-books"
+                name="library_books"
+                size={22}
+              />
+              <Text style={styles.lightSectionTitle}>Exercise Library</Text>
             </View>
           ) : (
-            exercises.map((exercise, index) => (
-              <View key={exercise.id} style={styles.selectedCard}>
-                <View style={styles.selectedCardTop}>
-                  <View style={styles.selectedIndexBadge}>
-                    <Text style={styles.selectedIndexBadgeText}>{index + 1}</Text>
-                  </View>
+            <Text style={styles.sectionTitle}>Exercise library</Text>
+          )}
+          <View style={!isDarkTheme ? styles.lightPanelCard : undefined}>
+            <View style={styles.sectionToolbar}>
+              <Text style={styles.sectionMetaText}>Max exercises allowed: {maxExercisesPerWorkout}</Text>
+              <Pressable onPress={handleOpenAddExercisePlaceholder} style={styles.inlineAction}>
+                <GoogleMaterialSymbol
+                  color={theme.colors.primary}
+                  fallbackName="add-circle-outline"
+                  name="add_circle"
+                  size={16}
+                />
+                <Text style={styles.inlineActionText}>Add new drill</Text>
+              </Pressable>
+            </View>
 
-                  <View style={styles.selectedCopy}>
-                    <Text style={styles.selectedTitle}>{exercise.title}</Text>
-                    <Text style={styles.selectedDescription}>{exercise.description}</Text>
-                    <View style={styles.selectedMetaRow}>
-                      <GoogleMaterialSymbol
-                        color={theme.colors.primary}
-                        fallbackName="loop"
-                        name="autorenew"
-                        size={15}
-                      />
-                      <Text style={styles.selectedMetaText}>
-                        {formatSelectedExerciseMeta(exercise.target, difficulty)}
-                      </Text>
-                    </View>
-                  </View>
+            {selectionErrorMessage ? (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorTitle}>Selection error</Text>
+                <Text style={styles.errorText}>{selectionErrorMessage}</Text>
+              </View>
+            ) : null}
 
+            {!isDarkTheme ? <View style={styles.lightDivider} /> : null}
+
+            <View style={styles.libraryPanel}>
+              <View style={styles.libraryHeader}>
+                <Text style={styles.libraryPageText}>
+                  Page {availableExercisesPage} of {totalAvailableExercisePages}
+                </Text>
+                <View style={styles.libraryNav}>
                   <Pressable
-                    onPress={() => handleRemoveExercise(exercise.id)}
-                    style={styles.deleteButton}
+                    onPress={() =>
+                      setAvailableExercisesPage((currentPage) => Math.max(1, currentPage - 1))
+                    }
+                    disabled={availableExercisesPage === 1}
+                    style={[
+                      styles.libraryNavButton,
+                      availableExercisesPage === 1 ? styles.libraryNavButtonDisabled : undefined,
+                    ]}
                   >
                     <GoogleMaterialSymbol
-                      color={theme.colors.textPrimary}
-                      fallbackName="delete-outline"
-                      name="delete"
-                      size={20}
+                      color={
+                        availableExercisesPage === 1 ? theme.colors.textMuted : theme.colors.textPrimary
+                      }
+                      fallbackName="chevron-left"
+                      name="chevron_left"
+                      size={18}
+                    />
+                  </Pressable>
+                  <Pressable
+                    onPress={() =>
+                      setAvailableExercisesPage((currentPage) =>
+                        Math.min(totalAvailableExercisePages, currentPage + 1),
+                      )
+                    }
+                    disabled={availableExercisesPage === totalAvailableExercisePages}
+                    style={[
+                      styles.libraryNavButton,
+                      availableExercisesPage === totalAvailableExercisePages
+                        ? styles.libraryNavButtonDisabled
+                        : undefined,
+                    ]}
+                  >
+                    <GoogleMaterialSymbol
+                      color={
+                        availableExercisesPage === totalAvailableExercisePages
+                          ? theme.colors.textMuted
+                          : theme.colors.primary
+                      }
+                      fallbackName="chevron-right"
+                      name="chevron_right"
+                      size={18}
                     />
                   </Pressable>
                 </View>
               </View>
-            ))
-          )}
+
+              {visibleAvailableExercises.map((exercise) => {
+                const isAtLimit = exercises.length >= maxExercisesPerWorkout;
+
+                return (
+                  <View key={exercise.id} style={styles.libraryItem}>
+                    <ImageBackground
+                      imageStyle={styles.libraryThumbImage}
+                      source={{ uri: EXERCISE_THUMB_URI }}
+                      style={styles.libraryThumb}
+                    >
+                      <View style={styles.libraryThumbOverlay} />
+                    </ImageBackground>
+
+                    <View style={styles.libraryCopy}>
+                      <Text numberOfLines={1} style={styles.libraryItemTitle}>
+                        {exercise.title}
+                      </Text>
+                      <Text numberOfLines={2} style={styles.libraryItemDescription}>
+                        {exercise.description}
+                      </Text>
+                    </View>
+
+                    <View style={styles.libraryActions}>
+                      <Pressable
+                        onPress={() => handleAddExercise(exercise)}
+                        disabled={isAtLimit}
+                        style={[
+                          styles.libraryAddButton,
+                          isAtLimit ? styles.libraryAddButtonDisabled : undefined,
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.libraryAddButtonText,
+                            isAtLimit ? styles.libraryAddButtonTextDisabled : undefined,
+                          ]}
+                        >
+                          Add
+                        </Text>
+                      </Pressable>
+                      <Pressable
+                        onPress={handleOpenEditExercisePlaceholder}
+                        style={styles.libraryEditButton}
+                      >
+                        <Text style={styles.libraryEditButtonText}>Edit</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          {!isDarkTheme ? (
+            <View style={styles.lightSectionTitleRow}>
+              <GoogleMaterialSymbol
+                color="#1560C8"
+                fallbackName="checklist"
+                name="checklist"
+                size={22}
+              />
+              <Text style={styles.lightSectionTitle}>Selected Drills</Text>
+            </View>
+          ) : null}
+          <View style={!isDarkTheme ? styles.lightPanelCard : undefined}>
+            <View style={styles.selectedHeader}>
+              {isDarkTheme ? <Text style={styles.sectionTitle}>Selected drills</Text> : <View />}
+              <View style={styles.selectedCountBadge}>
+                <Text style={styles.selectedCountBadgeText}>
+                  {exercises.length} / {maxExercisesPerWorkout}
+                </Text>
+              </View>
+            </View>
+
+            {!isDarkTheme ? <View style={styles.lightDivider} /> : null}
+
+            {exercises.length === 0 ? (
+              <View style={styles.emptyState}>
+                <Text style={styles.emptyStateText}>No exercises added yet.</Text>
+              </View>
+            ) : (
+              exercises.map((exercise, index) => (
+                <View key={exercise.id} style={styles.selectedCard}>
+                  <View style={styles.selectedCardTop}>
+                    <View style={styles.selectedIndexBadge}>
+                      <Text style={styles.selectedIndexBadgeText}>{index + 1}</Text>
+                    </View>
+
+                    <View style={styles.selectedCopy}>
+                      <Text style={styles.selectedTitle}>{exercise.title}</Text>
+                      <Text style={styles.selectedDescription}>{exercise.description}</Text>
+                      <View style={styles.selectedMetaRow}>
+                        <GoogleMaterialSymbol
+                          color={theme.colors.primary}
+                          fallbackName="loop"
+                          name="autorenew"
+                          size={15}
+                        />
+                        <Text style={styles.selectedMetaText}>
+                          {formatSelectedExerciseMeta(exercise.target, difficulty)}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <Pressable
+                      onPress={() => handleRemoveExercise(exercise.id)}
+                      style={styles.deleteButton}
+                    >
+                      <GoogleMaterialSymbol
+                        color={theme.colors.textPrimary}
+                        fallbackName="delete-outline"
+                        name="delete"
+                        size={20}
+                      />
+                    </Pressable>
+                  </View>
+                </View>
+              ))
+            )}
+          </View>
         </View>
 
         {workoutErrorMessage ? (
@@ -540,13 +602,15 @@ export function EditWorkoutScreen({
           </View>
         ) : null}
 
-        <View style={styles.actionsRow}>
-          <Pressable onPress={onBackToWorkouts} style={styles.secondaryActionButton}>
-            <Text style={styles.secondaryActionButtonText}>Cancel</Text>
-          </Pressable>
-          <Pressable onPress={handleSaveWorkout} style={styles.primaryActionButton}>
-            <Text style={styles.primaryActionButtonText}>Save</Text>
-          </Pressable>
+        <View style={!isDarkTheme ? styles.lightFooterActions : undefined}>
+          <View style={styles.actionsRow}>
+            <Pressable onPress={onBackToWorkouts} style={styles.secondaryActionButton}>
+              <Text style={styles.secondaryActionButtonText}>Cancel</Text>
+            </Pressable>
+            <Pressable onPress={handleSaveWorkout} style={styles.primaryActionButton}>
+              <Text style={styles.primaryActionButtonText}>Save</Text>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -564,9 +628,31 @@ function getStyles(theme: AppTheme) {
     content: {
       paddingHorizontal: 16,
       paddingTop: 18,
-      paddingBottom: 14,
+      paddingBottom: 24,
       gap: 22,
       backgroundColor: isDarkTheme ? "#141416" : theme.colors.appBackground,
+    },
+    lightTopBar: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingBottom: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: "#CFD8EA",
+      marginBottom: 2,
+    },
+    lightIconButton: {
+      width: 34,
+      height: 34,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    lightTopTitle: {
+      flex: 1,
+      color: "#1560C8",
+      fontSize: 24,
+      fontWeight: "700",
+      marginLeft: 12,
     },
     darkTopBar: {
       flexDirection: "row",
@@ -622,11 +708,16 @@ function getStyles(theme: AppTheme) {
       letterSpacing: isDarkTheme ? -0.8 : 0,
       textTransform: isDarkTheme ? "uppercase" : "none",
     },
+    lightHeaderSupport: {
+      color: "#394B65",
+      fontSize: 15,
+      lineHeight: 22,
+    },
     fieldBlock: {
       gap: 10,
     },
     fieldLabel: {
-      color: isDarkTheme ? "#B8D1D5" : theme.colors.textPrimary,
+      color: isDarkTheme ? "#B8D1D5" : "#5B6D87",
       fontSize: 12,
       fontWeight: "800",
       textTransform: "uppercase",
@@ -634,7 +725,7 @@ function getStyles(theme: AppTheme) {
     },
     textInput: {
       minHeight: 52,
-      borderRadius: 4,
+      borderRadius: isDarkTheme ? 4 : 10,
       borderWidth: 1,
       borderColor: isDarkTheme ? "#42565B" : theme.colors.inputBorder,
       backgroundColor: isDarkTheme ? "#1F1D20" : theme.colors.inputBackground,
@@ -662,42 +753,52 @@ function getStyles(theme: AppTheme) {
     },
     segmentedGroup: {
       flexDirection: "row",
-      borderRadius: 4,
-      borderWidth: 1,
+      borderRadius: isDarkTheme ? 4 : 10,
+      borderWidth: isDarkTheme ? 1 : 0,
       borderColor: isDarkTheme ? "#42565B" : theme.colors.inputBorder,
       overflow: "hidden",
-      backgroundColor: isDarkTheme ? "#1B1A1D" : theme.colors.surface,
+      backgroundColor: isDarkTheme ? "#1B1A1D" : "#ECE7E4",
+      padding: isDarkTheme ? 0 : 4,
+      gap: isDarkTheme ? 0 : 4,
     },
     segmentedButton: {
       flex: 1,
       minHeight: 44,
       alignItems: "center",
       justifyContent: "center",
-      borderRightWidth: 1,
+      borderRightWidth: isDarkTheme ? 1 : 0,
       borderRightColor: isDarkTheme ? "#42565B" : theme.colors.inputBorder,
       backgroundColor: "transparent",
+      borderRadius: isDarkTheme ? 0 : 8,
     },
     segmentedButtonSelected: {
-      backgroundColor: theme.colors.primary,
+      backgroundColor: isDarkTheme ? theme.colors.primary : "#FFFFFF",
+      borderWidth: isDarkTheme ? 0 : 1,
+      borderColor: isDarkTheme ? "transparent" : "#C5D1E5",
+      shadowColor: isDarkTheme ? "transparent" : "#000000",
+      shadowOpacity: isDarkTheme ? 0 : 0.04,
+      shadowRadius: isDarkTheme ? 0 : 4,
+      shadowOffset: isDarkTheme ? undefined : { width: 0, height: 2 },
+      elevation: isDarkTheme ? 0 : 1,
     },
     segmentedButtonText: {
       color: theme.colors.textPrimary,
-      fontSize: 13,
-      fontWeight: "800",
+      fontSize: 14,
+      fontWeight: isDarkTheme ? "800" : "600",
       letterSpacing: 0.8,
     },
     segmentedButtonTextSelected: {
-      color: theme.colors.primaryText,
+      color: isDarkTheme ? theme.colors.primaryText : "#1560C8",
     },
     durationDisplay: {
       minHeight: 44,
-      borderRadius: 4,
+      borderRadius: isDarkTheme ? 4 : 10,
       borderWidth: 1,
       borderStyle: "dashed",
       borderColor: isDarkTheme ? "#58696E" : theme.colors.border,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: isDarkTheme ? "#232125" : theme.colors.surfaceMuted,
+      backgroundColor: isDarkTheme ? "#232125" : "#F6F2EF",
       paddingHorizontal: 12,
     },
     durationDisplayText: {
@@ -713,9 +814,9 @@ function getStyles(theme: AppTheme) {
       gap: 10,
     },
     chipButton: {
-      minHeight: 32,
+      minHeight: isDarkTheme ? 32 : 38,
       paddingHorizontal: 14,
-      borderRadius: 14,
+      borderRadius: isDarkTheme ? 14 : 19,
       borderWidth: 1,
       borderColor: isDarkTheme ? "#56656A" : theme.colors.inputBorder,
       backgroundColor: isDarkTheme ? "#202023" : theme.colors.surface,
@@ -727,7 +828,7 @@ function getStyles(theme: AppTheme) {
       shadowColor: theme.colors.primary,
       shadowOpacity: isDarkTheme ? 0.35 : 0,
       shadowRadius: 8,
-      backgroundColor: isDarkTheme ? "#162A2D" : theme.colors.surface,
+      backgroundColor: isDarkTheme ? "#162A2D" : "#EAF2FF",
       elevation: isDarkTheme ? 3 : 0,
     },
     chipButtonText: {
@@ -747,6 +848,28 @@ function getStyles(theme: AppTheme) {
       fontWeight: "800",
       textTransform: "uppercase",
     },
+    lightSectionTitleRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+    },
+    lightSectionTitle: {
+      color: "#1560C8",
+      fontSize: 22,
+      fontWeight: "700",
+    },
+    lightPanelCard: {
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: "#C5D1E5",
+      backgroundColor: "#FFFFFF",
+      padding: 14,
+      gap: 14,
+    },
+    lightDivider: {
+      height: 1,
+      backgroundColor: "#D9E0EC",
+    },
     sectionToolbar: {
       flexDirection: "row",
       alignItems: "center",
@@ -754,7 +877,7 @@ function getStyles(theme: AppTheme) {
       gap: 12,
     },
     sectionMetaText: {
-      color: theme.colors.textPrimary,
+      color: isDarkTheme ? theme.colors.textPrimary : "#394B65",
       fontSize: 12,
       fontWeight: "500",
       textTransform: "none",
@@ -796,7 +919,7 @@ function getStyles(theme: AppTheme) {
       borderWidth: 1,
       borderColor: isDarkTheme ? "#42565B" : theme.colors.border,
       overflow: "hidden",
-      backgroundColor: isDarkTheme ? "#1E1D20" : theme.colors.card,
+      backgroundColor: isDarkTheme ? "#1E1D20" : "#FBF9F7",
     },
     libraryHeader: {
       flexDirection: "row",
@@ -916,20 +1039,20 @@ function getStyles(theme: AppTheme) {
     selectedCountBadge: {
       minWidth: 90,
       minHeight: 42,
-      borderRadius: 2,
+      borderRadius: isDarkTheme ? 2 : 12,
       borderWidth: 1,
       borderColor: isDarkTheme ? "#56656A" : theme.colors.border,
-      backgroundColor: isDarkTheme ? "#2B2B2F" : theme.colors.surfaceMuted,
+      backgroundColor: isDarkTheme ? "#2B2B2F" : "#F6F2EF",
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 12,
     },
     selectedCountBadgeText: {
       color: theme.colors.primary,
-      fontSize: 17,
-      fontWeight: "500",
-      letterSpacing: 2.2,
-      textTransform: "uppercase",
+      fontSize: isDarkTheme ? 17 : 15,
+      fontWeight: "700",
+      letterSpacing: isDarkTheme ? 2.2 : 0.6,
+      textTransform: isDarkTheme ? "uppercase" : "none",
     },
     emptyState: {
       borderRadius: 8,
@@ -943,10 +1066,10 @@ function getStyles(theme: AppTheme) {
       fontSize: 14,
     },
     selectedCard: {
-      borderRadius: 8,
+      borderRadius: isDarkTheme ? 8 : 12,
       borderWidth: 1,
       borderColor: isDarkTheme ? "#42565B" : theme.colors.border,
-      backgroundColor: isDarkTheme ? "#1E1D20" : theme.colors.card,
+      backgroundColor: isDarkTheme ? "#1E1D20" : "#FBF9F7",
       padding: 16,
     },
     selectedCardTop: {
@@ -1008,13 +1131,17 @@ function getStyles(theme: AppTheme) {
     actionsRow: {
       flexDirection: "row",
       gap: 16,
-      paddingTop: 18,
+      paddingTop: isDarkTheme ? 18 : 0,
+      paddingBottom: 4,
+    },
+    lightFooterActions: {
+      paddingTop: 2,
       paddingBottom: 4,
     },
     secondaryActionButton: {
       flex: 1,
-      minHeight: 58,
-      borderRadius: 4,
+      minHeight: isDarkTheme ? 58 : 52,
+      borderRadius: isDarkTheme ? 4 : 12,
       borderWidth: 1,
       borderColor: isDarkTheme ? "#56656A" : theme.colors.inputBorder,
       backgroundColor: isDarkTheme ? "#1F1D20" : theme.colors.surface,
@@ -1023,15 +1150,15 @@ function getStyles(theme: AppTheme) {
     },
     secondaryActionButtonText: {
       color: theme.colors.textPrimary,
-      fontSize: 18,
+      fontSize: isDarkTheme ? 18 : 16,
       fontWeight: "800",
-      textTransform: "uppercase",
-      letterSpacing: 2,
+      textTransform: isDarkTheme ? "uppercase" : "none",
+      letterSpacing: isDarkTheme ? 2 : 0.3,
     },
     primaryActionButton: {
       flex: 1,
-      minHeight: 58,
-      borderRadius: 4,
+      minHeight: isDarkTheme ? 58 : 52,
+      borderRadius: isDarkTheme ? 4 : 12,
       backgroundColor: theme.colors.primary,
       alignItems: "center",
       justifyContent: "center",
@@ -1041,10 +1168,10 @@ function getStyles(theme: AppTheme) {
     },
     primaryActionButtonText: {
       color: theme.colors.primaryText,
-      fontSize: 18,
+      fontSize: isDarkTheme ? 18 : 16,
       fontWeight: "800",
-      textTransform: "uppercase",
-      letterSpacing: 1.6,
+      textTransform: isDarkTheme ? "uppercase" : "none",
+      letterSpacing: isDarkTheme ? 1.6 : 0.3,
       textAlign: "center",
     },
     missingState: {

@@ -89,7 +89,7 @@ export function WorkoutsScreen({
   const styles = getStyles(theme);
   const isDarkTheme = theme.name === "dark";
   const [libraryWorkouts, setLibraryWorkouts] = useState(workouts);
-  const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(workouts[0]?.id ?? null);
+  const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<
     typeof LIGHT_ALL_FILTER | MockWorkoutDifficulty
   >(LIGHT_ALL_FILTER);
@@ -102,7 +102,7 @@ export function WorkoutsScreen({
 
   useEffect(() => {
     setLibraryWorkouts(workouts);
-    setExpandedWorkoutId(workouts[0]?.id ?? null);
+    setExpandedWorkoutId(null);
   }, [workouts]);
 
   const visibleWorkouts = useMemo(() => {
@@ -602,11 +602,13 @@ export function WorkoutsScreen({
                   <View style={styles.lightInlineMeta}>
                     <GoogleMaterialSymbol
                       color="#516C95"
-                      fallbackName="schedule"
-                      name="schedule"
+                      fallbackName="history"
+                      name="history"
                       size={18}
                     />
-                    <Text style={styles.lightInlineMetaText}>{workout.totalDurationMinutes} min</Text>
+                    <Text style={styles.lightInlineMetaText}>
+                      {formatLastDoneDate(workout.lastDoneDate)}
+                    </Text>
                   </View>
                   <Pressable
                     onPress={() => onStartWorkout(workout.id)}

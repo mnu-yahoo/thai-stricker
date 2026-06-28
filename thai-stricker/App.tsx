@@ -1,7 +1,7 @@
 import { MaterialSymbols_400Regular } from "@expo-google-fonts/material-symbols/400Regular";
 import { useFonts } from "@expo-google-fonts/material-symbols/useFonts";
 import * as DocumentPicker from "expo-document-picker";
-import { File } from "expo-file-system";
+import * as FileSystemLegacy from "expo-file-system/legacy";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
@@ -57,7 +57,7 @@ import {
 type WorkoutFlowState = {
   workoutId: string;
   currentExerciseIndex: number;
-  currentStep: "exercise" | "rest";
+  currentStep: "exercise" | "rest" | "prestart";
   hasStarted: boolean;
   completedExerciseCount: number;
   skippedExerciseCount: number;
@@ -78,6 +78,27 @@ function pickRandomCoachTip(coachTips: MockCoachTip[]) {
   }
 
   return coachTips[Math.floor(Math.random() * coachTips.length)] ?? null;
+}
+
+async function readPickedDocumentText(uri: string) {
+  if (uri.startsWith("content://")) {
+    const cacheDirectory = FileSystemLegacy.cacheDirectory;
+
+    if (!cacheDirectory) {
+      throw new Error("The app cache directory is not available.");
+    }
+
+    const cachedUri = `${cacheDirectory}import-${Date.now()}-${Math.random()
+      .toString(36)
+      .slice(2)}.json`;
+    await FileSystemLegacy.copyAsync({
+      from: uri,
+      to: cachedUri,
+    });
+    return await FileSystemLegacy.readAsStringAsync(cachedUri);
+  }
+
+  return await FileSystemLegacy.readAsStringAsync(uri);
 }
 
 function isDateInSameMonth(dateString: string, referenceDate: Date) {
@@ -412,8 +433,22 @@ export default function App() {
       return {
         ...currentFlow,
         hasStarted: true,
-        currentStep: "exercise",
+        currentStep: "prestart",
         currentExerciseIndex: currentFlow.currentExerciseIndex + 1,
+      };
+    });
+  };
+
+  const handleFinishPrestart = () => {
+    setWorkoutFlow((currentFlow) => {
+      if (!currentFlow) {
+        return currentFlow;
+      }
+
+      return {
+        ...currentFlow,
+        hasStarted: true,
+        currentStep: "exercise",
       };
     });
   };
@@ -600,7 +635,7 @@ export default function App() {
         const result = await DocumentPicker.getDocumentAsync({
           type: ["application/json", "text/json"],
           multiple: true,
-          copyToCacheDirectory: true,
+          copyToCacheDirectory: false,
         });
 
         if (result.canceled) {
@@ -610,8 +645,7 @@ export default function App() {
         const importedWorkoutsFromFiles: WorkoutImportPayload[] = [];
 
         for (const asset of result.assets) {
-          const file = new File(asset.uri);
-          const text = await file.text();
+          const text = await readPickedDocumentText(asset.uri);
           importedWorkoutsFromFiles.push(...parseWorkoutImportText(text, asset.name));
         }
 
@@ -666,6 +700,7 @@ export default function App() {
         onFinishExercise={() => advanceFromExercise(false)}
         onSkipExercise={() => advanceFromExercise(true)}
         onFinishRest={handleFinishRest}
+        onFinishPrestart={handleFinishPrestart}
       />
     );
   } else if (workoutRecap && recapWorkout) {

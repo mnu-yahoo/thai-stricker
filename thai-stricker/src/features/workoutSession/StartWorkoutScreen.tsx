@@ -6,7 +6,8 @@ import { GoogleMaterialSymbol } from "../../components/icons/GoogleMaterialSymbo
 import type { AppTheme } from "../../styles/theme";
 import type { MockWorkout } from "../workouts/workoutMocks";
 
-type WorkoutFlowStep = "exercise" | "rest";
+type WorkoutFlowStep = "exercise" | "rest" | "prestart";
+const PRESTART_SECONDS = 10;
 
 type StartWorkoutScreenProps = {
   theme: AppTheme;
@@ -20,6 +21,7 @@ type StartWorkoutScreenProps = {
   onFinishExercise: () => void;
   onSkipExercise: () => void;
   onFinishRest: () => void;
+  onFinishPrestart: () => void;
 };
 
 function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
@@ -49,6 +51,7 @@ export function StartWorkoutScreen({
   onFinishExercise,
   onSkipExercise,
   onFinishRest,
+  onFinishPrestart,
 }: StartWorkoutScreenProps) {
   const styles = getStyles(theme);
   const isDarkTheme = theme.name === "dark";
@@ -71,6 +74,11 @@ export function StartWorkoutScreen({
 
     if (currentStep === "rest") {
       setRemainingSeconds(restSecondsBetweenExercises);
+      return;
+    }
+
+    if (currentStep === "prestart") {
+      setRemainingSeconds(PRESTART_SECONDS);
       return;
     }
 
@@ -112,37 +120,57 @@ export function StartWorkoutScreen({
     }
   }, [currentStep, hasStarted, remainingSeconds, onFinishRest]);
 
+  useEffect(() => {
+    if (hasStarted && currentStep === "prestart" && remainingSeconds === 0) {
+      onFinishPrestart();
+    }
+  }, [currentStep, hasStarted, remainingSeconds, onFinishPrestart]);
+
   const isRestStep = currentStep === "rest";
+  const isPrestartStep = currentStep === "prestart";
   const heartbeatValue = 142;
-  const phaseLabel = isRestStep ? "Recovery window" : "Active";
-  const headline = isRestStep ? "Rest" : exercise.title;
+  const phaseLabel = isRestStep ? "Recovery window" : isPrestartStep ? "Pre-start" : "Active";
+  const headline = isRestStep ? "Rest" : isPrestartStep ? "Get ready" : exercise.title;
   const summary = isRestStep
     ? `Next: ${nextExercise?.title ?? "Workout complete"}`
-    : exercise.description;
-  const detailLine = isRestStep ? "Catch your breath and get ready." : exercise.help;
+    : isPrestartStep
+      ? `Up next: ${exercise.title}`
+      : exercise.description;
+  const detailLine = isRestStep
+    ? "Catch your breath and get ready."
+    : isPrestartStep
+      ? exercise.description || "Set your stance and prepare to launch the next round."
+      : exercise.help;
   const counterLabel = isRestStep
     ? "Rest remaining"
-    : exercise.target.type === "duration"
-      ? "Time remaining"
-      : "Target";
-  const counterValue = isRestStep
+    : isPrestartStep
+      ? "Starting in"
+      : exercise.target.type === "duration"
+        ? "Time remaining"
+        : "Target";
+  const counterValue = isRestStep || isPrestartStep
     ? formatTimerValue(remainingSeconds ?? 0)
     : exercise.target.type === "duration"
       ? formatTimerValue(remainingSeconds ?? 0)
       : formatTarget(exercise.target).toUpperCase();
-  const lightRepsValue = !isRestStep && exercise.target.type === "reps" ? exercise.target.reps : null;
   const primaryActionLabel = "Done";
-  const primaryAction = isRestStep ? onFinishRest : onFinishExercise;
+  const primaryAction = isRestStep
+    ? onFinishRest
+    : isPrestartStep
+      ? onFinishPrestart
+      : onFinishExercise;
   const showStartState = currentStep === "exercise" && !hasStarted;
   const secondaryActionLabel = showStartState
     ? "Start Workout"
-    : isRestStep
+    : isRestStep || isPrestartStep
       ? "Next"
       : "Skip";
   const secondaryAction = showStartState
     ? onStartWorkout
     : isRestStep
       ? onFinishRest
+      : isPrestartStep
+        ? onFinishPrestart
       : onSkipExercise;
   const activeOverviewIndex = isRestStep
     ? Math.min(currentExerciseIndex + 1, workout.exercises.length - 1)
@@ -153,12 +181,16 @@ export function StartWorkoutScreen({
       return Math.max(0.08, (remainingSeconds ?? restSecondsBetweenExercises) / restSecondsBetweenExercises);
     }
 
+    if (isPrestartStep) {
+      return Math.max(0.08, (remainingSeconds ?? PRESTART_SECONDS) / PRESTART_SECONDS);
+    }
+
     if (exercise.target.type === "duration") {
       return Math.max(0.08, (remainingSeconds ?? exercise.target.seconds) / exercise.target.seconds);
     }
 
     return 0.75;
-  }, [exercise.target, isRestStep, remainingSeconds, restSecondsBetweenExercises]);
+  }, [exercise.target, isPrestartStep, isRestStep, remainingSeconds, restSecondsBetweenExercises]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -388,50 +420,22 @@ export function StartWorkoutScreen({
                   color="#8B6200"
                   fallbackName="info-outline"
                   name="info"
-                  size={24}
+                  size={22}
                 />
                 <Text style={styles.lightExerciseHelp}>{detailLine}</Text>
               </View>
             </View>
 
-            <View style={styles.lightTimerWrap}>
-              <View style={styles.lightTimerRingOuter}>
-                <View
-                  style={[
-                    styles.lightTimerRingAccent,
-                    isRestStep ? styles.lightTimerRingAccentRest : undefined,
-                    { transform: [{ rotate: `${timerProgress * 290}deg` }] },
-                  ]}
-                />
-                <View style={styles.lightTimerRingInner}>
-                  <Text style={styles.lightTimerLabel}>{counterLabel.toUpperCase()}</Text>
-                  {lightRepsValue !== null ? (
-                    <View style={styles.lightRepsValueStack}>
-                      <Text style={styles.lightRepsValueNumber}>{lightRepsValue}</Text>
-                      <Text style={styles.lightRepsValueUnit}>REPS</Text>
-                    </View>
-                  ) : (
-                    <Text style={styles.lightTimerValue}>{counterValue}</Text>
-                  )}
-                </View>
+            <View style={styles.lightTimerShell}>
+              <View style={styles.lightTimerPanel}>
+                <Text style={styles.lightTimerLabel}>{counterLabel.toUpperCase()}</Text>
+                <Text style={styles.lightTimerValue}>{counterValue}</Text>
               </View>
             </View>
 
-            <View style={styles.lightOverviewSection}>
-              <Pressable
-                onPress={() => setShowOverview((currentValue) => !currentValue)}
-                style={styles.lightOverviewToggle}
-              >
-                <Text style={styles.lightOverviewTitle}>Workout Overview</Text>
-                <GoogleMaterialSymbol
-                  color="#111111"
-                  fallbackName={showOverview ? "expand-less" : "expand-more"}
-                  name={showOverview ? "expand_less" : "expand_more"}
-                  size={24}
-                />
-              </Pressable>
-
-              {showOverview ? (
+            {showOverview ? (
+              <View style={styles.lightOverviewSection}>
+                <Text style={styles.lightOverviewLink}>View workout overview</Text>
                 <View style={styles.lightOverviewList}>
                   {workout.exercises.map((workoutExercise, index) => {
                     const isActiveExercise = index === activeOverviewIndex;
@@ -469,62 +473,86 @@ export function StartWorkoutScreen({
                     );
                   })}
                 </View>
-              ) : null}
-            </View>
+              </View>
+            ) : null}
 
-            <View style={styles.lightActionsStack}>
-              <View style={styles.lightBottomActionRow}>
+            <View style={styles.lightFooterSection}>
+              <Pressable onPress={onCancelWorkout} style={styles.lightCancelLinkButton}>
+                <Text style={styles.lightCancelLinkText}>Cancel</Text>
+              </Pressable>
+
+              <View style={styles.lightBottomRail}>
+                <Pressable
+                  onPress={() => setShowOverview((currentValue) => !currentValue)}
+                  style={[
+                    styles.lightRailCard,
+                    showOverview ? styles.lightRailCardActive : undefined,
+                  ]}
+                >
+                  <GoogleMaterialSymbol
+                    color={showOverview ? "#1560C8" : "#5F6A7F"}
+                    fallbackName="grid-view"
+                    name="grid_view"
+                    size={22}
+                  />
+                  <Text
+                    style={[
+                      styles.lightRailCardText,
+                      showOverview ? styles.lightRailCardTextActive : undefined,
+                    ]}
+                  >
+                    Overview
+                  </Text>
+                </Pressable>
+
+                <Pressable
+                  onPress={showStartState ? onStartWorkout : secondaryAction}
+                  style={[
+                    styles.lightRailCard,
+                    showStartState ? styles.lightRailCardPrimary : undefined,
+                  ]}
+                >
+                  <GoogleMaterialSymbol
+                    color={showStartState ? "#FFFFFF" : "#243B5E"}
+                    fallbackName={showStartState ? "play-arrow" : "skip-next"}
+                    name={showStartState ? "play_arrow" : "skip_next"}
+                    size={22}
+                  />
+                  <Text
+                    style={[
+                      styles.lightRailCardText,
+                      showStartState ? styles.lightRailCardPrimaryText : undefined,
+                    ]}
+                  >
+                    {showStartState ? "Start Workout" : isRestStep || isPrestartStep ? "Next" : "Skip"}
+                  </Text>
+                </Pressable>
+
                 <Pressable
                   disabled={showStartState}
                   onPress={primaryAction}
                   style={[
-                    styles.lightGhostAction,
-                    showStartState ? styles.lightGhostActionDisabled : undefined,
+                    styles.lightRailCard,
+                    styles.lightRailCardPrimary,
+                    showStartState ? styles.lightRailCardPrimaryDisabled : undefined,
                   ]}
                 >
                   <GoogleMaterialSymbol
-                    color={showStartState ? "#8EB6E9" : "#6D9FDE"}
+                    color={showStartState ? "#A7B0B4" : "#FFFFFF"}
                     fallbackName="check-circle"
                     name="check_circle"
                     size={22}
                   />
                   <Text
                     style={[
-                      styles.lightGhostActionText,
-                      showStartState ? styles.lightGhostActionTextDisabled : undefined,
+                      styles.lightRailCardPrimaryText,
+                      showStartState ? styles.lightRailCardPrimaryTextDisabled : undefined,
                     ]}
                   >
                     {primaryActionLabel}
                   </Text>
                 </Pressable>
-
-                <Pressable
-                  onPress={showStartState ? onStartWorkout : secondaryAction}
-                  style={[styles.lightMutedAction, styles.lightMutedActionStart]}
-                >
-                  <GoogleMaterialSymbol
-                    color="#FFFFFF"
-                    fallbackName={showStartState ? "play-arrow" : "skip-next"}
-                    name={showStartState ? "play_arrow" : "skip_next"}
-                    size={22}
-                  />
-                  <Text
-                    style={[styles.lightMutedActionText, styles.lightMutedActionTextStart]}
-                  >
-                    {showStartState ? "Start" : isRestStep ? "Next" : "Skip"}
-                  </Text>
-                </Pressable>
               </View>
-
-              <Pressable onPress={onCancelWorkout} style={styles.lightCancelButton}>
-                <GoogleMaterialSymbol
-                  color="#D00000"
-                  fallbackName="cancel"
-                  name="cancel"
-                  size={24}
-                />
-                <Text style={styles.lightCancelButtonText}>Cancel Workout</Text>
-              </Pressable>
             </View>
           </>
         )}
@@ -890,8 +918,9 @@ function getStyles(theme: AppTheme) {
       borderRadius: 14,
       borderWidth: 1,
       borderColor: "#DDD8D4",
-      padding: 20,
-      gap: 16,
+      paddingHorizontal: 18,
+      paddingVertical: 16,
+      gap: 12,
       shadowColor: "#395A88",
       shadowOpacity: 0.05,
       shadowRadius: 10,
@@ -907,8 +936,8 @@ function getStyles(theme: AppTheme) {
     lightExerciseTitle: {
       flex: 1,
       color: "#1560C8",
-      fontSize: 24,
-      lineHeight: 34,
+      fontSize: 22,
+      lineHeight: 30,
       fontWeight: "800",
     },
     lightPhaseBadge: {
@@ -926,117 +955,70 @@ function getStyles(theme: AppTheme) {
     },
     lightExerciseSummary: {
       color: "#24406A",
-      fontSize: 16,
-      lineHeight: 24,
+      fontSize: 15,
+      lineHeight: 22,
       fontStyle: "italic",
     },
     lightHelpPanel: {
       flexDirection: "row",
-      alignItems: "flex-start",
-      gap: 12,
-      borderRadius: 6,
-      borderWidth: 1,
-      borderColor: "#BEC9DA",
-      backgroundColor: "#FAF9F8",
-      paddingHorizontal: 16,
-      paddingVertical: 16,
+      alignItems: "center",
+      gap: 10,
+      paddingTop: 2,
     },
     lightExerciseHelp: {
       flex: 1,
       color: "#374457",
-      fontSize: 16,
-      lineHeight: 26,
+      fontSize: 15,
+      lineHeight: 22,
     },
-    lightTimerWrap: {
-      alignItems: "center",
-      marginTop: 8,
-      marginBottom: 6,
+    lightTimerShell: {
+      marginTop: 10,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: "#D9E2EF",
+      padding: 16,
+      backgroundColor: "#F4EFEA",
     },
-    lightTimerRingOuter: {
-      width: 280,
-      height: 280,
-      borderRadius: 140,
-      borderWidth: 10,
-      borderColor: "#ECE7E3",
-      alignItems: "center",
-      justifyContent: "center",
-      position: "relative",
-      overflow: "hidden",
-    },
-    lightTimerRingAccent: {
-      position: "absolute",
-      width: 10,
-      height: 140,
-      top: 0,
-      backgroundColor: "#1560C8",
-      transformOrigin: "bottom center",
-    },
-    lightTimerRingAccentRest: {
-      backgroundColor: "#6D9FDE",
-    },
-    lightTimerRingInner: {
-      width: 230,
-      height: 230,
-      borderRadius: 115,
-      backgroundColor: "#F7F3F0",
+    lightTimerPanel: {
+      minHeight: 170,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: "#C8D5E8",
+      backgroundColor: "#FFFFFF",
       alignItems: "center",
       justifyContent: "center",
-      gap: 8,
-      zIndex: 1,
+      paddingHorizontal: 18,
+      paddingVertical: 24,
+      gap: 12,
     },
     lightTimerLabel: {
-      color: "#6B7384",
+      color: "#1560C8",
       fontSize: 16,
-      fontWeight: "500",
+      fontWeight: "700",
       letterSpacing: 3,
       textTransform: "uppercase",
     },
     lightTimerValue: {
-      color: "#151515",
+      color: "#1560C8",
       fontSize: 64,
       fontWeight: "900",
-      letterSpacing: -2,
-    },
-    lightRepsValueStack: {
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 0,
-      minHeight: 118,
-    },
-    lightRepsValueNumber: {
-      color: "#151515",
-      fontSize: 60,
-      fontWeight: "900",
-      letterSpacing: -2,
-      lineHeight: 64,
       textAlign: "center",
-    },
-    lightRepsValueUnit: {
-      color: "#151515",
-      fontSize: 50,
-      fontWeight: "900",
-      letterSpacing: -1,
-      lineHeight: 56,
-      textAlign: "center",
+      letterSpacing: -3,
+      textTransform: "uppercase",
+      textShadowColor: "rgba(21, 96, 200, 0.12)",
+      textShadowRadius: 10,
     },
     lightOverviewSection: {
-      gap: 10,
+      gap: 12,
+      marginTop: 2,
     },
-    lightOverviewToggle: {
-      minHeight: 73,
-      borderRadius: 14,
-      borderWidth: 1,
-      borderColor: "#DDD8D4",
-      backgroundColor: "#FFFFFF",
-      paddingHorizontal: 20,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-    },
-    lightOverviewTitle: {
-      color: "#151515",
-      fontSize: 22,
-      fontWeight: "700",
+    lightOverviewLink: {
+      color: "#6B7384",
+      fontSize: 12,
+      fontWeight: "600",
+      textAlign: "center",
+      textTransform: "uppercase",
+      letterSpacing: 1.4,
     },
     lightOverviewList: {
       gap: 10,
@@ -1086,76 +1068,65 @@ function getStyles(theme: AppTheme) {
       letterSpacing: 0.8,
       textTransform: "uppercase",
     },
-    lightActionsStack: {
-      gap: 14,
-      marginTop: 8,
+    lightFooterSection: {
+      gap: 10,
+      paddingBottom: 8,
+      marginTop: 4,
     },
-    lightBottomActionRow: {
+    lightBottomRail: {
       flexDirection: "row",
-      gap: 14,
+      gap: 12,
     },
-    lightGhostAction: {
+    lightRailCard: {
       flex: 1,
-      minHeight: 65,
-      borderRadius: 12,
-      borderWidth: 2,
-      borderColor: "#7CA9E2",
+      minHeight: 82,
+      borderRadius: 14,
+      borderWidth: 1,
+      borderColor: "#C8D5E8",
       backgroundColor: "#FFFFFF",
-      flexDirection: "row",
       alignItems: "center",
       justifyContent: "center",
-      gap: 10,
+      gap: 8,
     },
-    lightGhostActionDisabled: {
-      borderColor: "#A8C8EF",
-      backgroundColor: "#FFFFFF",
+    lightRailCardPrimary: {
+      backgroundColor: "#1560C8",
+      borderColor: "#1560C8",
     },
-    lightGhostActionText: {
-      color: "#7CA9E2",
-      fontSize: 18,
-      fontWeight: "700",
+    lightRailCardPrimaryDisabled: {
+      backgroundColor: "#B8C0CC",
+      borderColor: "#B8C0CC",
     },
-    lightGhostActionTextDisabled: {
-      color: "#A8C8EF",
+    lightRailCardActive: {
+      borderColor: "#1560C8",
+      backgroundColor: "#EAF2FF",
     },
-    lightMutedAction: {
-      flex: 1,
-      minHeight: 65,
-      borderRadius: 12,
-      backgroundColor: "#E7E2DF",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
-      gap: 10,
-    },
-    lightMutedActionStart: {
-      backgroundColor: "#2A73E2",
-      shadowColor: "#2A73E2",
-      shadowOpacity: 0.14,
-      shadowRadius: 10,
-      shadowOffset: { width: 0, height: 4 },
-      elevation: 2,
-    },
-    lightMutedActionText: {
-      color: "#384657",
-      fontSize: 18,
+    lightRailCardText: {
+      color: "#5F6A7F",
+      fontSize: 13,
       fontWeight: "500",
+      textAlign: "center",
     },
-    lightMutedActionTextStart: {
+    lightRailCardTextActive: {
+      color: "#1560C8",
+    },
+    lightRailCardPrimaryText: {
       color: "#FFFFFF",
-      fontWeight: "700",
-    },
-    lightCancelButton: {
-      alignSelf: "center",
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 10,
-      paddingVertical: 4,
-    },
-    lightCancelButtonText: {
-      color: "#D00000",
-      fontSize: 18,
+      fontSize: 13,
       fontWeight: "500",
+      textAlign: "center",
+    },
+    lightRailCardPrimaryTextDisabled: {
+      color: "#F3F5F8",
+    },
+    lightCancelLinkButton: {
+      alignSelf: "center",
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+    },
+    lightCancelLinkText: {
+      color: "#D00000",
+      fontSize: 13,
+      fontWeight: "700",
     },
   });
 }
