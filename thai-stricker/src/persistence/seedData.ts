@@ -1,12 +1,10 @@
 import { mockCoachTips } from "../features/aiCoach/coachTipsMocks";
 import {
-  mockCalendarWorkoutDays,
-  mockMonthlySummary,
   type MockCalendarWorkoutDay,
   type MockMonthlySummary,
 } from "../features/home/homeMocks";
 import { type MockWeeklyWorkoutPlan } from "../features/plannedWorkouts/plannedWorkoutMocks";
-import { mockWorkoutLogs } from "../features/workoutLogging/workoutLogMocks";
+import { type MockWorkoutLogEntry } from "../features/workoutLogging/workoutLogMocks";
 import {
   mockWorkouts,
   type MockExercise,
@@ -39,7 +37,7 @@ export const seedSettings: SeedSettings = {
   maxExercisesPerWorkout: 10,
   numberOfExercisesPerPage: 6,
   defaultRepsExerciseDurationMinutes: 3,
-  themePreference: "Dark",
+  themePreference: "Light",
 };
 
 type ImportedWorkoutSeed = {
@@ -168,16 +166,21 @@ function buildAvailableExercises(workouts: MockWorkout[]) {
 }
 
 export const importedWorkouts = buildImportedWorkouts();
-export const seedWorkouts = [...mockWorkouts, ...importedWorkouts];
-export const seedAvailableExercises = buildAvailableExercises(seedWorkouts);
+export const seedWorkouts: MockWorkout[] = [];
+export const seedAvailableExercises: MockAvailableExercise[] = [];
+const emptyMonthlySummary: MockMonthlySummary = {
+  completedWorkouts: 0,
+  plannedWorkouts: 0,
+  missedWorkouts: 0,
+};
 
 export const seedData = {
   availableExercises: seedAvailableExercises,
   workouts: seedWorkouts,
   weeklyWorkoutPlans: [] as MockWeeklyWorkoutPlan[],
-  workoutLogs: mockWorkoutLogs,
+  workoutLogs: [] as MockWorkoutLogEntry[],
   coachTips: mockCoachTips,
-  calendarWorkoutDays: mockCalendarWorkoutDays as MockCalendarWorkoutDay[],
-  monthlySummary: mockMonthlySummary as MockMonthlySummary,
+  calendarWorkoutDays: [] as MockCalendarWorkoutDay[],
+  monthlySummary: emptyMonthlySummary as MockMonthlySummary,
   settings: seedSettings,
 };

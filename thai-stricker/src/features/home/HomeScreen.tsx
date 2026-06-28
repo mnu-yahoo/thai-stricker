@@ -1,5 +1,5 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Alert,
   ImageBackground,
@@ -27,19 +27,22 @@ const WEEKDAY_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 const LIGHT_WEEKDAY_LABELS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 const HERO_IMAGE_URI =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD3C5SDrHOXybW_s5ltu_w7y9f3GD1p4EqUBQ1pc2of6ewG7U9wEwWsJae_KVvSFfNSOmta4dlvbm6MWYCTC6UyJO0B4q4RFm4H-UAcHu4Iqi-pu4QJrrvt3UfWBVGTYlAb-Zv6S6YEQ2ruDMSFxRQXYeyJAkgojkw17GI1XVaentlU4Dcg6A9GwlEQZXareWGIu361fNtyrcNyoyhCNyA1cOVVMkyoT6NC-lXpHr1V2tCdBrPHbgrkaJykY4vvt972cISslWZNFg0";
-const LIGHT_ACTIVITY_GRID = [
-  [3, 1, 3, 2, 0, 3, 2],
-  [0, 3, 3, 3, 2, 3, 0],
-  [1, 3, 1, 3, 2, 3, 3],
-  [2, 3, 2, 0, 3, 3, 1],
-];
-
 type CalendarDay = {
   key: string;
   dayNumber: number;
   date: string;
   status?: MockWorkoutStatus;
   isSunday: boolean;
+};
+
+type MonthlyDashboardMetrics = {
+  summary: MockMonthlySummary;
+  totalDurationMinutes: number;
+  totalCompletedExercises: number;
+  totalCalories: number;
+  consistencyRate: number;
+  activityBarHeights: number[];
+  heatmapValues: number[][];
 };
 
 type HomeScreenProps = {
@@ -82,6 +85,121 @@ function formatMonthYear(date: Date) {
     month: "long",
     year: "numeric",
   });
+}
+
+function formatMonthLabel(date: Date) {
+  return date.toLocaleDateString("en-US", {
+    month: "long",
+  });
+}
+
+function isSameMonth(dateString: string, referenceDate: Date) {
+  const monthKey = `${referenceDate.getFullYear()}-${`${referenceDate.getMonth() + 1}`.padStart(2, "0")}`;
+  return dateString.startsWith(monthKey);
+}
+
+function buildMonthlyDashboardMetrics(
+  referenceDate: Date,
+  workoutLogs: MockWorkoutLogEntry[],
+  weeklyWorkoutPlans: MockWeeklyWorkoutPlan[],
+  calendarWorkoutDays: MockCalendarWorkoutDay[],
+): MonthlyDashboardMetrics {
+  const todayDate = formatLocalDate(referenceDate);
+  const monthLogs = workoutLogs.filter((entry) => isSameMonth(entry.completedDate, referenceDate));
+  const totalDurationMinutes = monthLogs.reduce(
+    (total, entry) => total + entry.totalDurationMinutes,
+    0,
+  );
+  const totalCompletedExercises = monthLogs.reduce(
+    (total, entry) => total + entry.completedExerciseCount,
+    0,
+  );
+  const totalCalories = monthLogs.reduce(
+    (total, entry) => total + entry.totalDurationMinutes * 12,
+    0,
+  );
+
+  const completedDates = new Set(monthLogs.map((entry) => entry.completedDate));
+  const plannedDates = new Set(
+    weeklyWorkoutPlans
+      .flatMap((plan) => plan.plannedDays)
+      .filter((plannedDay) => isSameMonth(plannedDay.dayDate, referenceDate))
+      .map((plannedDay) => plannedDay.dayDate),
+  );
+  const explicitPlannedDates = new Set(
+    calendarWorkoutDays
+      .filter((entry) => entry.status === "planned" && isSameMonth(entry.date, referenceDate))
+      .map((entry) => entry.date),
+  );
+  const missedDates = new Set(
+    calendarWorkoutDays
+      .filter((entry) => entry.status === "missed" && isSameMonth(entry.date, referenceDate))
+      .map((entry) => entry.date),
+  );
+
+  const futurePlannedDates = new Set(
+    [...plannedDates, ...explicitPlannedDates].filter(
+      (date) => !completedDates.has(date) && !missedDates.has(date),
+    ),
+  );
+
+  const elapsedScheduledDates = new Set(
+    [...plannedDates, ...missedDates, ...completedDates].filter((date) => date <= todayDate),
+  );
+  const consistencyRate =
+    elapsedScheduledDates.size > 0
+      ? Math.round((completedDates.size / elapsedScheduledDates.size) * 100)
+      : completedDates.size > 0
+        ? 100
+        : 0;
+
+  const activityBarTotals = Array.from({ length: 7 }, (_, index) => {
+    const dayDate = formatLocalDate(addDays(referenceDate, index - 6));
+    return workoutLogs
+      .filter((entry) => entry.completedDate === dayDate)
+      .reduce((total, entry) => total + entry.totalDurationMinutes, 0);
+  });
+  const maxActivityBarTotal = Math.max(...activityBarTotals, 1);
+  const activityBarHeights = activityBarTotals.map((total) => total / maxActivityBarTotal);
+
+  const heatmapValues = Array.from({ length: 4 }, (_, rowIndex) =>
+    Array.from({ length: 7 }, (_, columnIndex) => {
+      const dayOffset = rowIndex * 7 + columnIndex;
+      const dayDate = formatLocalDate(addDays(referenceDate, dayOffset - 27));
+      const dayDurationMinutes = workoutLogs
+        .filter((entry) => entry.completedDate === dayDate)
+        .reduce((total, entry) => total + entry.totalDurationMinutes, 0);
+      const dayStatus = calendarWorkoutDays.find((entry) => entry.date === dayDate)?.status;
+
+      if (dayDurationMinutes >= 45) {
+        return 3;
+      }
+
+      if (dayDurationMinutes > 0) {
+        return 2;
+      }
+
+      if (dayStatus === "planned" || dayStatus === "missed" || plannedDates.has(dayDate)) {
+        return 1;
+      }
+
+      return 0;
+    }),
+  );
+
+  return {
+    summary: {
+      completedWorkouts: monthLogs.length,
+      plannedWorkouts: futurePlannedDates.size,
+      missedWorkouts: missedDates.size,
+    },
+    totalDurationMinutes,
+    totalCompletedExercises,
+    totalCalories,
+    consistencyRate,
+    activityBarHeights,
+    heatmapValues,
+  };
 }
 
 function buildWorkoutStatusByDate(
@@ -196,10 +314,11 @@ export function HomeScreen({
   const [selectedWeekStartDate, setSelectedWeekStartDate] = useState(() =>
     getStartOfWeekMonday(new Date()),
   );
+  const today = new Date();
   const weekDays = buildWeekDays(selectedWeekStartDate, workoutLogs, calendarWorkoutDays);
   const displayedMonthLabel = formatMonthYear(addDays(selectedWeekStartDate, 6));
-
-  const todayDate = formatLocalDate(new Date());
+  const activityMonthLabel = formatMonthLabel(today);
+  const todayDate = formatLocalDate(today);
   const todayPlannedDay = weeklyWorkoutPlans
     .flatMap((plan) => plan.plannedDays)
     .find((plannedDay) => plannedDay.dayDate === todayDate);
@@ -207,13 +326,24 @@ export function HomeScreen({
     ? workouts.find((workout) => workout.id === todayPlannedDay.workoutId) ?? null
     : null;
   const featuredWorkout = todayPlannedWorkout ?? workouts[0] ?? null;
-  const monthlyCalories = monthlySummary.completedWorkouts * 350;
-  const dashboardSessions = 18;
-  const dashboardHours = 24.5;
+  const dashboardMetrics = useMemo(
+    () =>
+      buildMonthlyDashboardMetrics(today, workoutLogs, weeklyWorkoutPlans, calendarWorkoutDays),
+    [calendarWorkoutDays, todayDate, weeklyWorkoutPlans, workoutLogs],
+  );
+  const effectiveMonthlySummary =
+    dashboardMetrics.summary.completedWorkouts > 0 ||
+    dashboardMetrics.summary.plannedWorkouts > 0 ||
+    dashboardMetrics.summary.missedWorkouts > 0
+      ? dashboardMetrics.summary
+      : monthlySummary;
+  const monthlyCalories = dashboardMetrics.totalCalories;
+  const dashboardSessions = effectiveMonthlySummary.completedWorkouts;
+  const dashboardHours = (dashboardMetrics.totalDurationMinutes / 60).toFixed(1);
   const lightSessionCalories = featuredWorkout ? featuredWorkout.totalDurationMinutes * 12 : 0;
-  const lightConsistency = 84;
-  const lightAverageHeartRate = 155;
-  const lightTotalRounds = 142;
+  const lightConsistency = dashboardMetrics.consistencyRate;
+  const lightTotalWorkouts = effectiveMonthlySummary.completedWorkouts;
+  const lightTotalHours = (dashboardMetrics.totalDurationMinutes / 60).toFixed(1);
 
   const handleStartPlannedOrRandomWorkout = () => {
     if (todayPlannedWorkout) {
@@ -336,12 +466,12 @@ export function HomeScreen({
                 {monthlyCalories.toLocaleString()} <Text style={styles.monthlyUnit}>KCAL</Text>
               </Text>
               <View style={styles.activityBars}>
-                {[0.24, 0.38, 0.9, 0.3, 0.46, 1, 0.42].map((height, index) => (
+                {dashboardMetrics.activityBarHeights.map((height, index) => (
                   <View
                     key={`activity-${index}`}
                     style={[
                       styles.activityBar,
-                      index === 2 || index === 5 ? styles.activityBarActive : undefined,
+                      height > 0 ? styles.activityBarActive : undefined,
                       { height: 22 + height * 26 },
                     ]}
                   />
@@ -599,11 +729,11 @@ export function HomeScreen({
             </View>
 
             <View style={styles.lightSection}>
-              <Text style={styles.lightSectionTitle}>October Activity</Text>
+              <Text style={styles.lightSectionTitle}>{activityMonthLabel} Activity</Text>
               <View style={styles.lightActivityRow}>
                 <View style={styles.lightConsistencyCard}>
                   <View style={styles.lightHeatmapGrid}>
-                    {LIGHT_ACTIVITY_GRID.map((row, rowIndex) =>
+                    {dashboardMetrics.heatmapValues.map((row, rowIndex) =>
                       row.map((value, columnIndex) => (
                         <View
                           key={`heat-${rowIndex}-${columnIndex}`}
@@ -626,13 +756,13 @@ export function HomeScreen({
 
                 <View style={styles.lightStatsColumn}>
                   <View style={styles.lightStatCard}>
-                    <Text style={styles.lightStatLabel}>Total Rounds</Text>
-                    <Text style={styles.lightStatValue}>{lightTotalRounds}</Text>
+                    <Text style={styles.lightStatLabel}>Total Workouts</Text>
+                    <Text style={styles.lightStatValue}>{lightTotalWorkouts}</Text>
                   </View>
                   <View style={styles.lightStatCard}>
-                    <Text style={styles.lightStatLabel}>Avg. HR</Text>
+                    <Text style={styles.lightStatLabel}>Total Hours</Text>
                     <Text style={styles.lightStatValue}>
-                      {lightAverageHeartRate} <Text style={styles.lightStatUnit}>bpm</Text>
+                      {lightTotalHours} <Text style={styles.lightStatUnit}>hrs</Text>
                     </Text>
                   </View>
                 </View>

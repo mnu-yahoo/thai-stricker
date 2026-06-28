@@ -34,6 +34,8 @@ type SettingsScreenProps = {
   ) => void;
   themePreference: ThemePreferenceOption;
   onThemePreferenceChange: (value: ThemePreferenceOption) => void;
+  onResetWorkoutsAndExercises: () => void;
+  onImportWorkouts: () => void;
   theme: AppTheme;
 };
 
@@ -133,6 +135,8 @@ export function SettingsScreen({
   onDefaultRepsExerciseDurationMinutesChange,
   themePreference,
   onThemePreferenceChange,
+  onResetWorkoutsAndExercises,
+  onImportWorkouts,
   theme,
 }: SettingsScreenProps) {
   const styles = getStyles(theme);
@@ -415,6 +419,30 @@ export function SettingsScreen({
                 Settings are stored locally on this device and persist across app reloads.
               </Text>
             </View>
+
+            <View style={styles.card}>
+              <View style={styles.cardHeader}>
+                <Text style={styles.cardTitle}>DB Section</Text>
+                <GoogleMaterialSymbol
+                  color={theme.colors.primary}
+                  fallbackName="dataset"
+                  name="dataset"
+                  size={18}
+                />
+              </View>
+
+              <Text style={styles.settingHint}>
+                Manage local SQLite workout data and import workout JSON files from the device.
+              </Text>
+
+              <Pressable onPress={onImportWorkouts} style={styles.dbPrimaryButton}>
+                <Text style={styles.dbPrimaryButtonText}>Import Workouts</Text>
+              </Pressable>
+
+              <Pressable onPress={onResetWorkoutsAndExercises} style={styles.dbDangerButton}>
+                <Text style={styles.dbDangerButtonText}>Reset Workouts and Exercises</Text>
+              </Pressable>
+            </View>
           </>
         ) : (
           <>
@@ -635,6 +663,39 @@ export function SettingsScreen({
               </View>
             </View>
 
+            <View style={styles.lightSection}>
+              <View style={styles.lightSectionTitleRow}>
+                <GoogleMaterialSymbol
+                  color="#1560C8"
+                  fallbackName="dataset"
+                  name="dataset"
+                  size={22}
+                />
+                <Text style={styles.lightSectionTitle}>DB Section</Text>
+              </View>
+
+              <View style={styles.lightPanelCard}>
+                <Text style={styles.lightSettingHint}>
+                  Import local workout JSON files or clear all workouts and exercises from SQLite.
+                </Text>
+
+                <View style={styles.lightDbActions}>
+                  <Pressable onPress={onImportWorkouts} style={styles.lightPrimaryButton}>
+                    <Text style={styles.lightPrimaryButtonText}>Import Workouts</Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={onResetWorkoutsAndExercises}
+                    style={styles.lightDangerButton}
+                  >
+                    <Text style={styles.lightDangerButtonText}>
+                      Reset Workouts and Exercises
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+
           </>
         )}
       </ScrollView>
@@ -809,6 +870,39 @@ function getStyles(theme: AppTheme) {
       color: theme.colors.textSecondary,
       fontSize: 14,
       lineHeight: 21,
+    },
+    dbPrimaryButton: {
+      minHeight: 46,
+      borderRadius: 12,
+      backgroundColor: theme.colors.primary,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 16,
+    },
+    dbPrimaryButtonText: {
+      color: theme.colors.primaryText,
+      fontSize: 14,
+      fontWeight: "800",
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+    },
+    dbDangerButton: {
+      minHeight: 46,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: theme.colors.danger,
+      backgroundColor: isDarkTheme ? "#24191C" : theme.colors.surfaceMuted,
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 16,
+    },
+    dbDangerButtonText: {
+      color: theme.colors.danger,
+      fontSize: 14,
+      fontWeight: "800",
+      textTransform: "uppercase",
+      letterSpacing: 0.8,
+      textAlign: "center",
     },
     lightTopBar: {
       flexDirection: "row",
@@ -987,6 +1081,39 @@ function getStyles(theme: AppTheme) {
       borderColor: "#C5D1E5",
       backgroundColor: "#FFFFFF",
       padding: 14,
+      gap: 14,
+    },
+    lightDbActions: {
+      gap: 12,
+    },
+    lightPrimaryButton: {
+      minHeight: 48,
+      borderRadius: 12,
+      backgroundColor: "#1560C8",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 14,
+    },
+    lightPrimaryButtonText: {
+      color: "#FFFFFF",
+      fontSize: 15,
+      fontWeight: "700",
+    },
+    lightDangerButton: {
+      minHeight: 48,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: "#D34A4A",
+      backgroundColor: "#FFF3F1",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingHorizontal: 14,
+    },
+    lightDangerButtonText: {
+      color: "#B33535",
+      fontSize: 15,
+      fontWeight: "700",
+      textAlign: "center",
     },
     lightToggleRow: {
       flexDirection: "row",

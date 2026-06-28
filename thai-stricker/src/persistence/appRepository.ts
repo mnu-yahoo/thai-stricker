@@ -22,10 +22,12 @@ import type {
   MockExercise,
   MockExerciseTarget,
   MockWorkout,
+  MockWorkoutCategory,
+  MockWorkoutDifficulty,
 } from "../features/workouts/workoutMocks";
-import { seedData } from "./seedData";
+import { seedAvailableExercises, seedData } from "./seedData";
 
-const CURRENT_SEED_VERSION = 2;
+const CURRENT_SEED_VERSION = 8;
 
 type ExerciseRow = {
   id: string;
@@ -133,6 +135,20 @@ export type AppDataSnapshot = {
   settings: PersistedSettings;
 };
 
+export type WorkoutImportPayload = {
+  title: string;
+  description: string;
+  difficulty: MockWorkoutDifficulty;
+  category: MockWorkoutCategory;
+  restSecondsBetweenExercises: number;
+  exercises: Array<{
+    title: string;
+    description: string;
+    help: string;
+    target: MockExerciseTarget;
+  }>;
+};
+
 let databasePromise: Promise<SQLiteDatabase> | null = null;
 
 function getDatabase() {
@@ -156,6 +172,75 @@ function serializeJson(value: unknown) {
 function parseJsonArray(value: string) {
   const parsed = JSON.parse(value);
   return Array.isArray(parsed) ? parsed : [];
+}
+
+function calculateWorkoutTotalDurationMinutes(
+  exercises: MockExercise[],
+  restSecondsBetweenExercises: number,
+  defaultRepsExerciseDurationMinutes: number,
+) {
+  const exerciseDurationTotalSeconds = exercises.reduce((totalSeconds, exercise) => {
+    if (exercise.target.type === "duration") {
+      return totalSeconds + exercise.target.seconds;
+    }
+
+    return totalSeconds + defaultRepsExerciseDurationMinutes * 60;
+  }, 0);
+
+  const restTotalSeconds = Math.max(exercises.length - 1, 0) * restSecondsBetweenExercises;
+
+  return Math.ceil((exerciseDurationTotalSeconds + restTotalSeconds) / 60);
+}
+
+function getExerciseDeduplicationKey(
+  exercise: Pick<MockExercise, "title" | "description" | "help" | "target">,
+) {
+  const targetKey =
+    exercise.target.type === "duration"
+      ? `duration:${exercise.target.seconds}`
+      : `reps:${exercise.target.reps}`;
+
+  return [
+    exercise.title.trim().toLowerCase(),
+    exercise.description.trim().toLowerCase(),
+    exercise.help.trim().toLowerCase(),
+    targetKey,
+  ].join("|");
+}
+
+function buildAvailableExercisesFromWorkouts(workouts: MockWorkout[]) {
+  const deduplicatedExercises = new Map<string, MockAvailableExercise>();
+
+  workouts.forEach((workout) => {
+    workout.exercises.forEach((exercise) => {
+      const key = getExerciseDeduplicationKey(exercise);
+
+      if (deduplicatedExercises.has(key)) {
+        return;
+      }
+
+      deduplicatedExercises.set(key, {
+        id: `available-${deduplicatedExercises.size + 1}`,
+        title: exercise.title,
+        description: exercise.description,
+        help: exercise.help,
+        target: exercise.target,
+      });
+    });
+  });
+
+  return Array.from(deduplicatedExercises.values());
+}
+
+function getHighestNumericSuffix(values: string[], prefix: string) {
+  return values.reduce((highestValue, value) => {
+    if (!value.startsWith(prefix)) {
+      return highestValue;
+    }
+
+    const numericPart = Number(value.slice(prefix.length));
+    return Number.isFinite(numericPart) ? Math.max(highestValue, numericPart) : highestValue;
+  }, 0);
 }
 
 async function createTables(db: SQLiteDatabase) {
@@ -513,6 +598,92 @@ async function migrateToSeedVersion2(db: SQLiteDatabase) {
   });
 }
 
+async function upsertSeedWorkouts(txn: SQLiteDatabase) {
+  await txn.runAsync("DELETE FROM exercises WHERE id LIKE 'available-%'");
+  await txn.runAsync("DELETE FROM workout_exercises");
+  await txn.runAsync("DELETE FROM workouts");
+
+  for (const exercise of seedAvailableExercises) {
+    await insertSeedExercise(txn, exercise);
+  }
+
+  for (const workout of seedData.workouts) {
+    await insertSeedWorkout(txn, workout);
+  }
+}
+
+async function migrateToSeedVersion3(db: SQLiteDatabase) {
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await upsertSeedWorkouts(txn);
+  });
+}
+
+async function migrateToSeedVersion4(db: SQLiteDatabase) {
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("DELETE FROM planned_workout_days");
+    await txn.runAsync("DELETE FROM planned_workouts");
+    await txn.runAsync("DELETE FROM workout_logs");
+    await txn.runAsync("DELETE FROM workout_exercises");
+    await txn.runAsync("DELETE FROM workouts");
+    await txn.runAsync("DELETE FROM calendar_day_statuses");
+    await txn.runAsync("DELETE FROM monthly_summaries");
+    await txn.runAsync(
+      `
+        INSERT INTO monthly_summaries (id, completed_workouts, planned_workouts, missed_workouts)
+        VALUES (1, 0, 0, 0)
+      `,
+    );
+  });
+}
+
+async function migrateToSeedVersion5(db: SQLiteDatabase) {
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await upsertSeedWorkouts(txn);
+  });
+}
+
+async function migrateToSeedVersion6(db: SQLiteDatabase) {
+  await db.runAsync(
+    `
+      INSERT INTO settings (key, value)
+      VALUES (?, ?)
+      ON CONFLICT(key) DO UPDATE SET value = excluded.value
+    `,
+    "themePreference",
+    "Light",
+  );
+}
+
+async function migrateToSeedVersion7(db: SQLiteDatabase) {
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("DELETE FROM exercises WHERE id LIKE 'available-%'");
+    await txn.runAsync("DELETE FROM planned_workout_days");
+    await txn.runAsync("DELETE FROM planned_workouts");
+    await txn.runAsync("DELETE FROM workout_logs");
+    await txn.runAsync("DELETE FROM workout_exercises");
+    await txn.runAsync("DELETE FROM workouts");
+    await txn.runAsync("DELETE FROM calendar_day_statuses");
+    await txn.runAsync("DELETE FROM monthly_summaries");
+
+    for (const exercise of seedAvailableExercises) {
+      await insertSeedExercise(txn, exercise);
+    }
+
+    await txn.runAsync(
+      `
+        INSERT INTO monthly_summaries (id, completed_workouts, planned_workouts, missed_workouts)
+        VALUES (1, 0, 0, 0)
+      `,
+    );
+  });
+}
+
+async function migrateToSeedVersion8(db: SQLiteDatabase) {
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("DELETE FROM exercises");
+  });
+}
+
 export async function initializeDatabase() {
   const db = await getDatabase();
   await createTables(db);
@@ -523,6 +694,30 @@ export async function initializeDatabase() {
   } else if (currentSeedVersion < CURRENT_SEED_VERSION) {
     if (currentSeedVersion < 2) {
       await migrateToSeedVersion2(db);
+    }
+
+    if (currentSeedVersion < 3) {
+      await migrateToSeedVersion3(db);
+    }
+
+    if (currentSeedVersion < 4) {
+      await migrateToSeedVersion4(db);
+    }
+
+    if (currentSeedVersion < 5) {
+      await migrateToSeedVersion5(db);
+    }
+
+    if (currentSeedVersion < 6) {
+      await migrateToSeedVersion6(db);
+    }
+
+    if (currentSeedVersion < 7) {
+      await migrateToSeedVersion7(db);
+    }
+
+    if (currentSeedVersion < 8) {
+      await migrateToSeedVersion8(db);
     }
 
     await setSeedVersion(db, CURRENT_SEED_VERSION);
@@ -825,6 +1020,26 @@ export async function saveSetting<K extends keyof SettingsValueMap>(
   );
 }
 
+export async function resetWorkoutsAndExercises() {
+  const db = await initializeDatabase();
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("DELETE FROM planned_workout_days");
+    await txn.runAsync("DELETE FROM planned_workouts");
+    await txn.runAsync("DELETE FROM workout_logs");
+    await txn.runAsync("DELETE FROM workout_exercises");
+    await txn.runAsync("DELETE FROM workouts");
+    await txn.runAsync("DELETE FROM exercises");
+    await txn.runAsync("DELETE FROM calendar_day_statuses");
+    await txn.runAsync("DELETE FROM monthly_summaries");
+    await txn.runAsync(
+      `
+        INSERT INTO monthly_summaries (id, completed_workouts, planned_workouts, missed_workouts)
+        VALUES (1, 0, 0, 0)
+      `,
+    );
+  });
+}
+
 export async function addAvailableExercise(exercise: MockAvailableExercise) {
   const db = await initializeDatabase();
   const targetValue =
@@ -862,6 +1077,99 @@ export async function updateAvailableExercise(exercise: MockAvailableExercise) {
     targetValue,
     exercise.id,
   );
+}
+
+export async function importWorkouts(
+  importedWorkouts: WorkoutImportPayload[],
+  defaultRepsExerciseDurationMinutes: number,
+) {
+  const db = await initializeDatabase();
+  const existingWorkoutIds = await db.getAllAsync<{ id: string }>("SELECT id FROM workouts");
+  const existingExerciseIds = await db.getAllAsync<{ id: string }>("SELECT id FROM exercises");
+
+  let nextWorkoutNumber =
+    getHighestNumericSuffix(
+      existingWorkoutIds.map((row) => row.id),
+      "workout-",
+    ) + 1;
+  let nextExerciseNumber =
+    getHighestNumericSuffix(
+      existingExerciseIds.map((row) => row.id),
+      "exercise-",
+    ) + 1;
+
+  const workoutsToInsert = importedWorkouts.map((workout) => {
+    const exercises = workout.exercises.map(
+      (exercise): MockExercise => ({
+        id: `exercise-${String(nextExerciseNumber++).padStart(3, "0")}`,
+        title: exercise.title.trim(),
+        description: exercise.description.trim(),
+        help: exercise.help.trim(),
+        target: exercise.target,
+      }),
+    );
+
+    return {
+      id: `workout-${String(nextWorkoutNumber++).padStart(3, "0")}`,
+      title: workout.title.trim(),
+      description: workout.description.trim(),
+      difficulty: workout.difficulty,
+      category: workout.category,
+      totalDurationMinutes: calculateWorkoutTotalDurationMinutes(
+        exercises,
+        workout.restSecondsBetweenExercises,
+        defaultRepsExerciseDurationMinutes,
+      ),
+      restSecondsBetweenExercises: workout.restSecondsBetweenExercises,
+      exercises,
+    } satisfies MockWorkout;
+  });
+
+  const availableExercisesToInsert = buildAvailableExercisesFromWorkouts(workoutsToInsert);
+
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    for (const exercise of availableExercisesToInsert) {
+      await txn.runAsync(
+        `
+          INSERT INTO exercises (id, title, description, help, target_type, target_value)
+          VALUES (?, ?, ?, ?, ?, ?)
+        `,
+        exercise.id,
+        exercise.title,
+        exercise.description,
+        exercise.help,
+        exercise.target.type,
+        exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps,
+      );
+    }
+
+    for (const workout of workoutsToInsert) {
+      await txn.runAsync(
+        `
+          INSERT INTO workouts (
+            id,
+            title,
+            description,
+            difficulty,
+            category,
+            total_duration_minutes,
+            rest_seconds_between_exercises,
+            last_done_date
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+        workout.id,
+        workout.title,
+        workout.description,
+        workout.difficulty,
+        workout.category,
+        workout.totalDurationMinutes,
+        workout.restSecondsBetweenExercises,
+        null,
+      );
+
+      await replaceWorkoutExercises(txn, workout);
+    }
+  });
 }
 
 async function replaceWorkoutExercises(txn: SQLiteDatabase, workout: MockWorkout) {

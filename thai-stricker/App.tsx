@@ -1,5 +1,7 @@
 import { MaterialSymbols_400Regular } from "@expo-google-fonts/material-symbols/400Regular";
 import { useFonts } from "@expo-google-fonts/material-symbols/useFonts";
+import * as DocumentPicker from "expo-document-picker";
+import { File } from "expo-file-system";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
@@ -30,15 +32,23 @@ import { type MockWorkoutLogEntry } from "./src/features/workoutLogging/workoutL
 import { AddWorkoutScreen } from "./src/features/workouts/AddWorkoutScreen";
 import { EditWorkoutScreen } from "./src/features/workouts/EditWorkoutScreen";
 import { WorkoutsScreen } from "./src/features/workouts/WorkoutsScreen";
-import { type MockWorkout } from "./src/features/workouts/workoutMocks";
+import {
+  MOCK_WORKOUT_CATEGORIES,
+  MOCK_WORKOUT_DIFFICULTIES,
+  type MockWorkout,
+} from "./src/features/workouts/workoutMocks";
 import {
   addAvailableExercise,
   addWorkout,
   addWorkoutLog,
   deleteWorkout,
+  type AppDataSnapshot,
+  importWorkouts,
   loadAppData,
+  resetWorkoutsAndExercises,
   saveSetting,
   saveWeeklyPlan,
+  type WorkoutImportPayload,
   updateAvailableExercise,
   updateWorkout,
   updateWorkoutLastDoneDate,
@@ -70,6 +80,105 @@ function pickRandomCoachTip(coachTips: MockCoachTip[]) {
   return coachTips[Math.floor(Math.random() * coachTips.length)] ?? null;
 }
 
+function isDateInSameMonth(dateString: string, referenceDate: Date) {
+  const monthKey = `${referenceDate.getFullYear()}-${`${referenceDate.getMonth() + 1}`.padStart(2, "0")}`;
+  return dateString.startsWith(monthKey);
+}
+
+async function confirmAction(title: string, message: string) {
+  return await new Promise<boolean>((resolve) => {
+    Alert.alert(title, message, [
+      {
+        text: "Cancel",
+        style: "cancel",
+        onPress: () => resolve(false),
+      },
+      {
+        text: "Confirm",
+        style: "destructive",
+        onPress: () => resolve(true),
+      },
+    ]);
+  });
+}
+
+function isValidWorkoutImportPayload(value: unknown): value is WorkoutImportPayload {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const workout = value as Partial<WorkoutImportPayload>;
+
+  if (
+    typeof workout.title !== "string" ||
+    typeof workout.description !== "string" ||
+    !MOCK_WORKOUT_DIFFICULTIES.includes(workout.difficulty as MockWorkout["difficulty"]) ||
+    !MOCK_WORKOUT_CATEGORIES.includes(workout.category as MockWorkout["category"]) ||
+    typeof workout.restSecondsBetweenExercises !== "number" ||
+    !Number.isInteger(workout.restSecondsBetweenExercises) ||
+    workout.restSecondsBetweenExercises <= 0 ||
+    !Array.isArray(workout.exercises) ||
+    workout.exercises.length < 1
+  ) {
+    return false;
+  }
+
+  return workout.exercises.every((exercise) => {
+    if (!exercise || typeof exercise !== "object") {
+      return false;
+    }
+
+    const typedExercise = exercise as WorkoutImportPayload["exercises"][number];
+
+    if (
+      typeof typedExercise.title !== "string" ||
+      typeof typedExercise.description !== "string" ||
+      typeof typedExercise.help !== "string" ||
+      !typedExercise.target ||
+      typeof typedExercise.target !== "object"
+    ) {
+      return false;
+    }
+
+    if (typedExercise.target.type === "duration") {
+      return (
+        typeof typedExercise.target.seconds === "number" &&
+        Number.isInteger(typedExercise.target.seconds) &&
+        typedExercise.target.seconds > 0
+      );
+    }
+
+    if (typedExercise.target.type === "reps") {
+      return (
+        typeof typedExercise.target.reps === "number" &&
+        Number.isInteger(typedExercise.target.reps) &&
+        typedExercise.target.reps > 0
+      );
+    }
+
+    return false;
+  });
+}
+
+function parseWorkoutImportText(text: string, sourceName: string) {
+  const parsed = JSON.parse(text) as unknown;
+  const parsedArray = Array.isArray(parsed) ? parsed : [parsed];
+
+  if (parsedArray.length < 1) {
+    throw new Error(`${sourceName} does not contain any workouts.`);
+  }
+
+  const workouts = parsedArray.map((entry, index) => {
+    if (!isValidWorkoutImportPayload(entry)) {
+      throw new Error(`Invalid workout format in ${sourceName} at item ${index + 1}.`);
+    }
+
+    return entry;
+  });
+
+  return workouts;
+}
+
 export default function App() {
   const [fontsLoaded] = useFonts({
     MaterialSymbols_400Regular,
@@ -86,7 +195,7 @@ export default function App() {
     useState<NumberOfExercisesPerPageOption>(6);
   const [defaultRepsExerciseDurationMinutes, setDefaultRepsExerciseDurationMinutes] =
     useState<DefaultRepsExerciseDurationOption>(3);
-  const [themePreference, setThemePreference] = useState<ThemePreferenceOption>("Dark");
+  const [themePreference, setThemePreference] = useState<ThemePreferenceOption>("Light");
   const [availableExercises, setAvailableExercises] = useState<MockAvailableExercise[]>([]);
   const [workouts, setWorkouts] = useState<MockWorkout[]>([]);
   const [workoutsView, setWorkoutsView] = useState<WorkoutsViewState>("list");
@@ -104,6 +213,26 @@ export default function App() {
   const [homeCoachTip, setHomeCoachTip] = useState<MockCoachTip | null>(null);
   const [aiCoachVisitKey, setAiCoachVisitKey] = useState(0);
 
+  const applySnapshot = (snapshot: AppDataSnapshot) => {
+    setRestSecondsBetweenExercises(snapshot.settings.restSecondsBetweenExercises);
+    setTrainingDaysPerWeek(snapshot.settings.trainingDaysPerWeek);
+    setMaxExercisesPerWorkout(snapshot.settings.maxExercisesPerWorkout);
+    setNumberOfExercisesPerPage(snapshot.settings.numberOfExercisesPerPage);
+    setDefaultRepsExerciseDurationMinutes(snapshot.settings.defaultRepsExerciseDurationMinutes);
+    setThemePreference(snapshot.settings.themePreference);
+    setAvailableExercises(snapshot.availableExercises);
+    setWorkouts(snapshot.workouts);
+    setWorkoutLogs(snapshot.workoutLogs);
+    setWeeklyWorkoutPlans(snapshot.weeklyWorkoutPlans);
+    setCoachTips(snapshot.coachTips);
+    setCalendarWorkoutDays(snapshot.calendarWorkoutDays);
+    setMonthlySummary(snapshot.monthlySummary);
+    const nextCoachTip = pickRandomCoachTip(snapshot.coachTips);
+    if (nextCoachTip) {
+      setHomeCoachTip(nextCoachTip);
+    }
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -115,22 +244,7 @@ export default function App() {
           return;
         }
 
-        setRestSecondsBetweenExercises(snapshot.settings.restSecondsBetweenExercises);
-        setTrainingDaysPerWeek(snapshot.settings.trainingDaysPerWeek);
-        setMaxExercisesPerWorkout(snapshot.settings.maxExercisesPerWorkout);
-        setNumberOfExercisesPerPage(snapshot.settings.numberOfExercisesPerPage);
-        setDefaultRepsExerciseDurationMinutes(
-          snapshot.settings.defaultRepsExerciseDurationMinutes,
-        );
-        setThemePreference(snapshot.settings.themePreference);
-        setAvailableExercises(snapshot.availableExercises);
-        setWorkouts(snapshot.workouts);
-        setWorkoutLogs(snapshot.workoutLogs);
-        setWeeklyWorkoutPlans(snapshot.weeklyWorkoutPlans);
-        setCoachTips(snapshot.coachTips);
-        setCalendarWorkoutDays(snapshot.calendarWorkoutDays);
-        setMonthlySummary(snapshot.monthlySummary);
-        setHomeCoachTip(pickRandomCoachTip(snapshot.coachTips));
+        applySnapshot(snapshot);
         setIsAppReady(true);
       } catch (error) {
         console.error("Failed to initialize local SQLite data", error);
@@ -229,6 +343,16 @@ export default function App() {
     };
 
     setWorkoutLogs((currentLogs) => [nextLog, ...currentLogs]);
+    setMonthlySummary((currentSummary) => {
+      if (!isDateInSameMonth(completionDate, new Date())) {
+        return currentSummary;
+      }
+
+      return {
+        ...currentSummary,
+        completedWorkouts: currentSummary.completedWorkouts + 1,
+      };
+    });
     setWorkoutFlow(null);
     setWorkoutRecap({
       workoutId: flow.workoutId,
@@ -447,6 +571,82 @@ export default function App() {
     void saveSetting("themePreference", value);
   };
 
+  const handleResetWorkoutsAndExercises = () => {
+    void (async () => {
+      const confirmed = await confirmAction(
+        "Reset workouts and exercises?",
+        "This will permanently delete all workouts and exercises stored in SQLite on this device.",
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      try {
+        await resetWorkoutsAndExercises();
+        const snapshot = await loadAppData();
+        applySnapshot(snapshot);
+        Alert.alert("Database reset", "All workouts and exercises were deleted successfully.");
+      } catch (error) {
+        console.error("Failed to reset workouts and exercises", error);
+        Alert.alert("Reset failed", "The app could not clear the local workout database.");
+      }
+    })();
+  };
+
+  const handleImportWorkouts = () => {
+    void (async () => {
+      try {
+        const result = await DocumentPicker.getDocumentAsync({
+          type: ["application/json", "text/json"],
+          multiple: true,
+          copyToCacheDirectory: true,
+        });
+
+        if (result.canceled) {
+          return;
+        }
+
+        const importedWorkoutsFromFiles: WorkoutImportPayload[] = [];
+
+        for (const asset of result.assets) {
+          const file = new File(asset.uri);
+          const text = await file.text();
+          importedWorkoutsFromFiles.push(...parseWorkoutImportText(text, asset.name));
+        }
+
+        const confirmed = await confirmAction(
+          "Import workouts?",
+          `Import ${importedWorkoutsFromFiles.length} workout${
+            importedWorkoutsFromFiles.length === 1 ? "" : "s"
+          } from ${result.assets.length} JSON file${result.assets.length === 1 ? "" : "s"} into SQLite?`,
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        await importWorkouts(
+          importedWorkoutsFromFiles,
+          defaultRepsExerciseDurationMinutes,
+        );
+        const snapshot = await loadAppData();
+        applySnapshot(snapshot);
+        Alert.alert(
+          "Import complete",
+          `${importedWorkoutsFromFiles.length} workout${
+            importedWorkoutsFromFiles.length === 1 ? "" : "s"
+          } imported successfully.`,
+        );
+      } catch (error) {
+        console.error("Failed to import workouts", error);
+        const message =
+          error instanceof Error ? error.message : "The selected JSON files could not be imported.";
+        Alert.alert("Import failed", message);
+      }
+    })();
+  };
+
   const shouldHideNavbar = Boolean(workoutFlow || workoutRecap);
   const theme = getTheme(themePreference);
 
@@ -572,6 +772,8 @@ export default function App() {
         onDefaultRepsExerciseDurationMinutesChange={handleDefaultRepsDurationChange}
         themePreference={themePreference}
         onThemePreferenceChange={handleThemePreferenceChange}
+        onResetWorkoutsAndExercises={handleResetWorkoutsAndExercises}
+        onImportWorkouts={handleImportWorkouts}
       />
     );
   }

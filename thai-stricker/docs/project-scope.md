@@ -413,6 +413,39 @@ Not implemented:
 - Payments
 - Public user accounts
 
+## Private Android Deployment
+
+Thai Stricker is deployed privately as an Android APK.
+
+Deployment target:
+- Personal Android device only
+
+Build type:
+- APK
+
+Not used:
+- Google Play Store
+- Android App Bundle for store release
+- iOS build
+- Public distribution
+
+Developer commands:
+
+```powershell
+npm install -g eas-cli
+eas login
+eas build:configure
+eas build --platform android --profile preview-apk
+```
+
+After the APK is built:
+
+```powershell
+adb install path/to/thai-stricker.apk
+```
+
+Or manually copy the APK to the Android phone and install it after allowing installation from unknown sources.
+
 ## Rule
 
 Do not implement features unless they are explicitly approved in this file.

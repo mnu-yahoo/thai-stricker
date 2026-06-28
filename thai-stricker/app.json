@@ -10,14 +10,19 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "android": {
+      "icon": "./assets/icon.png",
       "package": "com.personal.thaistricker",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#140705",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
+        "backgroundImage": "./assets/android-icon-background.png"
       },
       "predictiveBackGestureEnabled": false
+    },
+    "extra": {
+      "eas": {
+        "projectId": "c57a77cd-1b19-4e83-9bc9-8b49df1877b4"
+      }
     }
   }
 }
