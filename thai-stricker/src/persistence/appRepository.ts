@@ -1020,7 +1020,7 @@ export async function saveSetting<K extends keyof SettingsValueMap>(
   );
 }
 
-export async function resetWorkoutsAndExercises() {
+export async function deleteAllWorkouts(deleteExercises = false) {
   const db = await initializeDatabase();
   await db.withExclusiveTransactionAsync(async (txn) => {
     await txn.runAsync("DELETE FROM planned_workout_days");
@@ -1028,7 +1028,9 @@ export async function resetWorkoutsAndExercises() {
     await txn.runAsync("DELETE FROM workout_logs");
     await txn.runAsync("DELETE FROM workout_exercises");
     await txn.runAsync("DELETE FROM workouts");
-    await txn.runAsync("DELETE FROM exercises");
+    if (deleteExercises) {
+      await txn.runAsync("DELETE FROM exercises");
+    }
     await txn.runAsync("DELETE FROM calendar_day_statuses");
     await txn.runAsync("DELETE FROM monthly_summaries");
     await txn.runAsync(

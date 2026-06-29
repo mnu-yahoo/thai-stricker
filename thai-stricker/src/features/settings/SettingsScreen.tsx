@@ -440,7 +440,7 @@ export function SettingsScreen({
               </Pressable>
 
               <Pressable onPress={onResetWorkoutsAndExercises} style={styles.dbDangerButton}>
-                <Text style={styles.dbDangerButtonText}>Reset Workouts and Exercises</Text>
+                <Text style={styles.dbDangerButtonText}>Delete Workouts</Text>
               </Pressable>
             </View>
           </>
@@ -676,7 +676,7 @@ export function SettingsScreen({
 
               <View style={styles.lightPanelCard}>
                 <Text style={styles.lightSettingHint}>
-                  Import local workout JSON files or clear all workouts and exercises from SQLite.
+                  Import local workout JSON files or delete workouts from SQLite. You can also choose to delete all exercises after confirmation.
                 </Text>
 
                 <View style={styles.lightDbActions}>
@@ -688,9 +688,7 @@ export function SettingsScreen({
                     onPress={onResetWorkoutsAndExercises}
                     style={styles.lightDangerButton}
                   >
-                    <Text style={styles.lightDangerButtonText}>
-                      Reset Workouts and Exercises
-                    </Text>
+                    <Text style={styles.lightDangerButtonText}>Delete Workouts</Text>
                   </Pressable>
                 </View>
               </View>

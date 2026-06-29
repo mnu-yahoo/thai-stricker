@@ -38,3 +38,5 @@ Android Bundled 91ms index.ts (1 module)
 Android Bundled 86ms index.ts (1 module)
  WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
  ERROR  [ReferenceError: Property 'lightRepsValue' doesn't exist]
+Android Bundled 690ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context

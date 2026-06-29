@@ -19,6 +19,7 @@ type WorkoutsScreenProps = {
   restSecondsBetweenExercises: 15 | 30 | 45 | 60 | 90 | 120;
   workouts: MockWorkout[];
   onStartWorkout: (workoutId: string) => void;
+  onOpenWorkoutDetail: (workoutId: string) => void;
   onOpenAddWorkout: () => void;
   onOpenEditWorkout: (workoutId: string) => void;
   onDeleteWorkout: (workoutId: string) => void;
@@ -82,6 +83,7 @@ export function WorkoutsScreen({
   theme,
   workouts,
   onStartWorkout,
+  onOpenWorkoutDetail,
   onOpenAddWorkout,
   onOpenEditWorkout,
   onDeleteWorkout,
@@ -415,12 +417,12 @@ export function WorkoutsScreen({
               )}
 
               <View style={styles.cardHeader}>
-                <View style={styles.headerCopy}>
+                <Pressable onPress={() => onOpenWorkoutDetail(workout.id)} style={styles.headerCopy}>
                   <Text style={styles.cardTitle}>{workout.title}</Text>
                   <Text style={styles.cardDescription}>
                     {isDarkTheme ? workout.description : buildQuickDescription(workout.description)}
                   </Text>
-                </View>
+                </Pressable>
                 {!isDarkTheme ? null : null}
               </View>
 

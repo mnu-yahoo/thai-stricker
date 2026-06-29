@@ -54,6 +54,7 @@ type HomeScreenProps = {
   calendarWorkoutDays: MockCalendarWorkoutDay[];
   monthlySummary: MockMonthlySummary;
   onStartWorkout: (workoutId: string) => void;
+  onOpenWorkoutDetail: (workoutId: string) => void;
   onOpenAiCoach: () => void;
 };
 
@@ -307,6 +308,7 @@ export function HomeScreen({
   calendarWorkoutDays,
   monthlySummary,
   onStartWorkout,
+  onOpenWorkoutDetail,
   onOpenAiCoach,
 }: HomeScreenProps) {
   const styles = getStyles(theme);
@@ -404,7 +406,13 @@ export function HomeScreen({
             <View style={styles.card}>
               <View style={styles.cardHeader}>
                 <Text style={styles.cardTitle}>Today's Workout</Text>
-                <Text style={styles.linkText}>View routine</Text>
+                {featuredWorkout ? (
+                  <Pressable onPress={() => onOpenWorkoutDetail(featuredWorkout.id)}>
+                    <Text style={styles.linkText}>View routine</Text>
+                  </Pressable>
+                ) : (
+                  <Text style={styles.linkText}>View routine</Text>
+                )}
               </View>
 
               {featuredWorkout ? (

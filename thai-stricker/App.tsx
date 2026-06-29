@@ -31,6 +31,7 @@ import { StartWorkoutScreen } from "./src/features/workoutSession/StartWorkoutSc
 import { type MockWorkoutLogEntry } from "./src/features/workoutLogging/workoutLogMocks";
 import { AddWorkoutScreen } from "./src/features/workouts/AddWorkoutScreen";
 import { EditWorkoutScreen } from "./src/features/workouts/EditWorkoutScreen";
+import { WorkoutDetailScreen } from "./src/features/workouts/WorkoutDetailScreen";
 import { WorkoutsScreen } from "./src/features/workouts/WorkoutsScreen";
 import {
   MOCK_WORKOUT_CATEGORIES,
@@ -41,11 +42,11 @@ import {
   addAvailableExercise,
   addWorkout,
   addWorkoutLog,
+  deleteAllWorkouts,
   deleteWorkout,
   type AppDataSnapshot,
   importWorkouts,
   loadAppData,
-  resetWorkoutsAndExercises,
   saveSetting,
   saveWeeklyPlan,
   type WorkoutImportPayload,
@@ -70,7 +71,11 @@ type WorkoutRecapState = {
   skippedExerciseCount: number;
 };
 
-type WorkoutsViewState = "list" | "add" | { type: "edit"; workoutId: string };
+type WorkoutsViewState =
+  | "list"
+  | "add"
+  | { type: "edit"; workoutId: string }
+  | { type: "detail"; workoutId: string };
 
 function pickRandomCoachTip(coachTips: MockCoachTip[]) {
   if (coachTips.length === 0) {
@@ -506,6 +511,10 @@ export default function App() {
     setWorkoutsView({ type: "edit", workoutId });
   };
 
+  const handleOpenWorkoutDetail = (workoutId: string) => {
+    setWorkoutsView({ type: "detail", workoutId });
+  };
+
   const handleBackToWorkouts = () => {
     setWorkoutsView("list");
   };
@@ -606,25 +615,35 @@ export default function App() {
     void saveSetting("themePreference", value);
   };
 
-  const handleResetWorkoutsAndExercises = () => {
+  const handleDeleteWorkouts = () => {
     void (async () => {
-      const confirmed = await confirmAction(
-        "Reset workouts and exercises?",
-        "This will permanently delete all workouts and exercises stored in SQLite on this device.",
+      const shouldDeleteWorkouts = await confirmAction(
+        "Delete workouts?",
+        "This will permanently delete all workouts stored in SQLite on this device.",
       );
 
-      if (!confirmed) {
+      if (!shouldDeleteWorkouts) {
         return;
       }
 
       try {
-        await resetWorkoutsAndExercises();
+        const shouldDeleteExercises = await confirmAction(
+          "Delete all exercises too?",
+          "Choose Confirm to also delete every exercise from SQLite. Choose Cancel to keep the exercise library.",
+        );
+
+        await deleteAllWorkouts(shouldDeleteExercises);
         const snapshot = await loadAppData();
         applySnapshot(snapshot);
-        Alert.alert("Database reset", "All workouts and exercises were deleted successfully.");
+        Alert.alert(
+          "Delete complete",
+          shouldDeleteExercises
+            ? "All workouts and exercises were deleted successfully."
+            : "All workouts were deleted successfully. Exercises were kept.",
+        );
       } catch (error) {
-        console.error("Failed to reset workouts and exercises", error);
-        Alert.alert("Reset failed", "The app could not clear the local workout database.");
+        console.error("Failed to delete workouts", error);
+        Alert.alert("Delete failed", "The app could not clear the local workout database.");
       }
     })();
   };
@@ -726,6 +745,7 @@ export default function App() {
         calendarWorkoutDays={calendarWorkoutDays}
         monthlySummary={monthlySummary}
         onStartWorkout={handleStartWorkout}
+        onOpenWorkoutDetail={handleOpenWorkoutDetail}
         onOpenAiCoach={() => handleTabPress("AI Coach")}
       />
     );
@@ -743,6 +763,17 @@ export default function App() {
           onUpdateAvailableExercise={handleUpdateAvailableExercise}
           onBackToWorkouts={handleBackToWorkouts}
           onAddWorkout={handleAddWorkout}
+        />
+      ) : typeof workoutsView === "object" && workoutsView.type === "detail" ? (
+        <WorkoutDetailScreen
+          theme={theme}
+          workout={
+            workouts.find((currentWorkout) => currentWorkout.id === workoutsView.workoutId) ??
+            null
+          }
+          onBackToWorkouts={handleBackToWorkouts}
+          onStartWorkout={handleStartWorkout}
+          onOpenEditWorkout={handleOpenEditWorkout}
         />
       ) : typeof workoutsView === "object" && workoutsView.type === "edit" ? (
         <EditWorkoutScreen
@@ -767,6 +798,7 @@ export default function App() {
           restSecondsBetweenExercises={restSecondsBetweenExercises}
           workouts={workouts}
           onStartWorkout={handleStartWorkout}
+          onOpenWorkoutDetail={handleOpenWorkoutDetail}
           onOpenAddWorkout={handleOpenAddWorkout}
           onOpenEditWorkout={handleOpenEditWorkout}
           onDeleteWorkout={handleDeleteWorkout}
@@ -809,7 +841,7 @@ export default function App() {
         onDefaultRepsExerciseDurationMinutesChange={handleDefaultRepsDurationChange}
         themePreference={themePreference}
         onThemePreferenceChange={handleThemePreferenceChange}
-        onResetWorkoutsAndExercises={handleResetWorkoutsAndExercises}
+        onResetWorkoutsAndExercises={handleDeleteWorkouts}
         onImportWorkouts={handleImportWorkouts}
       />
     );

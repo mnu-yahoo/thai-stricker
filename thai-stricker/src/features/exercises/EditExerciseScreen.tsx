@@ -34,6 +34,7 @@ export function EditExerciseScreen({
   onSaveExercise,
 }: EditExerciseScreenProps) {
   const styles = getStyles(theme);
+  const isDarkTheme = theme.name === "dark";
   const [title, setTitle] = useState(exercise.title);
   const [description, setDescription] = useState(exercise.description);
   const [help, setHelp] = useState(exercise.help);
@@ -68,13 +69,19 @@ export function EditExerciseScreen({
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
           <Text style={styles.eyebrow}>Exercise library</Text>
-          <Text style={styles.title}>Edit exercise</Text>
-          <Text style={styles.subtitle}>
-            Update the exercise details used by the mocked available exercise list.
-          </Text>
+          <Text style={styles.title}>{isDarkTheme ? "EDIT EXERCISE" : "Edit Exercise"}</Text>
+          {!isDarkTheme ? (
+            <Text style={styles.subtitle}>
+              Update the drill details so they stay consistent with the workout library.
+            </Text>
+          ) : (
+            <Text style={styles.subtitle}>
+              Update the exercise details used by the mocked available exercise list.
+            </Text>
+          )}
         </View>
 
-        <View style={styles.card}>
+        <View style={!isDarkTheme ? styles.lightPanelCard : styles.card}>
           <Text style={styles.cardTitle}>Editable details</Text>
 
           <View style={styles.fieldGroup}>
@@ -115,7 +122,7 @@ export function EditExerciseScreen({
           </View>
         </View>
 
-        <View style={styles.card}>
+        <View style={!isDarkTheme ? styles.lightPanelCard : styles.card}>
           <Text style={styles.cardTitle}>Read-only target</Text>
           <View style={styles.readOnlyValue}>
             <Text style={styles.readOnlyValueText}>{formatExerciseTarget(exercise)}</Text>
@@ -134,10 +141,10 @@ export function EditExerciseScreen({
 
         <View style={styles.actionsRow}>
           <Pressable onPress={onBackToAddWorkout} style={styles.ghostButton}>
-            <Text style={styles.ghostButtonText}>Back to Add Workout</Text>
+            <Text style={styles.ghostButtonText}>{isDarkTheme ? "Back to Add Workout" : "Cancel"}</Text>
           </Pressable>
           <Pressable onPress={handleSaveExercise} style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Save exercise</Text>
+            <Text style={styles.primaryButtonText}>{isDarkTheme ? "Save exercise" : "Save"}</Text>
           </Pressable>
         </View>
       </ScrollView>
@@ -146,35 +153,38 @@ export function EditExerciseScreen({
 }
 
 function getStyles(theme: AppTheme) {
+  const isDarkTheme = theme.name === "dark";
+
   return StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: theme.colors.appBackground,
+    backgroundColor: isDarkTheme ? theme.colors.appBackground : "#F6F2EF",
   },
   content: {
     paddingHorizontal: 20,
     paddingTop: 18,
-    paddingBottom: 12,
+    paddingBottom: 16,
     gap: 16,
   },
   header: {
     gap: 6,
   },
   eyebrow: {
-    color: theme.colors.accent,
+    color: isDarkTheme ? theme.colors.accent : "#5F6A7F",
     fontSize: 13,
-    fontWeight: "600",
+    fontWeight: isDarkTheme ? "600" : "700",
     textTransform: "uppercase",
-    letterSpacing: 0.4,
+    letterSpacing: isDarkTheme ? 0.4 : 0.8,
   },
   title: {
-    color: theme.colors.textPrimary,
+    color: isDarkTheme ? theme.colors.textPrimary : "#2364D0",
     fontSize: 34,
-    fontWeight: "800",
+    fontWeight: isDarkTheme ? "800" : "700",
+    letterSpacing: isDarkTheme ? 0 : 0.2,
   },
   subtitle: {
-    color: theme.colors.textSecondary,
-    fontSize: 16,
+    color: isDarkTheme ? theme.colors.textSecondary : "#394B65",
+    fontSize: 15,
     lineHeight: 22,
   },
   card: {
@@ -185,58 +195,70 @@ function getStyles(theme: AppTheme) {
     borderWidth: 1,
     borderColor: theme.colors.border,
   },
+  lightPanelCard: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 14,
+    padding: 16,
+    gap: 14,
+    borderWidth: 1,
+    borderColor: "#C5D1E5",
+  },
   cardTitle: {
-    color: theme.colors.textPrimary,
-    fontSize: 20,
+    color: isDarkTheme ? theme.colors.textPrimary : "#2364D0",
+    fontSize: isDarkTheme ? 20 : 22,
     fontWeight: "700",
   },
   fieldGroup: {
     gap: 8,
   },
   fieldLabel: {
-    color: theme.colors.textPrimary,
-    fontSize: 15,
+    color: isDarkTheme ? theme.colors.textPrimary : "#5B6D87",
+    fontSize: isDarkTheme ? 15 : 12,
     fontWeight: "700",
+    textTransform: isDarkTheme ? "none" : "uppercase",
+    letterSpacing: isDarkTheme ? 0 : 1.8,
   },
   textInput: {
     minHeight: 48,
-    borderRadius: 14,
+    borderRadius: isDarkTheme ? 14 : 10,
     borderWidth: 1,
-    borderColor: theme.colors.inputBorder,
-    backgroundColor: theme.colors.inputBackground,
-    paddingHorizontal: 14,
+    borderColor: isDarkTheme ? theme.colors.inputBorder : "#BCC7D9",
+    backgroundColor: isDarkTheme ? theme.colors.inputBackground : "#FFFFFF",
+    paddingHorizontal: 16,
     paddingVertical: 12,
     color: theme.colors.textPrimary,
-    fontSize: 14,
+    fontSize: 16,
   },
   multilineInput: {
     minHeight: 92,
   },
   readOnlyValue: {
     minHeight: 48,
-    borderRadius: 14,
+    borderRadius: isDarkTheme ? 14 : 10,
     borderWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surfaceMuted,
-    paddingHorizontal: 14,
+    borderColor: isDarkTheme ? theme.colors.border : "#BCC7D9",
+    backgroundColor: isDarkTheme ? theme.colors.surfaceMuted : "#F6F2EF",
+    paddingHorizontal: 16,
     alignItems: "flex-start",
     justifyContent: "center",
   },
   readOnlyValueText: {
-    color: theme.colors.textPrimary,
+    color: isDarkTheme ? theme.colors.textPrimary : "#24344D",
     fontSize: 15,
-    fontWeight: "700",
+    fontWeight: isDarkTheme ? "700" : "800",
+    textTransform: isDarkTheme ? "none" : "uppercase",
+    letterSpacing: isDarkTheme ? 0 : 0.6,
   },
   helperText: {
-    color: theme.colors.textSecondary,
+    color: isDarkTheme ? theme.colors.textSecondary : "#516C95",
     fontSize: 13,
     lineHeight: 19,
   },
   errorBox: {
-    borderRadius: 14,
+    borderRadius: isDarkTheme ? 14 : 12,
     borderWidth: 1,
     borderColor: theme.colors.danger,
-    backgroundColor: theme.colors.surfaceMuted,
+    backgroundColor: isDarkTheme ? theme.colors.surfaceMuted : "#FFF4F4",
     padding: 14,
     gap: 4,
   },
@@ -251,33 +273,36 @@ function getStyles(theme: AppTheme) {
     lineHeight: 19,
   },
   actionsRow: {
-    gap: 10,
+    flexDirection: "row",
+    gap: 12,
     paddingBottom: 8,
   },
   ghostButton: {
-    borderRadius: 14,
+    flex: 1,
+    borderRadius: isDarkTheme ? 14 : 12,
     borderWidth: 1,
-    borderColor: theme.colors.inputBorder,
-    minHeight: 50,
+    borderColor: isDarkTheme ? theme.colors.inputBorder : "#D7E0EF",
+    minHeight: isDarkTheme ? 50 : 52,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: theme.colors.surface,
+    backgroundColor: isDarkTheme ? theme.colors.surface : "#FFFFFF",
   },
   ghostButtonText: {
-    color: theme.colors.textSecondary,
-    fontSize: 15,
+    color: isDarkTheme ? theme.colors.textSecondary : "#24344D",
+    fontSize: isDarkTheme ? 15 : 16,
     fontWeight: "700",
   },
   primaryButton: {
-    backgroundColor: theme.colors.primary,
-    borderRadius: 14,
-    minHeight: 50,
+    flex: 1,
+    backgroundColor: isDarkTheme ? theme.colors.primary : "#2364D0",
+    borderRadius: isDarkTheme ? 14 : 12,
+    minHeight: isDarkTheme ? 50 : 52,
     alignItems: "center",
     justifyContent: "center",
   },
   primaryButtonText: {
     color: theme.colors.primaryText,
-    fontSize: 15,
+    fontSize: isDarkTheme ? 15 : 16,
     fontWeight: "700",
   },
 });
