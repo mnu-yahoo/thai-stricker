@@ -22,13 +22,15 @@ export type MockWorkoutCategory =
   | "Striking"
   | "Defense"
   | "Conditioning"
-  | "Footwork";
+  | "Footwork"
+  | "Strength";
 export const MOCK_WORKOUT_CATEGORIES: MockWorkoutCategory[] = [
   "Fundamentals",
   "Striking",
   "Defense",
   "Conditioning",
   "Footwork",
+  "Strength",
 ];
 
 export type MockWorkout = {

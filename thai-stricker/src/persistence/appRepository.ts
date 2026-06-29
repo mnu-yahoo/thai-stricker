@@ -17,6 +17,7 @@ import type {
   ThemePreferenceOption,
   TrainingDayOption,
 } from "../features/settings/SettingsScreen";
+import type { Technique, TechniqueCategory } from "../features/techniques/techniqueMocks";
 import type { MockWorkoutLogEntry } from "../features/workoutLogging/workoutLogMocks";
 import type {
   MockExercise,
@@ -27,15 +28,32 @@ import type {
 } from "../features/workouts/workoutMocks";
 import { seedAvailableExercises, seedData } from "./seedData";
 
-const CURRENT_SEED_VERSION = 8;
+const CURRENT_SEED_VERSION = 12;
 
 type ExerciseRow = {
   id: string;
   title: string;
   description: string;
   help: string;
+  category: string;
+  checksum: string;
   target_type: "duration" | "reps";
   target_value: number;
+};
+
+type TechniqueRow = {
+  id: string;
+  name: string;
+  short_name: string;
+  description: string;
+  category: TechniqueCategory;
+  sub_category: string;
+};
+
+type ExerciseTechniqueRow = {
+  exercise_id: string;
+  technique_id: string;
+  sort_order: number;
 };
 
 type WorkoutRow = {
@@ -208,6 +226,20 @@ function getExerciseDeduplicationKey(
   ].join("|");
 }
 
+function computeExerciseChecksum(
+  exercise: Pick<MockExercise, "title" | "description" | "help" | "target">,
+) {
+  const canonicalValue = getExerciseDeduplicationKey(exercise);
+  let hash = 2166136261;
+
+  for (let index = 0; index < canonicalValue.length; index += 1) {
+    hash ^= canonicalValue.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+
+  return `ex-${(hash >>> 0).toString(16).padStart(8, "0")}`;
+}
+
 function buildAvailableExercisesFromWorkouts(workouts: MockWorkout[]) {
   const deduplicatedExercises = new Map<string, MockAvailableExercise>();
 
@@ -262,8 +294,27 @@ async function createTables(db: SQLiteDatabase) {
       title TEXT NOT NULL,
       description TEXT NOT NULL,
       help TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT '',
+      checksum TEXT NOT NULL DEFAULT '',
       target_type TEXT NOT NULL,
       target_value INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS exercise_techniques (
+      exercise_id TEXT NOT NULL,
+      technique_id TEXT NOT NULL,
+      sort_order INTEGER NOT NULL CHECK (sort_order >= 0 AND sort_order < 5),
+      PRIMARY KEY (exercise_id, sort_order),
+      UNIQUE (exercise_id, technique_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS techniques (
+      id TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      short_name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      category TEXT NOT NULL,
+      sub_category TEXT NOT NULL
     );
 
     CREATE TABLE IF NOT EXISTS workouts (
@@ -379,16 +430,28 @@ async function insertSeedExercise(
 ) {
   const targetValue =
     exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps;
+  const checksum = computeExerciseChecksum(exercise);
 
   await txn.runAsync(
     `
-      INSERT OR IGNORE INTO exercises (id, title, description, help, target_type, target_value)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT OR IGNORE INTO exercises (
+        id,
+        title,
+        description,
+        help,
+        category,
+        checksum,
+        target_type,
+        target_value
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,
     exercise.id,
     exercise.title,
     exercise.description,
     exercise.help,
+    "",
+    checksum,
     exercise.target.type,
     targetValue,
   );
@@ -684,6 +747,99 @@ async function migrateToSeedVersion8(db: SQLiteDatabase) {
   });
 }
 
+async function migrateToSeedVersion9(db: SQLiteDatabase) {
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS techniques (
+      id TEXT PRIMARY KEY NOT NULL,
+      name TEXT NOT NULL,
+      short_name TEXT NOT NULL,
+      description TEXT NOT NULL,
+      category TEXT NOT NULL
+    );
+  `);
+}
+
+async function migrateToSeedVersion10(db: SQLiteDatabase) {
+  const columns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(techniques)");
+  const hasSubCategoryColumn = columns.some((column) => column.name === "sub_category");
+
+  if (hasSubCategoryColumn) {
+    return;
+  }
+
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("ALTER TABLE techniques ADD COLUMN sub_category TEXT NOT NULL DEFAULT ''");
+  });
+}
+
+async function migrateToSeedVersion11(db: SQLiteDatabase) {
+  const exerciseColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(exercises)");
+  const hasExerciseCategoryColumn = exerciseColumns.some((column) => column.name === "category");
+
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS exercise_techniques (
+      exercise_id TEXT NOT NULL,
+      technique_id TEXT NOT NULL,
+      sort_order INTEGER NOT NULL CHECK (sort_order >= 0 AND sort_order < 5),
+      PRIMARY KEY (exercise_id, sort_order),
+      UNIQUE (exercise_id, technique_id)
+    );
+  `);
+
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    if (!hasExerciseCategoryColumn) {
+      await txn.runAsync("ALTER TABLE exercises ADD COLUMN category TEXT NOT NULL DEFAULT ''");
+    }
+
+    // Reset stored workout/exercise content so the local DB matches the new
+    // technique-composition paradigm before any new authoring flow is added.
+    await txn.runAsync("DELETE FROM exercise_techniques");
+    await txn.runAsync("DELETE FROM planned_workout_days");
+    await txn.runAsync("DELETE FROM planned_workouts");
+    await txn.runAsync("DELETE FROM workout_logs");
+    await txn.runAsync("DELETE FROM workout_exercises");
+    await txn.runAsync("DELETE FROM workouts");
+    await txn.runAsync("DELETE FROM exercises");
+    await txn.runAsync("DELETE FROM calendar_day_statuses");
+    await txn.runAsync("DELETE FROM monthly_summaries");
+    await txn.runAsync(
+      `
+        INSERT INTO monthly_summaries (id, completed_workouts, planned_workouts, missed_workouts)
+        VALUES (1, 0, 0, 0)
+      `,
+    );
+  });
+}
+
+async function migrateToSeedVersion12(db: SQLiteDatabase) {
+  const exerciseColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(exercises)");
+  const hasChecksumColumn = exerciseColumns.some((column) => column.name === "checksum");
+
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    if (!hasChecksumColumn) {
+      await txn.runAsync("ALTER TABLE exercises ADD COLUMN checksum TEXT NOT NULL DEFAULT ''");
+    }
+
+    const exercises = await txn.getAllAsync<ExerciseRow>(
+      `
+        SELECT id, title, description, help, category, checksum, target_type, target_value
+        FROM exercises
+      `,
+    );
+
+    for (const exercise of exercises) {
+      const checksum = computeExerciseChecksum({
+        title: exercise.title,
+        description: exercise.description,
+        help: exercise.help,
+        target: toTarget(exercise.target_type, exercise.target_value),
+      });
+
+      await txn.runAsync("UPDATE exercises SET checksum = ? WHERE id = ?", checksum, exercise.id);
+    }
+  });
+}
+
 export async function initializeDatabase() {
   const db = await getDatabase();
   await createTables(db);
@@ -718,6 +874,22 @@ export async function initializeDatabase() {
 
     if (currentSeedVersion < 8) {
       await migrateToSeedVersion8(db);
+    }
+
+    if (currentSeedVersion < 9) {
+      await migrateToSeedVersion9(db);
+    }
+
+    if (currentSeedVersion < 10) {
+      await migrateToSeedVersion10(db);
+    }
+
+    if (currentSeedVersion < 11) {
+      await migrateToSeedVersion11(db);
+    }
+
+    if (currentSeedVersion < 12) {
+      await migrateToSeedVersion12(db);
     }
 
     await setSeedVersion(db, CURRENT_SEED_VERSION);
@@ -757,7 +929,7 @@ async function loadSettings(db: SQLiteDatabase): Promise<PersistedSettings> {
 async function loadAvailableExercises(db: SQLiteDatabase) {
   const rows = await db.getAllAsync<ExerciseRow>(
     `
-      SELECT id, title, description, help, target_type, target_value
+      SELECT id, title, description, help, category, checksum, target_type, target_value
       FROM exercises
       ORDER BY title COLLATE NOCASE ASC
     `,
@@ -770,6 +942,25 @@ async function loadAvailableExercises(db: SQLiteDatabase) {
     help: row.help,
     target: toTarget(row.target_type, row.target_value),
   }));
+}
+
+async function loadTechniques(db: SQLiteDatabase) {
+  const rows = await db.getAllAsync<TechniqueRow>(
+    `
+      SELECT id, name, short_name, description, category, sub_category
+      FROM techniques
+      ORDER BY name COLLATE NOCASE ASC
+    `,
+  );
+
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    shortName: row.short_name,
+    description: row.description,
+    category: row.category,
+    subCategory: row.sub_category,
+  })) satisfies Technique[];
 }
 
 async function loadWorkouts(db: SQLiteDatabase) {
@@ -1020,12 +1211,44 @@ export async function saveSetting<K extends keyof SettingsValueMap>(
   );
 }
 
+export async function loadPersistedTechniques() {
+  const db = await initializeDatabase();
+  return await loadTechniques(db);
+}
+
+export async function importTechniques(techniques: Technique[]) {
+  const db = await initializeDatabase();
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    for (const technique of techniques) {
+      await txn.runAsync(
+        `
+          INSERT INTO techniques (id, name, short_name, description, category, sub_category)
+          VALUES (?, ?, ?, ?, ?, ?)
+          ON CONFLICT(id) DO UPDATE SET
+            name = excluded.name,
+            short_name = excluded.short_name,
+            description = excluded.description,
+            category = excluded.category,
+            sub_category = excluded.sub_category
+        `,
+        technique.id,
+        technique.name,
+        technique.shortName,
+        technique.description,
+        technique.category,
+        technique.subCategory,
+      );
+    }
+  });
+}
+
 export async function deleteAllWorkouts(deleteExercises = false) {
   const db = await initializeDatabase();
   await db.withExclusiveTransactionAsync(async (txn) => {
     await txn.runAsync("DELETE FROM planned_workout_days");
     await txn.runAsync("DELETE FROM planned_workouts");
     await txn.runAsync("DELETE FROM workout_logs");
+    await txn.runAsync("DELETE FROM exercise_techniques");
     await txn.runAsync("DELETE FROM workout_exercises");
     await txn.runAsync("DELETE FROM workouts");
     if (deleteExercises) {
@@ -1042,20 +1265,61 @@ export async function deleteAllWorkouts(deleteExercises = false) {
   });
 }
 
+export async function addTechnique(technique: Technique) {
+  const db = await initializeDatabase();
+  await db.runAsync(
+    `
+      INSERT INTO techniques (id, name, short_name, description, category, sub_category)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `,
+    technique.id,
+    technique.name,
+    technique.shortName,
+    technique.description,
+    technique.category,
+    technique.subCategory,
+  );
+}
+
+export async function updateTechnique(technique: Technique) {
+  const db = await initializeDatabase();
+  await db.runAsync(
+    `
+      UPDATE techniques
+      SET name = ?, short_name = ?, description = ?, category = ?, sub_category = ?
+      WHERE id = ?
+    `,
+    technique.name,
+    technique.shortName,
+    technique.description,
+    technique.category,
+    technique.subCategory,
+    technique.id,
+  );
+}
+
+export async function deleteTechnique(techniqueId: string) {
+  const db = await initializeDatabase();
+  await db.runAsync("DELETE FROM techniques WHERE id = ?", techniqueId);
+}
+
 export async function addAvailableExercise(exercise: MockAvailableExercise) {
   const db = await initializeDatabase();
   const targetValue =
     exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps;
+  const checksum = computeExerciseChecksum(exercise);
 
   await db.runAsync(
     `
-      INSERT INTO exercises (id, title, description, help, target_type, target_value)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO exercises (id, title, description, help, category, checksum, target_type, target_value)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,
     exercise.id,
     exercise.title,
     exercise.description,
     exercise.help,
+    "",
+    checksum,
     exercise.target.type,
     targetValue,
   );
@@ -1065,16 +1329,18 @@ export async function updateAvailableExercise(exercise: MockAvailableExercise) {
   const db = await initializeDatabase();
   const targetValue =
     exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps;
+  const checksum = computeExerciseChecksum(exercise);
 
   await db.runAsync(
     `
       UPDATE exercises
-      SET title = ?, description = ?, help = ?, target_type = ?, target_value = ?
+      SET title = ?, description = ?, help = ?, checksum = ?, target_type = ?, target_value = ?
       WHERE id = ?
     `,
     exercise.title,
     exercise.description,
     exercise.help,
+    checksum,
     exercise.target.type,
     targetValue,
     exercise.id,
@@ -1087,7 +1353,9 @@ export async function importWorkouts(
 ) {
   const db = await initializeDatabase();
   const existingWorkoutIds = await db.getAllAsync<{ id: string }>("SELECT id FROM workouts");
-  const existingExerciseIds = await db.getAllAsync<{ id: string }>("SELECT id FROM exercises");
+  const existingExercises = await db.getAllAsync<{ id: string; checksum: string }>(
+    "SELECT id, checksum FROM exercises",
+  );
 
   let nextWorkoutNumber =
     getHighestNumericSuffix(
@@ -1096,19 +1364,47 @@ export async function importWorkouts(
     ) + 1;
   let nextExerciseNumber =
     getHighestNumericSuffix(
-      existingExerciseIds.map((row) => row.id),
+      existingExercises.map((row) => row.id),
       "exercise-",
     ) + 1;
+  const exerciseIdsByChecksum = new Map(
+    existingExercises
+      .filter((row) => row.checksum.trim().length > 0)
+      .map((row) => [row.checksum, row.id] as const),
+  );
+  const exercisesToInsert = new Map<string, MockExercise>();
 
   const workoutsToInsert = importedWorkouts.map((workout) => {
     const exercises = workout.exercises.map(
-      (exercise): MockExercise => ({
-        id: `exercise-${String(nextExerciseNumber++).padStart(3, "0")}`,
-        title: exercise.title.trim(),
-        description: exercise.description.trim(),
-        help: exercise.help.trim(),
-        target: exercise.target,
-      }),
+      (exercise): MockExercise => {
+        const nextExercise = {
+          id: "",
+          title: exercise.title.trim(),
+          description: exercise.description.trim(),
+          help: exercise.help.trim(),
+          target: exercise.target,
+        } satisfies MockExercise;
+        const checksum = computeExerciseChecksum(nextExercise);
+        const existingExerciseId = exerciseIdsByChecksum.get(checksum);
+
+        if (existingExerciseId) {
+          return {
+            ...nextExercise,
+            id: existingExerciseId,
+          };
+        }
+
+        const newExerciseId = `exercise-${String(nextExerciseNumber++).padStart(3, "0")}`;
+        const exerciseToInsert = {
+          ...nextExercise,
+          id: newExerciseId,
+        } satisfies MockExercise;
+
+        exerciseIdsByChecksum.set(checksum, newExerciseId);
+        exercisesToInsert.set(newExerciseId, exerciseToInsert);
+
+        return exerciseToInsert;
+      },
     );
 
     return {
@@ -1127,19 +1423,29 @@ export async function importWorkouts(
     } satisfies MockWorkout;
   });
 
-  const availableExercisesToInsert = buildAvailableExercisesFromWorkouts(workoutsToInsert);
-
   await db.withExclusiveTransactionAsync(async (txn) => {
-    for (const exercise of availableExercisesToInsert) {
+    for (const exercise of exercisesToInsert.values()) {
+      const checksum = computeExerciseChecksum(exercise);
       await txn.runAsync(
         `
-          INSERT INTO exercises (id, title, description, help, target_type, target_value)
-          VALUES (?, ?, ?, ?, ?, ?)
+          INSERT INTO exercises (
+            id,
+            title,
+            description,
+            help,
+            category,
+            checksum,
+            target_type,
+            target_value
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `,
         exercise.id,
         exercise.title,
         exercise.description,
         exercise.help,
+        "",
+        checksum,
         exercise.target.type,
         exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps,
       );

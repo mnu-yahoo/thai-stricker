@@ -5,38 +5,6 @@
 Starting project at C:\Users\mathieu.nussbaumer\Documents\ThaiStricker\thai-stricker
 Starting Metro Bundler
 
-› Opening exp://192.168.1.26:8081 on SM_G781B
-Expo Go 56.0.1 is recommended for SDK 56.0.0 (SM_G781B is using 54.0.8). Learn more: https://docs.expo.dev/develop/tools/#expo-go. Install the recommended Expo Go version?
-Uninstalling Expo Go from android device SM_G781B.
-- Fetching Expo Go
-- Installing Expo Go on SM_G781B
+› Opening exp://192.168.1.26:8081 on Pixel_5
 Waiting on http://localhost:8081
 Logs for your project will appear below.
-Android Bundled 13484ms index.ts (840 modules)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
-Android Bundled 140ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
- ERROR  Failed to import workouts [Error: Call to function 'FileSystemFile.text' has been rejected.
-→ Caused by: Missing 'READ' permission for accessing the file.]
-Android Bundled 157ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
- ERROR  Failed to import workouts [Error: Call to function 'ExponentFileSystem.readAsStringAsync' has been rejected.
-→ Caused by: java.io.IOException: Location 'file:///data/user/0/host.exp.exponent/cache/DocumentPicker/d81950dd-a60e-4be7-99f0-286cc8587cbe.json' isn't readable.]
- ERROR  Failed to import workouts [Error: Call to function 'ExponentFileSystem.readAsStringAsync' has been rejected.
-→ Caused by: java.io.IOException: Location 'file:///data/user/0/host.exp.exponent/cache/DocumentPicker/867e6355-4c47-4d50-9b7a-459fe347740b.json' isn't readable.]
-Android Bundled 85ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
- ERROR  Failed to import workouts [Error: Call to function 'ExponentFileSystem.readAsStringAsync' has been rejected.
-→ Caused by: java.io.IOException: Unsupported scheme for location 'content://com.android.providers.downloads.documents/document/msf%3A87'.]
-Android Bundled 166ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
- ERROR  Failed to import workouts [Error: fetch failed: Call to function 'NativeRequest.start' has been rejected.
-→ Caused by: The 2nd argument cannot be cast to type class java.net.URL (received class java.lang.String)
-→ Caused by: java.net.MalformedURLException: unknown protocol: content]
-Android Bundled 91ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
-Android Bundled 86ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
- ERROR  [ReferenceError: Property 'lightRepsValue' doesn't exist]
-Android Bundled 690ms index.ts (1 module)
- WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context

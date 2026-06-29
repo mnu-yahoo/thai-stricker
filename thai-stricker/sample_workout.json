@@ -1,0 +1,126 @@
+{
+  "title": "Angle Entry Flow",
+  "description": "A beginner-friendly Thai boxing session focused on clean entries, balance, and simple counters.",
+  "difficulty": "Beginner",
+  "category": "Fundamentals",
+  "restSecondsBetweenExercises": 30,
+  "exercises": [
+    {
+      "title": "Jumping Jacks",
+      "description": "Raise your heart rate and wake up the whole body.",
+      "help": "Start light and stay relaxed through the shoulders.",
+      "target": {
+        "type": "reps",
+        "reps": 30
+      }
+    },
+    {
+      "title": "Shadow Boxing",
+      "description": "Move lightly in stance and rehearse basic punches and kicks.",
+      "help": "Stay loose and let your feet guide the rhythm.",
+      "target": {
+        "type": "duration",
+        "seconds": 60
+      }
+    },
+    {
+      "title": "Jab Cross Return",
+      "description": "Throw a jab-cross and recover quickly back to guard.",
+      "help": "Snap the punches and bring both hands home fast.",
+      "target": {
+        "type": "reps",
+        "reps": 20
+      }
+    },
+    {
+      "title": "Push-Up",
+      "description": "Build upper-body strength and shoulder stability.",
+      "help": "Keep your body straight and control the full range.",
+      "target": {
+        "type": "reps",
+        "reps": 20
+      }
+    },
+    {
+      "title": "Parry to Cross",
+      "description": "Parry the incoming jab and answer immediately with a rear cross.",
+      "help": "Keep the parry small so the counter fires fast.",
+      "target": {
+        "type": "reps",
+        "reps": 15
+      }
+    },
+    {
+      "title": "Teep to Middle Kick",
+      "description": "Use a teep to create space, then step back in with a middle kick.",
+      "help": "Regain balance after the teep before you swing the kick.",
+      "target": {
+        "type": "reps",
+        "reps": 15
+      }
+    },
+    {
+      "title": "Squat",
+      "description": "Develop leg strength and base control for strikes.",
+      "help": "Sit into the hips and keep your chest tall.",
+      "target": {
+        "type": "reps",
+        "reps": 25
+      }
+    },
+    {
+      "title": "Slip Hook Cross",
+      "description": "Slip off the center line, return with a lead hook, then finish with a cross.",
+      "help": "Make the slip tight and punch as soon as your feet are set.",
+      "target": {
+        "type": "reps",
+        "reps": 15
+      }
+    },
+    {
+      "title": "Catch to Rear Teep",
+      "description": "Catch the kick, reset your stance, and push back with a rear teep.",
+      "help": "Stay balanced on the catch before sending the teep straight through.",
+      "target": {
+        "type": "reps",
+        "reps": 15
+      }
+    },
+    {
+      "title": "Standing Hamstring Stretch",
+      "description": "Stretch the back of the legs after the striking work.",
+      "help": "Hinge gently and keep the knees soft.",
+      "target": {
+        "type": "reps",
+        "reps": 20
+      }
+    },
+    {
+      "title": "Butterfly Stretch",
+      "description": "Open the groin and inner thighs with controlled breathing.",
+      "help": "Sit tall and let the knees drop without forcing them.",
+      "target": {
+        "type": "duration",
+        "seconds": 80
+      }
+    },
+    {
+      "title": "Pigeon Stretch",
+      "description": "Release the hips and improve external rotation.",
+      "help": "Square the hips and breathe into the stretch.",
+      "target": {
+        "type": "reps",
+        "reps": 15
+      }
+    },
+    {
+      "title": "Deep Squat Hold",
+      "description": "Finish with a mobility hold for the hips, groin, and ankles.",
+      "help": "Keep the heels grounded and the spine long.",
+      "target": {
+        "type": "reps",
+        "reps": 15
+      }
+    }
+  ]
+}

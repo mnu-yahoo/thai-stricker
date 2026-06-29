@@ -36,6 +36,7 @@ type SettingsScreenProps = {
   onThemePreferenceChange: (value: ThemePreferenceOption) => void;
   onResetWorkoutsAndExercises: () => void;
   onImportWorkouts: () => void;
+  onImportTechniques: () => void;
   theme: AppTheme;
 };
 
@@ -137,6 +138,7 @@ export function SettingsScreen({
   onThemePreferenceChange,
   onResetWorkoutsAndExercises,
   onImportWorkouts,
+  onImportTechniques,
   theme,
 }: SettingsScreenProps) {
   const styles = getStyles(theme);
@@ -439,6 +441,10 @@ export function SettingsScreen({
                 <Text style={styles.dbPrimaryButtonText}>Import Workouts</Text>
               </Pressable>
 
+              <Pressable onPress={onImportTechniques} style={styles.dbPrimaryButton}>
+                <Text style={styles.dbPrimaryButtonText}>Import Techniques</Text>
+              </Pressable>
+
               <Pressable onPress={onResetWorkoutsAndExercises} style={styles.dbDangerButton}>
                 <Text style={styles.dbDangerButtonText}>Delete Workouts</Text>
               </Pressable>
@@ -676,12 +682,16 @@ export function SettingsScreen({
 
               <View style={styles.lightPanelCard}>
                 <Text style={styles.lightSettingHint}>
-                  Import local workout JSON files or delete workouts from SQLite. You can also choose to delete all exercises after confirmation.
+                  Import local workout or technique JSON files, or delete workouts from SQLite. You can also choose to delete all exercises after confirmation.
                 </Text>
 
                 <View style={styles.lightDbActions}>
                   <Pressable onPress={onImportWorkouts} style={styles.lightPrimaryButton}>
                     <Text style={styles.lightPrimaryButtonText}>Import Workouts</Text>
+                  </Pressable>
+
+                  <Pressable onPress={onImportTechniques} style={styles.lightPrimaryButton}>
+                    <Text style={styles.lightPrimaryButtonText}>Import Techniques</Text>
                   </Pressable>
 
                   <Pressable

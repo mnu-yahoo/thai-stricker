@@ -29,6 +29,10 @@ import { getTheme } from "./src/styles/theme";
 import { WorkoutFinishedRecapScreen } from "./src/features/workoutSession/WorkoutFinishedRecapScreen";
 import { StartWorkoutScreen } from "./src/features/workoutSession/StartWorkoutScreen";
 import { type MockWorkoutLogEntry } from "./src/features/workoutLogging/workoutLogMocks";
+import {
+  TECHNIQUE_CATEGORIES,
+  type Technique,
+} from "./src/features/techniques/techniqueMocks";
 import { AddWorkoutScreen } from "./src/features/workouts/AddWorkoutScreen";
 import { EditWorkoutScreen } from "./src/features/workouts/EditWorkoutScreen";
 import { WorkoutDetailScreen } from "./src/features/workouts/WorkoutDetailScreen";
@@ -45,6 +49,7 @@ import {
   deleteAllWorkouts,
   deleteWorkout,
   type AppDataSnapshot,
+  importTechniques,
   importWorkouts,
   loadAppData,
   saveSetting,
@@ -104,6 +109,17 @@ async function readPickedDocumentText(uri: string) {
   }
 
   return await FileSystemLegacy.readAsStringAsync(uri);
+}
+
+function normalizeImportedJsonText(text: string) {
+  return text.replace(/^\uFEFF/, "").trim();
+}
+
+function normalizeTechniqueCategory(value: string) {
+  const normalizedValue = value.trim().toLowerCase();
+  return (
+    TECHNIQUE_CATEGORIES.find((category) => category.toLowerCase() === normalizedValue) ?? null
+  );
 }
 
 function isDateInSameMonth(dateString: string, referenceDate: Date) {
@@ -187,7 +203,7 @@ function isValidWorkoutImportPayload(value: unknown): value is WorkoutImportPayl
 }
 
 function parseWorkoutImportText(text: string, sourceName: string) {
-  const parsed = JSON.parse(text) as unknown;
+  const parsed = JSON.parse(normalizeImportedJsonText(text)) as unknown;
   const parsedArray = Array.isArray(parsed) ? parsed : [parsed];
 
   if (parsedArray.length < 1) {
@@ -203,6 +219,64 @@ function parseWorkoutImportText(text: string, sourceName: string) {
   });
 
   return workouts;
+}
+
+function isValidTechniqueImportPayload(value: unknown): value is Technique {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const technique = value as Partial<Technique> & {
+    short_name?: string;
+    sub_category?: string;
+  };
+
+  const shortName = technique.shortName ?? technique.short_name;
+  const subCategory = technique.subCategory ?? technique.sub_category;
+  const normalizedCategory =
+    typeof technique.category === "string" ? normalizeTechniqueCategory(technique.category) : null;
+
+  return (
+    typeof technique.id === "string" &&
+    technique.id.trim().length > 0 &&
+    typeof technique.name === "string" &&
+    technique.name.trim().length > 0 &&
+    typeof shortName === "string" &&
+    shortName.trim().length > 0 &&
+    typeof technique.description === "string" &&
+    technique.description.trim().length > 0 &&
+    normalizedCategory !== null &&
+    typeof subCategory === "string" &&
+    subCategory.trim().length > 0
+  );
+}
+
+function parseTechniqueImportText(text: string, sourceName: string) {
+  const parsed = JSON.parse(normalizeImportedJsonText(text)) as unknown;
+
+  if (!Array.isArray(parsed) || parsed.length < 1) {
+    throw new Error(`${sourceName} does not contain any techniques.`);
+  }
+
+  return parsed.map((entry, index) => {
+    if (!isValidTechniqueImportPayload(entry)) {
+      throw new Error(`Invalid technique format in ${sourceName} at item ${index + 1}.`);
+    }
+
+    const typedEntry = entry as Technique & {
+      short_name?: string;
+      sub_category?: string;
+    };
+
+    return {
+      id: typedEntry.id.trim(),
+      name: typedEntry.name.trim(),
+      shortName: (typedEntry.shortName ?? typedEntry.short_name ?? "").trim(),
+      description: typedEntry.description.trim(),
+      category: normalizeTechniqueCategory(String(typedEntry.category)) as Technique["category"],
+      subCategory: (typedEntry.subCategory ?? typedEntry.sub_category ?? "").trim(),
+    } satisfies Technique;
+  });
 }
 
 export default function App() {
@@ -700,6 +774,53 @@ export default function App() {
     })();
   };
 
+  const handleImportTechniques = () => {
+    void (async () => {
+      try {
+        const result = await DocumentPicker.getDocumentAsync({
+          type: ["application/json", "text/json"],
+          multiple: true,
+          copyToCacheDirectory: false,
+        });
+
+        if (result.canceled) {
+          return;
+        }
+
+        const importedTechniques: Technique[] = [];
+
+        for (const asset of result.assets) {
+          const text = await readPickedDocumentText(asset.uri);
+          importedTechniques.push(...parseTechniqueImportText(text, asset.name));
+        }
+
+        const confirmed = await confirmAction(
+          "Import techniques?",
+          `Import ${importedTechniques.length} technique${
+            importedTechniques.length === 1 ? "" : "s"
+          } from ${result.assets.length} JSON file${result.assets.length === 1 ? "" : "s"} into SQLite?`,
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
+        await importTechniques(importedTechniques);
+        Alert.alert(
+          "Import complete",
+          `${importedTechniques.length} technique${
+            importedTechniques.length === 1 ? "" : "s"
+          } imported successfully.`,
+        );
+      } catch (error) {
+        console.error("Failed to import techniques", error);
+        const message =
+          error instanceof Error ? error.message : "The selected JSON files could not be imported.";
+        Alert.alert("Import failed", message);
+      }
+    })();
+  };
+
   const shouldHideNavbar = Boolean(workoutFlow || workoutRecap);
   const theme = getTheme(themePreference);
 
@@ -843,6 +964,7 @@ export default function App() {
         onThemePreferenceChange={handleThemePreferenceChange}
         onResetWorkoutsAndExercises={handleDeleteWorkouts}
         onImportWorkouts={handleImportWorkouts}
+        onImportTechniques={handleImportTechniques}
       />
     );
   }

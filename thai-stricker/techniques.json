@@ -1,0 +1,818 @@
+[
+    {
+        "id":  "technique-001",
+        "name":  "Teep (Front Kick)",
+        "short_name":  "F Teep",
+        "description":  "A straight push kick used to create distance and control opponents.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-002",
+        "name":  "Lead Teep",
+        "short_name":  "L Teep",
+        "description":  "A quick front kick thrown with the lead leg.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-003",
+        "name":  "Rear Teep",
+        "short_name":  "R Teep",
+        "description":  "A stronger front kick thrown with the rear leg.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-004",
+        "name":  "Roundhouse Kick (Middle Kick)",
+        "short_name":  "M Kick",
+        "description":  "A powerful shin kick targeting the ribs and body.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-005",
+        "name":  "Low Kick",
+        "short_name":  "Lw Kick",
+        "description":  "A roundhouse kick aimed at the opponent\u0027s thigh.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-006",
+        "name":  "Inside Low Kick",
+        "short_name":  "In Lw Kick",
+        "description":  "A low kick targeting the inside of the thigh.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-007",
+        "name":  "Outside Low Kick",
+        "short_name":  "Out Lw Kick",
+        "description":  "A low kick targeting the outside of the thigh.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-008",
+        "name":  "High Kick",
+        "short_name":  "H Kick",
+        "description":  "A roundhouse kick aimed at the head or neck.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-009",
+        "name":  "Switch Kick",
+        "short_name":  "Sw Kick",
+        "description":  "A roundhouse kick performed after a quick stance switch.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-010",
+        "name":  "Question Mark Kick",
+        "short_name":  "QM Kick",
+        "description":  "A deceptive kick that changes from a teep motion into a high kick.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-011",
+        "name":  "Axe Kick",
+        "short_name":  "Axe Kick",
+        "description":  "A downward striking kick using the heel.",
+        "category":  "Muay Thai techniques",
+        "sub_category":  "Basic Kick"
+    },
+    {
+        "id":  "technique-012",
+        "name":  "Jab",
+        "short_name":  "Jab",
+        "description":  "A quick straight punch thrown with the lead hand.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-013",
+        "name":  "Cross",
+        "short_name":  "Cross",
+        "description":  "A powerful straight punch thrown with the rear hand.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-014",
+        "name":  "Lead Hook",
+        "short_name":  "L Hook",
+        "description":  "A circular punch thrown with the lead hand.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-015",
+        "name":  "Rear Hook",
+        "short_name":  "R Hook",
+        "description":  "A powerful hook thrown with the rear hand.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-016",
+        "name":  "Lead Uppercut",
+        "short_name":  "L Upp",
+        "description":  "An upward punch thrown with the lead hand.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-017",
+        "name":  "Rear Uppercut",
+        "short_name":  "R Upp",
+        "description":  "A strong upward punch thrown with the rear hand.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-018",
+        "name":  "Overhand Right",
+        "short_name":  "Over R",
+        "description":  "A looping rear-hand punch thrown over the opponent\u0027s guard.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-019",
+        "name":  "Body Jab",
+        "short_name":  "B Jab",
+        "description":  "A lead-hand jab aimed at the body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-020",
+        "name":  "Body Cross",
+        "short_name":  "B Cross",
+        "description":  "A rear-hand straight punch aimed at the body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-021",
+        "name":  "Lead Body Hook",
+        "short_name":  "LB Hook",
+        "description":  "A circular punch thrown with the lead hand to the body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-022",
+        "name":  "Rear Body Hook",
+        "short_name":  "RB Hook",
+        "description":  "A powerful hook thrown with the rear hand to the body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-023",
+        "name":  "Lead Body Uppercut",
+        "short_name":  "LB Upp",
+        "description":  "An upward punch thrown with the lead hand to the body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Punches"
+    },
+    {
+        "id":  "technique-024",
+        "name":  "Horizontal Elbow",
+        "short_name":  "H Elbow",
+        "description":  "A sideways elbow strike aimed at the head or face.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-025",
+        "name":  "Upward Elbow",
+        "short_name":  "Up Elbow",
+        "description":  "An elbow strike driven upward toward the chin.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-026",
+        "name":  "Downward Elbow",
+        "short_name":  "Dwn Elbow",
+        "description":  "A chopping elbow strike delivered from above.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-027",
+        "name":  "Diagonal Up Elbow",
+        "short_name":  "Diag Elbow",
+        "description":  "An elbow strike traveling upward at an angle.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-028",
+        "name":  "Diagonal Down Elbow",
+        "short_name":  "Diag Dwn Elbow",
+        "description":  "An elbow strike traveling downward at an angle.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-029",
+        "name":  "Spinning Elbow",
+        "short_name":  "Spin Elbow",
+        "description":  "A rotating elbow strike using body momentum.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-030",
+        "name":  "Back Elbow",
+        "short_name":  "Bck Elbow",
+        "description":  "An elbow strike thrown backward toward an opponent behind you.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-031",
+        "name":  "Jumping Elbow",
+        "short_name":  "Jmp Elbow",
+        "description":  "An airborne elbow strike used to close distance.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Elbows"
+    },
+    {
+        "id":  "technique-032",
+        "name":  "Straight Knee",
+        "short_name":  "Strt Knee",
+        "description":  "A forward-driving knee aimed at the body or head.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-033",
+        "name":  "Lead Knee",
+        "short_name":  "L Knee",
+        "description":  "A quick knee strike delivered with the lead leg.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-034",
+        "name":  "Rear Knee",
+        "short_name":  "R Knee",
+        "description":  "A powerful knee strike delivered with the rear leg.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-035",
+        "name":  "Diagonal Knee",
+        "short_name":  "Diag Knee",
+        "description":  "A knee strike traveling upward at an angle.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-036",
+        "name":  "Horizontal Knee",
+        "short_name":  "H Knee",
+        "description":  "A knee strike driven across the opponent\u0027s body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-037",
+        "name":  "Curved Knee",
+        "short_name":  "Curv Knee",
+        "description":  "A looping knee strike aimed around the guard.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-038",
+        "name":  "Jumping Knee",
+        "short_name":  "Jmp Knee",
+        "description":  "An airborne knee strike used for extra reach and power.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-039",
+        "name":  "Flying Knee",
+        "short_name":  "Fly Knee",
+        "description":  "An explosive jumping knee aimed at the head or upper body.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-040",
+        "name":  "Long Knee",
+        "short_name":  "Long Knee",
+        "description":  "A knee strike delivered while stepping forward to close distance.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Knees"
+    },
+    {
+        "id":  "technique-041",
+        "name":  "High Guard",
+        "short_name":  "H Guard",
+        "description":  "Protects the head by keeping both hands raised.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-042",
+        "name":  "Long Guard",
+        "short_name":  "L Guard",
+        "description":  "Extends the lead arm to manage distance and block attacks.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-043",
+        "name":  "Parry",
+        "short_name":  "Parry",
+        "description":  "Redirects an incoming strike away from its target.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-044",
+        "name":  "Slip",
+        "short_name":  "L Slip",
+        "description":  "Moves the head off the line of an incoming punch.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-045",
+        "name":  "Cover Block",
+        "short_name":  "Cov Block",
+        "description":  "Absorbs punches using the forearms and gloves.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-046",
+        "name":  "Shin Block",
+        "short_name":  "Shin Block",
+        "description":  "Raises the leg to check incoming kicks.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-047",
+        "name":  "Knee Check",
+        "short_name":  "Knee Chk",
+        "description":  "Lifts the knee to defend against low kicks.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-048",
+        "name":  "Teep Defense",
+        "short_name":  "Teep Def",
+        "description":  "Uses the hands or body movement to stop a front kick.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-049",
+        "name":  "Catch",
+        "short_name":  "Catch",
+        "description":  "Controls or traps an opponent\u0027s kick.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-050",
+        "name":  "Lean Back",
+        "short_name":  "Ln Back",
+        "description":  "Moves the upper body away from kicks or punches.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-051",
+        "name":  "Clinch Defense",
+        "short_name":  "Cl Def",
+        "description":  "Prevents or breaks an opponent\u0027s clinch control.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-052",
+        "name":  "Footwork",
+        "short_name":  "Footw",
+        "description":  "Uses movement to avoid strikes and create angles.",
+        "category":  "Muay Thai Techniques",
+        "sub_category":  "Basic Defenses"
+    },
+    {
+        "id":  "technique-053",
+        "name":  "Pivot",
+        "short_name":  "Pivot",
+        "description":  "Rotates around the lead foot to evade attacks.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-054",
+        "name":  "Standing Hamstring Stretch",
+        "short_name":  "Standing Hamstring Stretch",
+        "description":  "Stretches the back of the legs.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-055",
+        "name":  "Seated Hamstring Stretch",
+        "short_name":  "Seated Hamstring Stretch",
+        "description":  "Improves hamstring flexibility and reach.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-056",
+        "name":  "Butterfly Stretch",
+        "short_name":  "Butterfly Stretch",
+        "description":  "Opens the inner thighs and groin.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-057",
+        "name":  "Frog Stretch",
+        "short_name":  "Frog Stretch",
+        "description":  "Deep stretch for the groin and hips.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-058",
+        "name":  "Side Lunge Stretch",
+        "short_name":  "Side Lunge Stretch",
+        "description":  "Targets the inner thighs and adductors.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-059",
+        "name":  "Pancake Stretch",
+        "short_name":  "Pancake Stretch",
+        "description":  "Improves flexibility in the hamstrings and hips.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-060",
+        "name":  "Front Split Stretch",
+        "short_name":  "Front Split Stretch",
+        "description":  "Develops flexibility for front-leg kicks.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-061",
+        "name":  "Middle Split Stretch",
+        "short_name":  "Middle Split Stretch",
+        "description":  "Develops flexibility for high roundhouse kicks.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-062",
+        "name":  "Hip Flexor Stretch",
+        "short_name":  "Hip Flexor Stretch",
+        "description":  "Loosens the front of the hips.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-063",
+        "name":  "Quad Stretch",
+        "short_name":  "Quad Stretch",
+        "description":  "Stretches the front of the thigh.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-064",
+        "name":  "Pigeon Stretch",
+        "short_name":  "Pigeon Stretch",
+        "description":  "Improves hip mobility and external rotation.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-065",
+        "name":  "Figure Four Stretch",
+        "short_name":  "Figure Four Stretch",
+        "description":  "Targets the glutes and outer hips.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-066",
+        "name":  "Standing Leg Swing (Front-to-Back)",
+        "short_name":  "Standing Leg Swing (Front-to-Back)",
+        "description":  "Dynamic stretch for kicking height and control.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-067",
+        "name":  "Standing Leg Swing (Side-to-Side)",
+        "short_name":  "Standing Leg Swing (Side-to-Side)",
+        "description":  "Improves hip mobility for roundhouse kicks.",
+        "category":  "Stretching Techniques",
+        "sub_category":  "Basic Stretching"
+    },
+    {
+        "id":  "technique-068",
+        "name":  "Deep Squat Hold",
+        "short_name":  "Deep Squat Hold",
+        "description":  "Increases hip, groin, and ankle mobility.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-069",
+        "name":  "Push-Up",
+        "short_name":  "Push-Up",
+        "description":  "Builds upper-body pushing strength and stability.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-070",
+        "name":  "Squat",
+        "short_name":  "Squat",
+        "description":  "Develops leg strength and balance.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-071",
+        "name":  "Lunge",
+        "short_name":  "Lunge",
+        "description":  "Strengthens the legs and improves stability.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-072",
+        "name":  "Jump Squat",
+        "short_name":  "Jump Squat",
+        "description":  "Builds explosive lower-body power.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-073",
+        "name":  "Calf Raise",
+        "short_name":  "Calf Raise",
+        "description":  "Strengthens the calves for footwork and kicking.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-074",
+        "name":  "Glute Bridge",
+        "short_name":  "Glute Bridge",
+        "description":  "Builds hip strength and power.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-075",
+        "name":  "Single-Leg Glute Bridge",
+        "short_name":  "Single-Leg Glute Bridge",
+        "description":  "Improves unilateral hip strength and stability.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-076",
+        "name":  "Plank",
+        "short_name":  "Plank",
+        "description":  "Develops core strength and endurance.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-077",
+        "name":  "Side Plank",
+        "short_name":  "Side Plank",
+        "description":  "Strengthens the obliques and core stability.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-078",
+        "name":  "Mountain Climber",
+        "short_name":  "Mountain Climber",
+        "description":  "Builds core strength and conditioning.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-079",
+        "name":  "Burpee",
+        "short_name":  "Burpee",
+        "description":  "Develops full-body strength and endurance.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-080",
+        "name":  "Superman Hold",
+        "short_name":  "Superman Hold",
+        "description":  "Strengthens the lower back and posterior chain.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-081",
+        "name":  "Wall Sit",
+        "short_name":  "Wall Sit",
+        "description":  "Builds leg endurance and mental toughness.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-082",
+        "name":  "Single-Leg Squat",
+        "short_name":  "Single-Leg Squat",
+        "description":  "Improves leg strength, balance, and control.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-083",
+        "name":  "Bear Crawl",
+        "short_name":  "Bear Crawl",
+        "description":  "Develops full-body strength and coordination.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-084",
+        "name":  "Hollow Body Hold",
+        "short_name":  "Hollow Body Hold",
+        "description":  "Builds core tension and stability.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-085",
+        "name":  "Reverse Lunge",
+        "short_name":  "Reverse Lunge",
+        "description":  "Strengthens the legs while reducing knee stress.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-086",
+        "name":  "Step-Up",
+        "short_name":  "Step-Up",
+        "description":  "Develops functional leg power and balance.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-087",
+        "name":  "Jumping Jacks",
+        "short_name":  "Jumping Jacks",
+        "description":  "Raises heart rate and warms the whole body.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-088",
+        "name":  "Jogging in Place",
+        "short_name":  "Jogging in Place",
+        "description":  "Increases blood flow and body temperature.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-089",
+        "name":  "High Knees",
+        "short_name":  "High Knees",
+        "description":  "Activates the legs and core.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-090",
+        "name":  "Butt Kicks",
+        "short_name":  "Butt Kicks",
+        "description":  "Warms up the hamstrings and calves.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-091",
+        "name":  "Arm Circles",
+        "short_name":  "Arm Circles",
+        "description":  "Loosens the shoulders and arms.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-092",
+        "name":  "Hip Circles",
+        "short_name":  "Hip Circles",
+        "description":  "Improves hip mobility.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-093",
+        "name":  "Neck Rotations",
+        "short_name":  "Neck Rotations",
+        "description":  "Gently warms up the neck muscles.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-094",
+        "name":  "Ankle Circles",
+        "short_name":  "Ankle Circles",
+        "description":  "Improves ankle mobility and stability.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-095",
+        "name":  "Leg Swings (Front-to-Back)",
+        "short_name":  "Leg Swings (Front-to-Back)",
+        "description":  "Prepares the legs for kicking.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-096",
+        "name":  "Leg Swings (Side-to-Side)",
+        "short_name":  "Leg Swings (Side-to-Side)",
+        "description":  "Opens the hips for roundhouse kicks.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-097",
+        "name":  "Bodyweight Squat",
+        "short_name":  "Bodyweight Squat",
+        "description":  "Activates the legs and hips.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-098",
+        "name":  "Walking Lunges",
+        "short_name":  "Walking Lunges",
+        "description":  "Warms up the lower body and balance.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-099",
+        "name":  "Inchworm",
+        "short_name":  "Inchworm",
+        "description":  "Activates the core, shoulders, and hamstrings.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-100",
+        "name":  "Shadow Boxing",
+        "short_name":  "Shadow Boxing",
+        "description":  "Prepares movement patterns and coordination.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-101",
+        "name":  "Light Knee Raises",
+        "short_name":  "Light Knee Raises",
+        "description":  "Warms up the hip flexors and knees.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    },
+    {
+        "id":  "technique-102",
+        "name":  "Light Kick Swings",
+        "short_name":  "Light Kick Swings",
+        "description":  "Prepares the kicking muscles and joints.",
+        "category":  "Strength Techniques",
+        "sub_category":  "Basic Strength"
+    }
+]
