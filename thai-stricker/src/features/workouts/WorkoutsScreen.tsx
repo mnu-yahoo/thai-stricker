@@ -28,13 +28,18 @@ type WorkoutsScreenProps = {
 const WORKOUT_HERO_IMAGE_URI =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD3C5SDrHOXybW_s5ltu_w7y9f3GD1p4EqUBQ1pc2of6ewG7U9wEwWsJae_KVvSFfNSOmta4dlvbm6MWYCTC6UyJO0B4q4RFm4H-UAcHu4Iqi-pu4QJrrvt3UfWBVGTYlAb-Zv6S6YEQ2ruDMSFxRQXYeyJAkgojkw17GI1XVaentlU4Dcg6A9GwlEQZXareWGIu361fNtyrcNyoyhCNyA1cOVVMkyoT6NC-lXpHr1V2tCdBrPHbgrkaJykY4vvt972cISslWZNFg0";
 
-const LIGHT_ALL_FILTER = "All Drills";
-const LIGHT_DIFFICULTY_FILTERS: Array<typeof LIGHT_ALL_FILTER | MockWorkoutDifficulty> = [
-  LIGHT_ALL_FILTER,
+const ALL_WORKOUTS_FILTER = "All Workouts";
+const DIFFICULTY_FILTERS: Array<typeof ALL_WORKOUTS_FILTER | MockWorkoutDifficulty> = [
+  ALL_WORKOUTS_FILTER,
   "Beginner",
   "Intermediate",
   "Advanced",
 ];
+const DIFFICULTY_ORDER: Record<MockWorkoutDifficulty, number> = {
+  Beginner: 0,
+  Intermediate: 1,
+  Advanced: 2,
+};
 
 function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
   if (target.type === "duration") {
@@ -79,6 +84,35 @@ function buildQuickDescription(description: string) {
   return description.length > 44 ? `${description.slice(0, 44).trimEnd()}...` : description;
 }
 
+function compareWorkoutOrder(leftWorkout: MockWorkout, rightWorkout: MockWorkout) {
+  const difficultyDifference =
+    DIFFICULTY_ORDER[leftWorkout.difficulty] - DIFFICULTY_ORDER[rightWorkout.difficulty];
+
+  if (difficultyDifference !== 0) {
+    return difficultyDifference;
+  }
+
+  if (!leftWorkout.lastDoneDate && !rightWorkout.lastDoneDate) {
+    return leftWorkout.title.localeCompare(rightWorkout.title);
+  }
+
+  if (!leftWorkout.lastDoneDate) {
+    return -1;
+  }
+
+  if (!rightWorkout.lastDoneDate) {
+    return 1;
+  }
+
+  const dateDifference = leftWorkout.lastDoneDate.localeCompare(rightWorkout.lastDoneDate);
+
+  if (dateDifference !== 0) {
+    return dateDifference;
+  }
+
+  return leftWorkout.title.localeCompare(rightWorkout.title);
+}
+
 export function WorkoutsScreen({
   theme,
   workouts,
@@ -93,13 +127,10 @@ export function WorkoutsScreen({
   const [libraryWorkouts, setLibraryWorkouts] = useState(workouts);
   const [expandedWorkoutId, setExpandedWorkoutId] = useState<string | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<
-    typeof LIGHT_ALL_FILTER | MockWorkoutDifficulty
-  >(LIGHT_ALL_FILTER);
-  const workoutCategories = useMemo(
-    () => Array.from(new Set(workouts.map((workout) => workout.category))),
-    [workouts],
+    typeof ALL_WORKOUTS_FILTER | MockWorkoutDifficulty
+  >(
+    ALL_WORKOUTS_FILTER,
   );
-  const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
@@ -108,22 +139,22 @@ export function WorkoutsScreen({
   }, [workouts]);
 
   const visibleWorkouts = useMemo(() => {
-    return libraryWorkouts.filter((workout) => {
-      const matchesSearch =
-        searchQuery.trim().length === 0 ||
-        workout.title.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
-        workout.description.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
-        workout.exercises.some((exercise) =>
-          exercise.title.toLowerCase().includes(searchQuery.trim().toLowerCase()),
-        );
-      const matchesDifficulty =
-        selectedDifficulty === LIGHT_ALL_FILTER || workout.difficulty === selectedDifficulty;
-      const matchesCategory =
-        selectedCategory === "All" || workout.category === selectedCategory;
+    return [...libraryWorkouts]
+      .filter((workout) => {
+        const matchesSearch =
+          searchQuery.trim().length === 0 ||
+          workout.title.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
+          workout.description.toLowerCase().includes(searchQuery.trim().toLowerCase()) ||
+          workout.exercises.some((exercise) =>
+            exercise.title.toLowerCase().includes(searchQuery.trim().toLowerCase()),
+          );
+        const matchesDifficulty =
+          selectedDifficulty === ALL_WORKOUTS_FILTER || workout.difficulty === selectedDifficulty;
 
-      return matchesSearch && matchesDifficulty && matchesCategory;
-    });
-  }, [libraryWorkouts, searchQuery, selectedDifficulty, selectedCategory]);
+        return matchesSearch && matchesDifficulty;
+      })
+      .sort(compareWorkoutOrder);
+  }, [libraryWorkouts, searchQuery, selectedDifficulty]);
 
   const toggleWorkoutContent = (workoutId: string) => {
     setExpandedWorkoutId((currentId) => (currentId === workoutId ? null : workoutId));
@@ -131,8 +162,7 @@ export function WorkoutsScreen({
 
   const resetFilters = () => {
     setSearchQuery("");
-    setSelectedDifficulty(LIGHT_ALL_FILTER);
-    setSelectedCategory("All");
+    setSelectedDifficulty(ALL_WORKOUTS_FILTER);
   };
 
   return (
@@ -217,13 +247,13 @@ export function WorkoutsScreen({
               horizontal
               showsHorizontalScrollIndicator={false}
             >
-              {["All workouts", ...workoutCategories].map((category) => {
-                const isActive = category === selectedCategory;
+              {DIFFICULTY_FILTERS.map((filter) => {
+                const isActive = filter === selectedDifficulty;
 
                 return (
                   <Pressable
-                    key={category}
-                    onPress={() => setSelectedCategory(category === "All workouts" ? "All workouts" : category)}
+                    key={filter}
+                    onPress={() => setSelectedDifficulty(filter)}
                     style={[styles.categoryChip, isActive ? styles.categoryChipActive : undefined]}
                   >
                     <Text
@@ -232,7 +262,7 @@ export function WorkoutsScreen({
                         isActive ? styles.categoryChipTextActive : undefined,
                       ]}
                     >
-                      {category}
+                      {filter}
                     </Text>
                   </Pressable>
                 );
@@ -306,7 +336,7 @@ export function WorkoutsScreen({
               horizontal
               showsHorizontalScrollIndicator={false}
             >
-              {LIGHT_DIFFICULTY_FILTERS.map((filter) => {
+              {DIFFICULTY_FILTERS.map((filter) => {
                 const isActive = filter === selectedDifficulty;
 
                 return (
@@ -325,36 +355,6 @@ export function WorkoutsScreen({
                       ]}
                     >
                       {filter}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-
-            <ScrollView
-              contentContainerStyle={styles.lightChipRow}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-            >
-              {["All", ...workoutCategories].map((category) => {
-                const isActive = category === selectedCategory;
-
-                return (
-                  <Pressable
-                    key={category}
-                    onPress={() => setSelectedCategory(category)}
-                    style={[
-                      styles.lightCategoryChip,
-                      isActive ? styles.lightCategoryChipActive : undefined,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.lightCategoryChipText,
-                        isActive ? styles.lightCategoryChipTextActive : undefined,
-                      ]}
-                    >
-                      {category}
                     </Text>
                   </Pressable>
                 );
@@ -876,28 +876,6 @@ function getStyles(theme: AppTheme) {
     },
     lightFilterChipTextActive: {
       color: "#FFFFFF",
-    },
-    lightCategoryChip: {
-      minHeight: 36,
-      borderRadius: 999,
-      borderWidth: 1,
-      borderColor: "#BCC7D9",
-      backgroundColor: "#F6F2EF",
-      paddingHorizontal: 18,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    lightCategoryChipActive: {
-      backgroundColor: "#EAF1FF",
-      borderColor: "#2364D0",
-    },
-    lightCategoryChipText: {
-      color: "#585F70",
-      fontSize: 12,
-      fontWeight: "700",
-    },
-    lightCategoryChipTextActive: {
-      color: "#2364D0",
     },
     card: {
       backgroundColor: isDarkTheme ? theme.colors.surfaceMuted : "#FFFFFF",

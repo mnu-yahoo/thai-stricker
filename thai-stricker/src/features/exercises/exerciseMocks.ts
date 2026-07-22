@@ -9,6 +9,7 @@ export type MockAvailableExercise = {
   title: string;
   description: string;
   help: string;
+  category?: string;
   target: MockExerciseTarget;
 };
 
@@ -42,6 +43,7 @@ function buildMockAvailableExercises() {
         title: exercise.title,
         description: exercise.description,
         help: exercise.help,
+        category: exercise.category,
         target: exercise.target,
       });
     });

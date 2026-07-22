@@ -20,6 +20,8 @@ import { type NumberOfExercisesPerPageOption } from "../settings/SettingsScreen"
 import {
   MOCK_WORKOUT_CATEGORIES,
   MOCK_WORKOUT_DIFFICULTIES,
+  countMuayThaiWorkoutExercises,
+  isMuayThaiWorkoutExercise,
   type MockExercise,
   type MockExerciseTarget,
   type MockWorkout,
@@ -190,6 +192,7 @@ export function EditWorkoutScreen({
     availableExercisesStartIndex,
     availableExercisesStartIndex + numberOfExercisesPerPage,
   );
+  const muayThaiExerciseCount = countMuayThaiWorkoutExercises(exercises);
 
   useEffect(() => {
     setAvailableExercisesPage((currentPage) => Math.min(currentPage, totalAvailableExercisePages));
@@ -217,8 +220,10 @@ export function EditWorkoutScreen({
   };
 
   const handleAddExercise = (exercise: MockAvailableExercise) => {
-    if (exercises.length >= maxExercisesPerWorkout) {
-      setSelectionErrorMessage(`Maximum ${maxExercisesPerWorkout} exercises allowed by Settings.`);
+    if (isMuayThaiWorkoutExercise(exercise) && muayThaiExerciseCount >= maxExercisesPerWorkout) {
+      setSelectionErrorMessage(
+        `Maximum ${maxExercisesPerWorkout} Muay Thai exercises allowed by Settings.`,
+      );
       return;
     }
 
@@ -229,6 +234,7 @@ export function EditWorkoutScreen({
         title: exercise.title,
         description: exercise.description,
         help: exercise.help,
+        category: exercise.category,
         target: exercise.target,
       },
     ]);
@@ -275,8 +281,10 @@ export function EditWorkoutScreen({
       return;
     }
 
-    if (exercises.length > maxExercisesPerWorkout) {
-      setWorkoutErrorMessage(`Maximum ${maxExercisesPerWorkout} exercises allowed by Settings.`);
+    if (muayThaiExerciseCount > maxExercisesPerWorkout) {
+      setWorkoutErrorMessage(
+        `Maximum ${maxExercisesPerWorkout} Muay Thai exercises allowed by Settings.`,
+      );
       return;
     }
 
@@ -452,7 +460,9 @@ export function EditWorkoutScreen({
           )}
           <View style={!isDarkTheme ? styles.lightPanelCard : undefined}>
             <View style={styles.sectionToolbar}>
-              <Text style={styles.sectionMetaText}>Max exercises allowed: {maxExercisesPerWorkout}</Text>
+              <Text style={styles.sectionMetaText}>
+                Max Muay Thai exercises allowed: {maxExercisesPerWorkout}
+              </Text>
               <Pressable onPress={handleOpenAddExercise} style={styles.inlineAction}>
                 <GoogleMaterialSymbol
                   color={theme.colors.primary}
@@ -527,7 +537,9 @@ export function EditWorkoutScreen({
               </View>
 
               {visibleAvailableExercises.map((exercise) => {
-                const isAtLimit = exercises.length >= maxExercisesPerWorkout;
+                const isAtLimit =
+                  isMuayThaiWorkoutExercise(exercise) &&
+                  muayThaiExerciseCount >= maxExercisesPerWorkout;
 
                 return (
                   <View key={exercise.id} style={styles.libraryItem}>
@@ -597,7 +609,7 @@ export function EditWorkoutScreen({
               {isDarkTheme ? <Text style={styles.sectionTitle}>Selected drills</Text> : <View />}
               <View style={styles.selectedCountBadge}>
                 <Text style={styles.selectedCountBadgeText}>
-                  {exercises.length} / {maxExercisesPerWorkout}
+                  {muayThaiExerciseCount} / {maxExercisesPerWorkout}
                 </Text>
               </View>
             </View>

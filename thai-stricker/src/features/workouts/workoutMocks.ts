@@ -7,8 +7,79 @@ export type MockExercise = {
   title: string;
   description: string;
   help: string;
+  category?: string;
   target: MockExerciseTarget;
 };
+
+const NON_MUAY_THAI_EXERCISE_CATEGORIES = new Set(["strength", "warmup", "stretching"]);
+
+const NON_MUAY_THAI_EXERCISE_TITLES = new Set(
+  [
+    "Ankle Circles",
+    "Arm Circles",
+    "Bear Crawl",
+    "Bodyweight Squat",
+    "Burpee",
+    "Butt Kicks",
+    "Butterfly Stretch",
+    "Calf Raise",
+    "Deep Squat Hold",
+    "Figure Four Stretch",
+    "Frog Stretch",
+    "Front Split Stretch",
+    "Glute Bridge",
+    "High Knees",
+    "Hip Circles",
+    "Hip Flexor Stretch",
+    "Hollow Body Hold",
+    "Inchworm",
+    "Jogging in Place",
+    "Jump Squat",
+    "Jumping Jacks",
+    "Leg Swings (Front-to-Back)",
+    "Leg Swings (Side-to-Side)",
+    "Light Kick Swings",
+    "Light Knee Raises",
+    "Lunge",
+    "Middle Split Stretch",
+    "Mountain Climber",
+    "Neck Rotations",
+    "Pancake Stretch",
+    "Pigeon Stretch",
+    "Plank",
+    "Push-Up",
+    "Quad Stretch",
+    "Reverse Lunge",
+    "Seated Hamstring Stretch",
+    "Shadow Boxing",
+    "Side Lunge Stretch",
+    "Side Plank",
+    "Single-Leg Glute Bridge",
+    "Single-Leg Squat",
+    "Squat",
+    "Standing Hamstring Stretch",
+    "Standing Leg Swing (Front-to-Back)",
+    "Standing Leg Swing (Side-to-Side)",
+    "Step-Up",
+    "Superman Hold",
+    "Walking Lunges",
+    "Wall Sit",
+  ].map((title) => title.trim().toLowerCase()),
+);
+
+export function isMuayThaiWorkoutExercise(exercise: { title: string; category?: string }) {
+  const category = exercise.category?.trim().toLowerCase();
+
+  if (category && NON_MUAY_THAI_EXERCISE_CATEGORIES.has(category)) {
+    return false;
+  }
+
+  return !NON_MUAY_THAI_EXERCISE_TITLES.has(exercise.title.trim().toLowerCase());
+}
+
+export function countMuayThaiWorkoutExercises(exercises: Array<{ title: string; category?: string }>) {
+  return exercises.filter(isMuayThaiWorkoutExercise).length;
+}
 
 export type MockWorkoutDifficulty = "Beginner" | "Intermediate" | "Advanced";
 export const MOCK_WORKOUT_DIFFICULTIES: MockWorkoutDifficulty[] = [

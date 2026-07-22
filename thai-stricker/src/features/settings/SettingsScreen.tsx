@@ -262,11 +262,11 @@ export function SettingsScreen({
 
               <View style={styles.settingBlock}>
                 <View style={styles.settingHeader}>
-                  <Text style={styles.settingLabel}>Maximum exercises per workout</Text>
+                  <Text style={styles.settingLabel}>Maximum Muay Thai exercises per workout</Text>
                   <Text style={styles.settingValue}>{maxExercisesPerWorkout} exercises</Text>
                 </View>
                 <Text style={styles.settingHint}>
-                  Defines the maximum number of exercises allowed when creating a workout.
+                  Warmup, strength, and stretching exercises do not count toward this limit.
                 </Text>
                 <View style={styles.optionGroup}>
                   {MAX_EXERCISES_OPTIONS.map((value) => {
@@ -541,8 +541,8 @@ export function SettingsScreen({
               <View style={styles.lightSettingBlock}>
                 <View style={styles.lightCompactHeader}>
                   <View>
-                    <Text style={styles.lightSettingName}>Max exercises</Text>
-                    <Text style={styles.lightSettingHint}>Limit per session</Text>
+                    <Text style={styles.lightSettingName}>Max Muay Thai</Text>
+                    <Text style={styles.lightSettingHint}>Warmup, strength, stretching excluded</Text>
                   </View>
                   <StepperControl
                     value={maxExercisesPerWorkout}

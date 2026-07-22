@@ -74,6 +74,7 @@ type WorkoutExerciseRow = {
   title: string;
   description: string;
   help: string;
+  category: string;
   target_type: "duration" | "reps";
   target_value: number;
 };
@@ -256,6 +257,7 @@ function buildAvailableExercisesFromWorkouts(workouts: MockWorkout[]) {
         title: exercise.title,
         description: exercise.description,
         help: exercise.help,
+        category: exercise.category,
         target: exercise.target,
       });
     });
@@ -940,6 +942,7 @@ async function loadAvailableExercises(db: SQLiteDatabase) {
     title: row.title,
     description: row.description,
     help: row.help,
+    category: row.category,
     target: toTarget(row.target_type, row.target_value),
   }));
 }
@@ -983,16 +986,18 @@ async function loadWorkouts(db: SQLiteDatabase) {
   const workoutExerciseRows = await db.getAllAsync<WorkoutExerciseRow>(
     `
       SELECT
-        workout_id,
-        exercise_id,
-        sort_order,
-        title,
-        description,
-        help,
-        target_type,
-        target_value
+        workout_exercises.workout_id,
+        workout_exercises.exercise_id,
+        workout_exercises.sort_order,
+        workout_exercises.title,
+        workout_exercises.description,
+        workout_exercises.help,
+        COALESCE(exercises.category, '') AS category,
+        workout_exercises.target_type,
+        workout_exercises.target_value
       FROM workout_exercises
-      ORDER BY workout_id ASC, sort_order ASC
+      LEFT JOIN exercises ON exercises.id = workout_exercises.exercise_id
+      ORDER BY workout_exercises.workout_id ASC, workout_exercises.sort_order ASC
     `,
   );
 
@@ -1005,6 +1010,7 @@ async function loadWorkouts(db: SQLiteDatabase) {
           title: exerciseRow.title,
           description: exerciseRow.description,
           help: exerciseRow.help,
+          category: exerciseRow.category,
           target: toTarget(exerciseRow.target_type, exerciseRow.target_value),
         }),
       );
