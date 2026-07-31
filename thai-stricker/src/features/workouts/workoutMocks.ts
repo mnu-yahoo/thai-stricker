@@ -8,6 +8,7 @@ export type MockExercise = {
   description: string;
   help: string;
   category?: string;
+  imageUri?: string;
   target: MockExerciseTarget;
 };
 

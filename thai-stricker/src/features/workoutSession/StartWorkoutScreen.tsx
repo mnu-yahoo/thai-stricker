@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ImageBackground,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 import { BottomNavbar } from "../../components/navigation/BottomNavbar";
 import { GoogleMaterialSymbol } from "../../components/icons/GoogleMaterialSymbol";
@@ -8,6 +16,8 @@ import type { MockWorkout } from "../workouts/workoutMocks";
 
 type WorkoutFlowStep = "exercise" | "rest" | "prestart";
 const PRESTART_SECONDS = 10;
+const DEFAULT_EXERCISE_IMAGE_URI =
+  "https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80";
 
 type StartWorkoutScreenProps = {
   theme: AppTheme;
@@ -60,6 +70,7 @@ export function StartWorkoutScreen({
   const nextExercise = workout.exercises[currentExerciseIndex + 1];
   const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const [showOverview, setShowOverview] = useState(false);
+  const [failedImageUris, setFailedImageUris] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     if (!hasStarted && currentStep === "exercise" && exercise.target.type === "duration") {
@@ -153,6 +164,17 @@ export function StartWorkoutScreen({
     : exercise.target.type === "duration"
       ? formatTimerValue(remainingSeconds ?? 0)
       : formatTarget(exercise.target).toUpperCase();
+  const requestedExerciseImageUri = exercise.imageUri?.trim() || DEFAULT_EXERCISE_IMAGE_URI;
+  const exerciseImageUri = failedImageUris.has(requestedExerciseImageUri)
+    ? DEFAULT_EXERCISE_IMAGE_URI
+    : requestedExerciseImageUri;
+  const handleExerciseImageError = () => {
+    if (requestedExerciseImageUri === DEFAULT_EXERCISE_IMAGE_URI) {
+      return;
+    }
+
+    setFailedImageUris((currentUris) => new Set(currentUris).add(requestedExerciseImageUri));
+  };
   const primaryActionLabel = "Done";
   const primaryAction = isRestStep
     ? onFinishRest
@@ -240,6 +262,26 @@ export function StartWorkoutScreen({
                 <Text style={styles.exerciseSummary}>{summary}</Text>
                 <Text style={styles.exerciseHelp}>{detailLine}</Text>
               </View>
+
+              {!isRestStep ? (
+                <ImageBackground
+                  imageStyle={styles.exerciseImage}
+                  onError={handleExerciseImageError}
+                  source={{ uri: exerciseImageUri }}
+                  style={styles.exerciseImageCard}
+                >
+                  <View style={styles.exerciseImageOverlay} />
+                  <View style={styles.exerciseImageLabel}>
+                    <GoogleMaterialSymbol
+                      color={theme.colors.primary}
+                      fallbackName="image"
+                      name="image"
+                      size={16}
+                    />
+                    <Text style={styles.exerciseImageLabelText}>Technique cue</Text>
+                  </View>
+                </ImageBackground>
+              ) : null}
 
               <View style={styles.timerShell}>
                 <View style={styles.timerPanel}>
@@ -426,6 +468,26 @@ export function StartWorkoutScreen({
               </View>
             </View>
 
+            {!isRestStep ? (
+              <ImageBackground
+                imageStyle={styles.lightExerciseImage}
+                onError={handleExerciseImageError}
+                source={{ uri: exerciseImageUri }}
+                style={styles.lightExerciseImageCard}
+              >
+                <View style={styles.lightExerciseImageOverlay} />
+                <View style={styles.lightExerciseImageLabel}>
+                  <GoogleMaterialSymbol
+                    color="#FFFFFF"
+                    fallbackName="image"
+                    name="image"
+                    size={16}
+                  />
+                  <Text style={styles.lightExerciseImageLabelText}>Technique cue</Text>
+                </View>
+              </ImageBackground>
+            ) : null}
+
             <View style={styles.lightTimerShell}>
               <View style={styles.lightTimerPanel}>
                 <Text style={styles.lightTimerLabel}>{counterLabel.toUpperCase()}</Text>
@@ -575,10 +637,10 @@ function getStyles(theme: AppTheme) {
     },
     content: {
       paddingHorizontal: isDarkTheme ? 26 : 20,
-      paddingTop: 18,
+      paddingTop: isDarkTheme ? 12 : 18,
       paddingBottom: 126,
       backgroundColor: isDarkTheme ? "#141416" : "#F7F3F0",
-      gap: 16,
+      gap: isDarkTheme ? 10 : 16,
     },
     sessionBody: {
       gap: 12,
@@ -639,7 +701,7 @@ function getStyles(theme: AppTheme) {
       flexDirection: "row",
       alignItems: "center",
       gap: 10,
-      marginTop: 18,
+      marginTop: 10,
       paddingHorizontal: 18,
       paddingVertical: 9,
       borderRadius: 999,
@@ -662,8 +724,8 @@ function getStyles(theme: AppTheme) {
     },
     titleBlock: {
       alignItems: "center",
-      marginTop: 16,
-      gap: 10,
+      marginTop: 8,
+      gap: 7,
     },
     phaseLabel: {
       color: theme.colors.primary,
@@ -692,17 +754,53 @@ function getStyles(theme: AppTheme) {
       lineHeight: 18,
       textAlign: "center",
     },
+    exerciseImageCard: {
+      minHeight: 166,
+      borderRadius: 18,
+      borderWidth: 1,
+      borderColor: theme.colors.primary,
+      overflow: "hidden",
+      backgroundColor: "#101214",
+      justifyContent: "flex-end",
+    },
+    exerciseImage: {
+      borderRadius: 17,
+    },
+    exerciseImageOverlay: {
+      ...StyleSheet.absoluteFill,
+      backgroundColor: "rgba(0, 0, 0, 0.16)",
+    },
+    exerciseImageLabel: {
+      alignSelf: "flex-start",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      margin: 12,
+      borderRadius: 999,
+      borderWidth: 1,
+      borderColor: "rgba(0, 240, 255, 0.45)",
+      backgroundColor: "rgba(8, 11, 13, 0.78)",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    exerciseImageLabelText: {
+      color: theme.colors.primary,
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1,
+      textTransform: "uppercase",
+    },
     timerShell: {
-      marginTop: 10,
+      marginTop: 6,
       borderRadius: 12,
       borderWidth: 2,
       borderStyle: "dashed",
       borderColor: "#222B2F",
-      padding: 16,
+      padding: 10,
       backgroundColor: "#161719",
     },
     timerPanel: {
-      minHeight: 170,
+      minHeight: 86,
       borderRadius: 8,
       borderWidth: 1,
       borderColor: "#22272B",
@@ -710,8 +808,8 @@ function getStyles(theme: AppTheme) {
       alignItems: "center",
       justifyContent: "center",
       paddingHorizontal: 18,
-      paddingVertical: 24,
-      gap: 12,
+      paddingVertical: 12,
+      gap: 6,
     },
     overviewPanel: {
       width: "100%",
@@ -784,7 +882,7 @@ function getStyles(theme: AppTheme) {
     },
     timerValue: {
       color: theme.colors.primary,
-      fontSize: 64,
+      fontSize: 54,
       fontWeight: "900",
       textAlign: "center",
       letterSpacing: -3,
@@ -971,6 +1069,45 @@ function getStyles(theme: AppTheme) {
       fontSize: 15,
       lineHeight: 22,
     },
+    lightExerciseImageCard: {
+      minHeight: 150,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: "#C8D5E8",
+      overflow: "hidden",
+      backgroundColor: "#FFFFFF",
+      justifyContent: "flex-end",
+      shadowColor: "#395A88",
+      shadowOpacity: 0.08,
+      shadowRadius: 10,
+      shadowOffset: { width: 0, height: 4 },
+      elevation: 1,
+    },
+    lightExerciseImage: {
+      borderRadius: 15,
+    },
+    lightExerciseImageOverlay: {
+      ...StyleSheet.absoluteFill,
+      backgroundColor: "rgba(21, 96, 200, 0.08)",
+    },
+    lightExerciseImageLabel: {
+      alignSelf: "flex-start",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+      margin: 12,
+      borderRadius: 999,
+      backgroundColor: "rgba(21, 96, 200, 0.88)",
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    lightExerciseImageLabelText: {
+      color: "#FFFFFF",
+      fontSize: 11,
+      fontWeight: "800",
+      letterSpacing: 1,
+      textTransform: "uppercase",
+    },
     lightTimerShell: {
       marginTop: 10,
       borderRadius: 12,
@@ -980,7 +1117,7 @@ function getStyles(theme: AppTheme) {
       backgroundColor: "#F4EFEA",
     },
     lightTimerPanel: {
-      minHeight: 170,
+      minHeight: 132,
       borderRadius: 8,
       borderWidth: 1,
       borderColor: "#C8D5E8",

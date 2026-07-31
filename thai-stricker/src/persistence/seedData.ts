@@ -50,6 +50,7 @@ type ImportedWorkoutSeed = {
     title: string;
     description: string;
     help: string;
+    imageUri?: string;
     target: MockExerciseTarget;
   }>;
 };
@@ -104,6 +105,7 @@ function buildImportedWorkouts() {
         title: exercise.title,
         description: exercise.description,
         help: exercise.help,
+        imageUri: exercise.imageUri,
         target: exercise.target,
       }),
     );
@@ -157,6 +159,7 @@ function buildAvailableExercises(workouts: MockWorkout[]) {
         title: exercise.title,
         description: exercise.description,
         help: exercise.help,
+        imageUri: exercise.imageUri,
         target: exercise.target,
       });
     });

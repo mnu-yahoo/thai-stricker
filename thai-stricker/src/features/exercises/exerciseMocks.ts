@@ -10,6 +10,7 @@ export type MockAvailableExercise = {
   description: string;
   help: string;
   category?: string;
+  imageUri?: string;
   target: MockExerciseTarget;
 };
 
@@ -44,6 +45,7 @@ function buildMockAvailableExercises() {
         description: exercise.description,
         help: exercise.help,
         category: exercise.category,
+        imageUri: exercise.imageUri,
         target: exercise.target,
       });
     });

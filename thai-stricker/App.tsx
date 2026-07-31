@@ -176,6 +176,7 @@ function isValidWorkoutImportPayload(value: unknown): value is WorkoutImportPayl
       typeof typedExercise.title !== "string" ||
       typeof typedExercise.description !== "string" ||
       typeof typedExercise.help !== "string" ||
+      (typedExercise.imageUri !== undefined && typeof typedExercise.imageUri !== "string") ||
       !typedExercise.target ||
       typeof typedExercise.target !== "object"
     ) {

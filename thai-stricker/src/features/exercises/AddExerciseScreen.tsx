@@ -27,6 +27,7 @@ export function AddExerciseScreen({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [help, setHelp] = useState("");
+  const [imageUri, setImageUri] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSaveExercise = () => {
@@ -50,6 +51,7 @@ export function AddExerciseScreen({
       title: title.trim(),
       description: description.trim(),
       help: help.trim(),
+      imageUri: imageUri.trim() || undefined,
       // Mock default target until Add Exercise supports target selection.
       target: {
         type: "reps",
@@ -107,6 +109,22 @@ export function AddExerciseScreen({
               textAlignVertical="top"
               style={[styles.textInput, styles.multilineInput]}
             />
+          </View>
+
+          <View style={styles.fieldGroup}>
+            <Text style={styles.fieldLabel}>Image URL</Text>
+            <TextInput
+              value={imageUri}
+              onChangeText={setImageUri}
+              placeholder="Optional exercise posture image URL"
+              placeholderTextColor={theme.colors.textMuted}
+              autoCapitalize="none"
+              autoCorrect={false}
+              style={styles.textInput}
+            />
+            <Text style={styles.helperText}>
+              Leave empty to use the default exercise image during workouts.
+            </Text>
           </View>
         </View>
 

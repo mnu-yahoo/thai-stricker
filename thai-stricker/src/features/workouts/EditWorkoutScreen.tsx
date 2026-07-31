@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import {
-  Alert,
   ImageBackground,
   Pressable,
   SafeAreaView,
@@ -105,14 +104,6 @@ function OptionGroup<T extends string>({
       })}
     </View>
   );
-}
-
-function formatExerciseTarget(target: MockExerciseTarget) {
-  if (target.type === "duration") {
-    return `${target.seconds} sec`;
-  }
-
-  return `${target.reps} reps`;
 }
 
 function calculateWorkoutTotalDurationMinutes(
@@ -235,6 +226,7 @@ export function EditWorkoutScreen({
         description: exercise.description,
         help: exercise.help,
         category: exercise.category,
+        imageUri: exercise.imageUri,
         target: exercise.target,
       },
     ]);

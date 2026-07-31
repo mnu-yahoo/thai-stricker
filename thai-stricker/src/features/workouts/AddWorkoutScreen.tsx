@@ -103,14 +103,6 @@ function OptionGroup<T extends string>({
   );
 }
 
-function formatExerciseTarget(target: MockExerciseTarget) {
-  if (target.type === "duration") {
-    return `${target.seconds} sec`;
-  }
-
-  return `${target.reps} reps`;
-}
-
 function calculateWorkoutTotalDurationMinutes(
   exercises: MockExercise[],
   restSecondsBetweenExercises: number,
@@ -207,6 +199,7 @@ export function AddWorkoutScreen({
         description: exercise.description,
         help: exercise.help,
         category: exercise.category,
+        imageUri: exercise.imageUri,
         target: exercise.target,
       },
     ]);

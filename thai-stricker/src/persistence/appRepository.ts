@@ -28,7 +28,7 @@ import type {
 } from "../features/workouts/workoutMocks";
 import { seedAvailableExercises, seedData } from "./seedData";
 
-const CURRENT_SEED_VERSION = 12;
+const CURRENT_SEED_VERSION = 13;
 
 type ExerciseRow = {
   id: string;
@@ -36,6 +36,7 @@ type ExerciseRow = {
   description: string;
   help: string;
   category: string;
+  image_uri: string | null;
   checksum: string;
   target_type: "duration" | "reps";
   target_value: number;
@@ -75,6 +76,7 @@ type WorkoutExerciseRow = {
   description: string;
   help: string;
   category: string;
+  image_uri: string | null;
   target_type: "duration" | "reps";
   target_value: number;
 };
@@ -164,6 +166,7 @@ export type WorkoutImportPayload = {
     title: string;
     description: string;
     help: string;
+    imageUri?: string;
     target: MockExerciseTarget;
   }>;
 };
@@ -258,6 +261,7 @@ function buildAvailableExercisesFromWorkouts(workouts: MockWorkout[]) {
         description: exercise.description,
         help: exercise.help,
         category: exercise.category,
+        imageUri: exercise.imageUri,
         target: exercise.target,
       });
     });
@@ -297,6 +301,7 @@ async function createTables(db: SQLiteDatabase) {
       description TEXT NOT NULL,
       help TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT '',
+      image_uri TEXT,
       checksum TEXT NOT NULL DEFAULT '',
       target_type TEXT NOT NULL,
       target_value INTEGER NOT NULL
@@ -442,17 +447,19 @@ async function insertSeedExercise(
         description,
         help,
         category,
+        image_uri,
         checksum,
         target_type,
         target_value
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     exercise.id,
     exercise.title,
     exercise.description,
     exercise.help,
-    "",
+    exercise.category ?? "",
+    exercise.imageUri?.trim() || null,
     checksum,
     exercise.target.type,
     targetValue,
@@ -842,6 +849,19 @@ async function migrateToSeedVersion12(db: SQLiteDatabase) {
   });
 }
 
+async function migrateToSeedVersion13(db: SQLiteDatabase) {
+  const exerciseColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(exercises)");
+  const hasImageUriColumn = exerciseColumns.some((column) => column.name === "image_uri");
+
+  if (hasImageUriColumn) {
+    return;
+  }
+
+  await db.withExclusiveTransactionAsync(async (txn) => {
+    await txn.runAsync("ALTER TABLE exercises ADD COLUMN image_uri TEXT");
+  });
+}
+
 export async function initializeDatabase() {
   const db = await getDatabase();
   await createTables(db);
@@ -894,6 +914,10 @@ export async function initializeDatabase() {
       await migrateToSeedVersion12(db);
     }
 
+    if (currentSeedVersion < 13) {
+      await migrateToSeedVersion13(db);
+    }
+
     await setSeedVersion(db, CURRENT_SEED_VERSION);
   }
 
@@ -931,7 +955,7 @@ async function loadSettings(db: SQLiteDatabase): Promise<PersistedSettings> {
 async function loadAvailableExercises(db: SQLiteDatabase) {
   const rows = await db.getAllAsync<ExerciseRow>(
     `
-      SELECT id, title, description, help, category, checksum, target_type, target_value
+      SELECT id, title, description, help, category, image_uri, checksum, target_type, target_value
       FROM exercises
       ORDER BY title COLLATE NOCASE ASC
     `,
@@ -943,6 +967,7 @@ async function loadAvailableExercises(db: SQLiteDatabase) {
     description: row.description,
     help: row.help,
     category: row.category,
+    imageUri: row.image_uri ?? undefined,
     target: toTarget(row.target_type, row.target_value),
   }));
 }
@@ -993,6 +1018,7 @@ async function loadWorkouts(db: SQLiteDatabase) {
         workout_exercises.description,
         workout_exercises.help,
         COALESCE(exercises.category, '') AS category,
+        exercises.image_uri,
         workout_exercises.target_type,
         workout_exercises.target_value
       FROM workout_exercises
@@ -1011,6 +1037,7 @@ async function loadWorkouts(db: SQLiteDatabase) {
           description: exerciseRow.description,
           help: exerciseRow.help,
           category: exerciseRow.category,
+          imageUri: exerciseRow.image_uri ?? undefined,
           target: toTarget(exerciseRow.target_type, exerciseRow.target_value),
         }),
       );
@@ -1317,14 +1344,15 @@ export async function addAvailableExercise(exercise: MockAvailableExercise) {
 
   await db.runAsync(
     `
-      INSERT INTO exercises (id, title, description, help, category, checksum, target_type, target_value)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO exercises (id, title, description, help, category, image_uri, checksum, target_type, target_value)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     exercise.id,
     exercise.title,
     exercise.description,
     exercise.help,
-    "",
+    exercise.category ?? "",
+    exercise.imageUri?.trim() || null,
     checksum,
     exercise.target.type,
     targetValue,
@@ -1340,12 +1368,14 @@ export async function updateAvailableExercise(exercise: MockAvailableExercise) {
   await db.runAsync(
     `
       UPDATE exercises
-      SET title = ?, description = ?, help = ?, checksum = ?, target_type = ?, target_value = ?
+      SET title = ?, description = ?, help = ?, category = ?, image_uri = ?, checksum = ?, target_type = ?, target_value = ?
       WHERE id = ?
     `,
     exercise.title,
     exercise.description,
     exercise.help,
+    exercise.category ?? "",
+    exercise.imageUri?.trim() || null,
     checksum,
     exercise.target.type,
     targetValue,
@@ -1359,8 +1389,8 @@ export async function importWorkouts(
 ) {
   const db = await initializeDatabase();
   const existingWorkoutIds = await db.getAllAsync<{ id: string }>("SELECT id FROM workouts");
-  const existingExercises = await db.getAllAsync<{ id: string; checksum: string }>(
-    "SELECT id, checksum FROM exercises",
+  const existingExercises = await db.getAllAsync<{ id: string; checksum: string; image_uri: string | null }>(
+    "SELECT id, checksum, image_uri FROM exercises",
   );
 
   let nextWorkoutNumber =
@@ -1378,6 +1408,12 @@ export async function importWorkouts(
       .filter((row) => row.checksum.trim().length > 0)
       .map((row) => [row.checksum, row.id] as const),
   );
+  const missingImageExerciseIds = new Map(
+    existingExercises
+      .filter((row) => !row.image_uri?.trim())
+      .map((row) => [row.id, row.id] as const),
+  );
+  const imageUrisByExistingExerciseId = new Map<string, string>();
   const exercisesToInsert = new Map<string, MockExercise>();
 
   const workoutsToInsert = importedWorkouts.map((workout) => {
@@ -1388,12 +1424,17 @@ export async function importWorkouts(
           title: exercise.title.trim(),
           description: exercise.description.trim(),
           help: exercise.help.trim(),
+          imageUri: exercise.imageUri?.trim() || undefined,
           target: exercise.target,
         } satisfies MockExercise;
         const checksum = computeExerciseChecksum(nextExercise);
         const existingExerciseId = exerciseIdsByChecksum.get(checksum);
 
         if (existingExerciseId) {
+          if (nextExercise.imageUri && missingImageExerciseIds.has(existingExerciseId)) {
+            imageUrisByExistingExerciseId.set(existingExerciseId, nextExercise.imageUri);
+          }
+
           return {
             ...nextExercise,
             id: existingExerciseId,
@@ -1440,20 +1481,30 @@ export async function importWorkouts(
             description,
             help,
             category,
+            image_uri,
             checksum,
             target_type,
             target_value
           )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
         exercise.id,
         exercise.title,
         exercise.description,
         exercise.help,
-        "",
+        exercise.category ?? "",
+        exercise.imageUri?.trim() || null,
         checksum,
         exercise.target.type,
         exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps,
+      );
+    }
+
+    for (const [exerciseId, imageUri] of imageUrisByExistingExerciseId) {
+      await txn.runAsync(
+        "UPDATE exercises SET image_uri = ? WHERE id = ? AND (image_uri IS NULL OR TRIM(image_uri) = '')",
+        imageUri,
+        exerciseId,
       );
     }
 

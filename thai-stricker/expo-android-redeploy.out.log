@@ -1,14 +1,17 @@
-
-> thai-stricker@1.0.0 android
-> expo start --android
-
 Starting project at C:\Users\mathieu.nussbaumer\Documents\ThaiStricker\thai-stricker
 Starting Metro Bundler
 
-› Opening exp://192.168.1.24:8081 on Pixel_5
 Waiting on http://localhost:8081
-An update for expo is available: 56.0.12 → ~56.0.16
+An update for expo is available: 56.0.12 → ~56.0.18
 0 other packages may need updating. Run npx expo install --check for details.
 Logs for your project will appear below.
-Android Bundled 5022ms index.ts (829 modules)
+Android Bundled 43447ms index.ts (829 modules)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 341ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 216ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 136ms index.ts (1 module)
+ WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
+Android Bundled 99ms index.ts (1 module)
  WARN  SafeAreaView has been deprecated and will be removed in a future release. Please use 'react-native-safe-area-context' instead. See https://github.com/AppAndFlow/react-native-safe-area-context
