@@ -244,32 +244,6 @@ function computeExerciseChecksum(
   return `ex-${(hash >>> 0).toString(16).padStart(8, "0")}`;
 }
 
-function buildAvailableExercisesFromWorkouts(workouts: MockWorkout[]) {
-  const deduplicatedExercises = new Map<string, MockAvailableExercise>();
-
-  workouts.forEach((workout) => {
-    workout.exercises.forEach((exercise) => {
-      const key = getExerciseDeduplicationKey(exercise);
-
-      if (deduplicatedExercises.has(key)) {
-        return;
-      }
-
-      deduplicatedExercises.set(key, {
-        id: `available-${deduplicatedExercises.size + 1}`,
-        title: exercise.title,
-        description: exercise.description,
-        help: exercise.help,
-        category: exercise.category,
-        imageUri: exercise.imageUri,
-        target: exercise.target,
-      });
-    });
-  });
-
-  return Array.from(deduplicatedExercises.values());
-}
-
 function getHighestNumericSuffix(values: string[], prefix: string) {
   return values.reduce((highestValue, value) => {
     if (!value.startsWith(prefix)) {
