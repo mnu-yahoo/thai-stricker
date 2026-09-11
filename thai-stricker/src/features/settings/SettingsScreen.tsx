@@ -5,7 +5,7 @@ import type { AppTheme } from "../../styles/theme";
 
 const REST_OPTIONS = [15, 30, 45, 60, 90, 120] as const;
 const TRAINING_DAY_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
-const MAX_EXERCISES_OPTIONS = [6, 8, 10, 12, 14, 16, 18, 20] as const;
+const MAX_EXERCISES_OPTIONS = [10, 15, 20, 25, 30] as const;
 const NUMBER_OF_EXERCISES_PER_PAGE_OPTIONS = [4, 6, 8, 10] as const;
 const DEFAULT_REPS_EXERCISE_DURATION_OPTIONS = [1, 2, 3, 4, 5] as const;
 const THEME_OPTIONS = ["Light", "Dark"] as const;

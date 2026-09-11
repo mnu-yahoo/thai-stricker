@@ -16,7 +16,7 @@ type EditExerciseScreenProps = {
   theme: AppTheme;
   exercise: MockAvailableExercise;
   onBackToAddWorkout: () => void;
-  onSaveExercise: (exercise: MockAvailableExercise) => void;
+  onSaveExercise: (exercise: MockAvailableExercise) => Promise<void>;
 };
 
 function formatExerciseTarget(exercise: MockAvailableExercise) {
@@ -41,7 +41,10 @@ export function EditExerciseScreen({
   const [imageUri, setImageUri] = useState(exercise.imageUri ?? "");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSaveExercise = () => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveExercise = async () => {
+    if (isSaving) return;
     if (!title.trim()) {
       setErrorMessage("Exercise title is required.");
       return;
@@ -57,13 +60,21 @@ export function EditExerciseScreen({
       return;
     }
 
-    onSaveExercise({
-      ...exercise,
-      title: title.trim(),
-      description: description.trim(),
-      help: help.trim(),
-      imageUri: imageUri.trim() || undefined,
-    });
+    setIsSaving(true);
+    setErrorMessage(null);
+    try {
+      await onSaveExercise({
+        ...exercise,
+        title: title.trim(),
+        description: description.trim(),
+        help: help.trim(),
+        imageUri: imageUri.trim() || undefined,
+      });
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to save exercise.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -158,10 +169,10 @@ export function EditExerciseScreen({
         ) : null}
 
         <View style={styles.actionsRow}>
-          <Pressable onPress={onBackToAddWorkout} style={styles.ghostButton}>
+          <Pressable disabled={isSaving} onPress={onBackToAddWorkout} style={styles.ghostButton}>
             <Text style={styles.ghostButtonText}>{isDarkTheme ? "Back to Add Workout" : "Cancel"}</Text>
           </Pressable>
-          <Pressable onPress={handleSaveExercise} style={styles.primaryButton}>
+          <Pressable disabled={isSaving} onPress={handleSaveExercise} style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>{isDarkTheme ? "Save exercise" : "Save"}</Text>
           </Pressable>
         </View>

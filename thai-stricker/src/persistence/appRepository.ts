@@ -28,7 +28,18 @@ import type {
 } from "../features/workouts/workoutMocks";
 import { seedAvailableExercises, seedData } from "./seedData";
 
-const CURRENT_SEED_VERSION = 13;
+import { normalizeExerciseName } from "../features/exercises/exerciseIdentity";
+import { migrateExercisesToVersion14 } from "./exerciseMigration";
+
+const CURRENT_SEED_VERSION = 14;
+let initializationPromise: Promise<SQLiteDatabase> | null = null;
+let writeQueue: Promise<unknown> = Promise.resolve();
+
+function withWriteTransaction(db: SQLiteDatabase, task: (txn: SQLiteDatabase) => Promise<void>) {
+  const result = writeQueue.then(() => db.withExclusiveTransactionAsync(task));
+  writeQueue = result.catch(() => undefined);
+  return result;
+}
 
 type ExerciseRow = {
   id: string;
@@ -497,7 +508,7 @@ async function insertSeedWorkout(
 }
 
 async function seedDatabase(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     for (const [key, value] of Object.entries(seedData.settings)) {
       await txn.runAsync(
         "INSERT INTO settings (key, value) VALUES (?, ?)",
@@ -628,12 +639,12 @@ async function seedDatabase(db: SQLiteDatabase) {
       seedData.monthlySummary.missedWorkouts,
     );
 
-    await setSeedVersion(txn, CURRENT_SEED_VERSION);
+    await setSeedVersion(txn, 13);
   });
 }
 
 async function migrateToSeedVersion2(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     for (const exercise of seedData.availableExercises) {
       await insertSeedExercise(txn, exercise);
     }
@@ -659,13 +670,13 @@ async function upsertSeedWorkouts(txn: SQLiteDatabase) {
 }
 
 async function migrateToSeedVersion3(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await upsertSeedWorkouts(txn);
   });
 }
 
 async function migrateToSeedVersion4(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("DELETE FROM planned_workout_days");
     await txn.runAsync("DELETE FROM planned_workouts");
     await txn.runAsync("DELETE FROM workout_logs");
@@ -683,7 +694,7 @@ async function migrateToSeedVersion4(db: SQLiteDatabase) {
 }
 
 async function migrateToSeedVersion5(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await upsertSeedWorkouts(txn);
   });
 }
@@ -701,7 +712,7 @@ async function migrateToSeedVersion6(db: SQLiteDatabase) {
 }
 
 async function migrateToSeedVersion7(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("DELETE FROM exercises WHERE id LIKE 'available-%'");
     await txn.runAsync("DELETE FROM planned_workout_days");
     await txn.runAsync("DELETE FROM planned_workouts");
@@ -725,7 +736,7 @@ async function migrateToSeedVersion7(db: SQLiteDatabase) {
 }
 
 async function migrateToSeedVersion8(db: SQLiteDatabase) {
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("DELETE FROM exercises");
   });
 }
@@ -750,7 +761,7 @@ async function migrateToSeedVersion10(db: SQLiteDatabase) {
     return;
   }
 
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("ALTER TABLE techniques ADD COLUMN sub_category TEXT NOT NULL DEFAULT ''");
   });
 }
@@ -769,7 +780,7 @@ async function migrateToSeedVersion11(db: SQLiteDatabase) {
     );
   `);
 
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     if (!hasExerciseCategoryColumn) {
       await txn.runAsync("ALTER TABLE exercises ADD COLUMN category TEXT NOT NULL DEFAULT ''");
     }
@@ -798,7 +809,7 @@ async function migrateToSeedVersion12(db: SQLiteDatabase) {
   const exerciseColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(exercises)");
   const hasChecksumColumn = exerciseColumns.some((column) => column.name === "checksum");
 
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     if (!hasChecksumColumn) {
       await txn.runAsync("ALTER TABLE exercises ADD COLUMN checksum TEXT NOT NULL DEFAULT ''");
     }
@@ -831,12 +842,22 @@ async function migrateToSeedVersion13(db: SQLiteDatabase) {
     return;
   }
 
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("ALTER TABLE exercises ADD COLUMN image_uri TEXT");
   });
 }
 
-export async function initializeDatabase() {
+export function initializeDatabase() {
+  if (!initializationPromise) {
+    initializationPromise = initializeDatabaseOnce().catch((error) => {
+      initializationPromise = null;
+      throw error;
+    });
+  }
+  return initializationPromise;
+}
+
+async function initializeDatabaseOnce() {
   const db = await getDatabase();
   await createTables(db);
   const currentSeedVersion = await getSeedVersion(db);
@@ -891,10 +912,11 @@ export async function initializeDatabase() {
     if (currentSeedVersion < 13) {
       await migrateToSeedVersion13(db);
     }
-
-    await setSeedVersion(db, CURRENT_SEED_VERSION);
   }
 
+  if (currentSeedVersion < 14) {
+    await withWriteTransaction(db, migrateExercisesToVersion14);
+  }
   return db;
 }
 
@@ -988,9 +1010,9 @@ async function loadWorkouts(db: SQLiteDatabase) {
         workout_exercises.workout_id,
         workout_exercises.exercise_id,
         workout_exercises.sort_order,
-        workout_exercises.title,
-        workout_exercises.description,
-        workout_exercises.help,
+        exercises.title,
+        exercises.description,
+        exercises.help,
         COALESCE(exercises.category, '') AS category,
         exercises.image_uri,
         workout_exercises.target_type,
@@ -1225,7 +1247,7 @@ export async function loadPersistedTechniques() {
 
 export async function importTechniques(techniques: Technique[]) {
   const db = await initializeDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     for (const technique of techniques) {
       await txn.runAsync(
         `
@@ -1251,7 +1273,7 @@ export async function importTechniques(techniques: Technique[]) {
 
 export async function deleteAllWorkouts(deleteExercises = false) {
   const db = await initializeDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("DELETE FROM planned_workout_days");
     await txn.runAsync("DELETE FROM planned_workouts");
     await txn.runAsync("DELETE FROM workout_logs");
@@ -1310,51 +1332,41 @@ export async function deleteTechnique(techniqueId: string) {
   await db.runAsync("DELETE FROM techniques WHERE id = ?", techniqueId);
 }
 
+async function assertExerciseNameAvailable(txn: SQLiteDatabase, exercise: MockAvailableExercise) {
+  const name = normalizeExerciseName(exercise.title);
+  if (!name) throw new Error("Exercise title is required.");
+  const duplicate = await txn.getFirstAsync<{ id: string }>(
+    "SELECT id FROM exercises WHERE normalized_name = ? AND id <> ?", name, exercise.id,
+  );
+  if (duplicate) throw new Error("An exercise with this name already exists. Use it from the exercise library.");
+}
+
 export async function addAvailableExercise(exercise: MockAvailableExercise) {
   const db = await initializeDatabase();
-  const targetValue =
-    exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps;
-  const checksum = computeExerciseChecksum(exercise);
-
-  await db.runAsync(
-    `
-      INSERT INTO exercises (id, title, description, help, category, image_uri, checksum, target_type, target_value)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    exercise.id,
-    exercise.title,
-    exercise.description,
-    exercise.help,
-    exercise.category ?? "",
-    exercise.imageUri?.trim() || null,
-    checksum,
-    exercise.target.type,
-    targetValue,
-  );
+  await withWriteTransaction(db, async (txn) => {
+    await assertExerciseNameAvailable(txn, exercise);
+    await txn.runAsync(
+      `INSERT INTO exercises (id, title, description, help, category, image_uri, target_type, target_value, normalized_name)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      exercise.id, exercise.title.trim(), exercise.description, exercise.help,
+      exercise.category ?? "", exercise.imageUri?.trim() || null,
+      exercise.target.type, exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps,
+      normalizeExerciseName(exercise.title),
+    );
+  });
 }
 
 export async function updateAvailableExercise(exercise: MockAvailableExercise) {
   const db = await initializeDatabase();
-  const targetValue =
-    exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps;
-  const checksum = computeExerciseChecksum(exercise);
-
-  await db.runAsync(
-    `
-      UPDATE exercises
-      SET title = ?, description = ?, help = ?, category = ?, image_uri = ?, checksum = ?, target_type = ?, target_value = ?
-      WHERE id = ?
-    `,
-    exercise.title,
-    exercise.description,
-    exercise.help,
-    exercise.category ?? "",
-    exercise.imageUri?.trim() || null,
-    checksum,
-    exercise.target.type,
-    targetValue,
-    exercise.id,
-  );
+  await withWriteTransaction(db, async (txn) => {
+    await assertExerciseNameAvailable(txn, exercise);
+    await txn.runAsync(
+      `UPDATE exercises SET title = ?, description = ?, help = ?, category = ?, image_uri = ?, normalized_name = ? WHERE id = ?`,
+      exercise.title.trim(), exercise.description, exercise.help, exercise.category ?? "",
+      exercise.imageUri?.trim() || null, normalizeExerciseName(exercise.title), exercise.id,
+    );
+    await txn.runAsync("UPDATE ai_coach_tips SET exercise_title = ? WHERE exercise_id = ?", exercise.title.trim(), exercise.id);
+  });
 }
 
 export async function importWorkouts(
@@ -1362,150 +1374,55 @@ export async function importWorkouts(
   defaultRepsExerciseDurationMinutes: number,
 ) {
   const db = await initializeDatabase();
-  const existingWorkoutIds = await db.getAllAsync<{ id: string }>("SELECT id FROM workouts");
-  const existingExercises = await db.getAllAsync<{ id: string; checksum: string; image_uri: string | null }>(
-    "SELECT id, checksum, image_uri FROM exercises",
-  );
-
-  let nextWorkoutNumber =
-    getHighestNumericSuffix(
-      existingWorkoutIds.map((row) => row.id),
-      "workout-",
-    ) + 1;
-  let nextExerciseNumber =
-    getHighestNumericSuffix(
-      existingExercises.map((row) => row.id),
-      "exercise-",
-    ) + 1;
-  const exerciseIdsByChecksum = new Map(
-    existingExercises
-      .filter((row) => row.checksum.trim().length > 0)
-      .map((row) => [row.checksum, row.id] as const),
-  );
-  const missingImageExerciseIds = new Map(
-    existingExercises
-      .filter((row) => !row.image_uri?.trim())
-      .map((row) => [row.id, row.id] as const),
-  );
-  const imageUrisByExistingExerciseId = new Map<string, string>();
-  const exercisesToInsert = new Map<string, MockExercise>();
-
-  const workoutsToInsert = importedWorkouts.map((workout) => {
-    const exercises = workout.exercises.map(
-      (exercise): MockExercise => {
-        const nextExercise = {
-          id: "",
-          title: exercise.title.trim(),
-          description: exercise.description.trim(),
-          help: exercise.help.trim(),
-          imageUri: exercise.imageUri?.trim() || undefined,
-          target: exercise.target,
-        } satisfies MockExercise;
-        const checksum = computeExerciseChecksum(nextExercise);
-        const existingExerciseId = exerciseIdsByChecksum.get(checksum);
-
-        if (existingExerciseId) {
-          if (nextExercise.imageUri && missingImageExerciseIds.has(existingExerciseId)) {
-            imageUrisByExistingExerciseId.set(existingExerciseId, nextExercise.imageUri);
-          }
-
-          return {
-            ...nextExercise,
-            id: existingExerciseId,
+  await withWriteTransaction(db, async (txn) => {
+    const existingWorkoutIds = await txn.getAllAsync<{ id: string }>("SELECT id FROM workouts");
+    const existingExercises = await txn.getAllAsync<ExerciseRow & { normalized_name: string }>("SELECT * FROM exercises");
+    let nextWorkoutNumber = getHighestNumericSuffix(existingWorkoutIds.map((row) => row.id), "workout-") + 1;
+    let nextExerciseNumber = getHighestNumericSuffix(existingExercises.map((row) => row.id), "exercise-") + 1;
+    const byName = new Map(existingExercises.map((row) => [row.normalized_name, row]));
+    for (const imported of importedWorkouts) {
+      const occurrences: MockExercise[] = [];
+      for (const exercise of imported.exercises) {
+        const name = normalizeExerciseName(exercise.title);
+        if (!name) throw new Error("Exercise title is required.");
+        let shared = byName.get(name);
+        if (!shared) {
+          shared = {
+            id: `exercise-${String(nextExerciseNumber++).padStart(3, "0")}`,
+            title: exercise.title.trim(), description: exercise.description.trim(), help: exercise.help.trim(),
+            category: "", image_uri: exercise.imageUri?.trim() || null, checksum: "", normalized_name: name,
+            target_type: exercise.target.type,
+            target_value: exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps,
           };
+          await txn.runAsync(
+            `INSERT INTO exercises (id, title, description, help, category, image_uri, target_type, target_value, normalized_name)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            shared.id, shared.title, shared.description, shared.help, shared.category, shared.image_uri,
+            shared.target_type, shared.target_value, name,
+          );
+          byName.set(name, shared);
+        } else {
+          shared.description = shared.description.trim() ? shared.description : exercise.description.trim();
+          shared.help = shared.help.trim() ? shared.help : exercise.help.trim();
+          shared.image_uri = shared.image_uri?.trim() ? shared.image_uri : exercise.imageUri?.trim() || null;
+          await txn.runAsync(
+            "UPDATE exercises SET description = ?, help = ?, image_uri = ? WHERE id = ?",
+            shared.description, shared.help, shared.image_uri, shared.id,
+          );
         }
-
-        const newExerciseId = `exercise-${String(nextExerciseNumber++).padStart(3, "0")}`;
-        const exerciseToInsert = {
-          ...nextExercise,
-          id: newExerciseId,
-        } satisfies MockExercise;
-
-        exerciseIdsByChecksum.set(checksum, newExerciseId);
-        exercisesToInsert.set(newExerciseId, exerciseToInsert);
-
-        return exerciseToInsert;
-      },
-    );
-
-    return {
-      id: `workout-${String(nextWorkoutNumber++).padStart(3, "0")}`,
-      title: workout.title.trim(),
-      description: workout.description.trim(),
-      difficulty: workout.difficulty,
-      category: workout.category,
-      totalDurationMinutes: calculateWorkoutTotalDurationMinutes(
-        exercises,
-        workout.restSecondsBetweenExercises,
-        defaultRepsExerciseDurationMinutes,
-      ),
-      restSecondsBetweenExercises: workout.restSecondsBetweenExercises,
-      exercises,
-    } satisfies MockWorkout;
-  });
-
-  await db.withExclusiveTransactionAsync(async (txn) => {
-    for (const exercise of exercisesToInsert.values()) {
-      const checksum = computeExerciseChecksum(exercise);
+        occurrences.push({ id: shared.id, title: shared.title, description: shared.description,
+          help: shared.help, category: shared.category, imageUri: shared.image_uri ?? undefined, target: exercise.target });
+      }
+      const workout: MockWorkout = {
+        ...imported, id: `workout-${String(nextWorkoutNumber++).padStart(3, "0")}`, exercises: occurrences,
+        totalDurationMinutes: calculateWorkoutTotalDurationMinutes(occurrences, imported.restSecondsBetweenExercises, defaultRepsExerciseDurationMinutes),
+      };
       await txn.runAsync(
-        `
-          INSERT INTO exercises (
-            id,
-            title,
-            description,
-            help,
-            category,
-            image_uri,
-            checksum,
-            target_type,
-            target_value
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        exercise.id,
-        exercise.title,
-        exercise.description,
-        exercise.help,
-        exercise.category ?? "",
-        exercise.imageUri?.trim() || null,
-        checksum,
-        exercise.target.type,
-        exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps,
+        `INSERT INTO workouts (id, title, description, difficulty, category, total_duration_minutes, rest_seconds_between_exercises, last_done_date)
+         VALUES (?, ?, ?, ?, ?, ?, ?, NULL)`,
+        workout.id, workout.title.trim(), workout.description.trim(), workout.difficulty,
+        workout.category, workout.totalDurationMinutes, workout.restSecondsBetweenExercises,
       );
-    }
-
-    for (const [exerciseId, imageUri] of imageUrisByExistingExerciseId) {
-      await txn.runAsync(
-        "UPDATE exercises SET image_uri = ? WHERE id = ? AND (image_uri IS NULL OR TRIM(image_uri) = '')",
-        imageUri,
-        exerciseId,
-      );
-    }
-
-    for (const workout of workoutsToInsert) {
-      await txn.runAsync(
-        `
-          INSERT INTO workouts (
-            id,
-            title,
-            description,
-            difficulty,
-            category,
-            total_duration_minutes,
-            rest_seconds_between_exercises,
-            last_done_date
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `,
-        workout.id,
-        workout.title,
-        workout.description,
-        workout.difficulty,
-        workout.category,
-        workout.totalDurationMinutes,
-        workout.restSecondsBetweenExercises,
-        null,
-      );
-
       await replaceWorkoutExercises(txn, workout);
     }
   });
@@ -1515,6 +1432,8 @@ async function replaceWorkoutExercises(txn: SQLiteDatabase, workout: MockWorkout
   await txn.runAsync("DELETE FROM workout_exercises WHERE workout_id = ?", workout.id);
 
   for (const [index, exercise] of workout.exercises.entries()) {
+    const shared = await txn.getFirstAsync<{ id: string }>("SELECT id FROM exercises WHERE id = ?", exercise.id);
+    if (!shared) throw new Error("Exercise no longer exists. Select it from the exercise library.");
     const targetValue =
       exercise.target.type === "duration" ? exercise.target.seconds : exercise.target.reps;
 
@@ -1545,7 +1464,7 @@ async function replaceWorkoutExercises(txn: SQLiteDatabase, workout: MockWorkout
 
 export async function addWorkout(workout: MockWorkout) {
   const db = await initializeDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync(
       `
         INSERT INTO workouts (
@@ -1575,7 +1494,7 @@ export async function addWorkout(workout: MockWorkout) {
 
 export async function updateWorkout(workout: MockWorkout) {
   const db = await initializeDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync(
       `
         UPDATE workouts
@@ -1605,7 +1524,7 @@ export async function updateWorkout(workout: MockWorkout) {
 
 export async function deleteWorkout(workoutId: string) {
   const db = await initializeDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync("DELETE FROM workout_exercises WHERE workout_id = ?", workoutId);
     await txn.runAsync("DELETE FROM planned_workout_days WHERE workout_id = ?", workoutId);
     await txn.runAsync("DELETE FROM workouts WHERE id = ?", workoutId);
@@ -1614,7 +1533,7 @@ export async function deleteWorkout(workoutId: string) {
 
 export async function saveWeeklyPlan(plan: MockWeeklyWorkoutPlan) {
   const db = await initializeDatabase();
-  await db.withExclusiveTransactionAsync(async (txn) => {
+  await withWriteTransaction(db, async (txn) => {
     await txn.runAsync(
       `
         INSERT INTO planned_workouts (

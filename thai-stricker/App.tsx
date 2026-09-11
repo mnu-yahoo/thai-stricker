@@ -1,3 +1,4 @@
+import { shareExerciseDetails } from "./src/features/exercises/exerciseIdentity";
 import { MaterialSymbols_400Regular } from "@expo-google-fonts/material-symbols/400Regular";
 import { useFonts } from "@expo-google-fonts/material-symbols/useFonts";
 import * as DocumentPicker from "expo-document-picker";
@@ -594,21 +595,21 @@ export default function App() {
     setWorkoutsView("list");
   };
 
-  const handleAddWorkout = (workout: MockWorkout) => {
+  const handleAddWorkout = async (workout: MockWorkout) => {
+    await addWorkout(workout);
     setWorkouts((currentWorkouts) => [...currentWorkouts, workout]);
     setWorkoutsView("list");
     setActiveTab("Home");
-    void addWorkout(workout);
   };
 
-  const handleSaveEditedWorkout = (updatedWorkout: MockWorkout) => {
+  const handleSaveEditedWorkout = async (updatedWorkout: MockWorkout) => {
+    await updateWorkout(updatedWorkout);
     setWorkouts((currentWorkouts) =>
       currentWorkouts.map((workout) =>
         workout.id === updatedWorkout.id ? updatedWorkout : workout,
       ),
     );
     setWorkoutsView("list");
-    void updateWorkout(updatedWorkout);
   };
 
   const handleDeleteWorkout = (workoutId: string) => {
@@ -644,18 +645,23 @@ export default function App() {
     void saveWeeklyPlan({ ...plan, source: "sqlite" });
   };
 
-  const handleAddAvailableExercise = (newExercise: MockAvailableExercise) => {
+  const handleAddAvailableExercise = async (newExercise: MockAvailableExercise) => {
+    await addAvailableExercise(newExercise);
     setAvailableExercises((currentExercises) => [...currentExercises, newExercise]);
-    void addAvailableExercise(newExercise);
   };
 
-  const handleUpdateAvailableExercise = (updatedExercise: MockAvailableExercise) => {
+  const handleUpdateAvailableExercise = async (updatedExercise: MockAvailableExercise) => {
+    await updateAvailableExercise(updatedExercise);
     setAvailableExercises((currentExercises) =>
       currentExercises.map((exercise) =>
         exercise.id === updatedExercise.id ? updatedExercise : exercise,
       ),
     );
-    void updateAvailableExercise(updatedExercise);
+    setWorkouts((current) => current.map((workout) => ({
+      ...workout, exercises: shareExerciseDetails(workout.exercises, [updatedExercise]),
+    })));
+    setCoachTips((current) => current.map((tip) => tip.exerciseId === updatedExercise.id
+      ? { ...tip, exerciseTitle: updatedExercise.title } : tip));
   };
 
   const handleRestSecondsChange = (

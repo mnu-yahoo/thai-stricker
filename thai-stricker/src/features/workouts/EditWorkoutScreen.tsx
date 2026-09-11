@@ -1,3 +1,4 @@
+import { shareExerciseDetails } from "../exercises/exerciseIdentity";
 import { useEffect, useState } from "react";
 import {
   ImageBackground,
@@ -46,10 +47,10 @@ type EditWorkoutScreenProps = {
   numberOfExercisesPerPage: NumberOfExercisesPerPageOption;
   restSecondsBetweenExercises: number;
   defaultRepsExerciseDurationMinutes: number;
-  onAddAvailableExercise: (exercise: MockAvailableExercise) => void;
-  onUpdateAvailableExercise: (exercise: MockAvailableExercise) => void;
+  onAddAvailableExercise: (exercise: MockAvailableExercise) => Promise<void>;
+  onUpdateAvailableExercise: (exercise: MockAvailableExercise) => Promise<void>;
   onBackToWorkouts: () => void;
-  onSaveWorkout: (workout: MockWorkout) => void;
+  onSaveWorkout: (workout: MockWorkout) => Promise<void>;
 };
 
 function OptionGroup<T extends string>({
@@ -169,6 +170,10 @@ export function EditWorkoutScreen({
   const [mode, setMode] = useState<EditWorkoutMode>({ type: "form" });
   const [workoutErrorMessage, setWorkoutErrorMessage] = useState<string | null>(null);
   const [selectionErrorMessage, setSelectionErrorMessage] = useState<string | null>(null);
+  useEffect(() => {
+    setExercises((current) => shareExerciseDetails(current, availableExercises));
+  }, [availableExercises]);
+  const [isSavingWorkout, setIsSavingWorkout] = useState(false);
   const calculatedTotalDurationMinutes = calculateWorkoutTotalDurationMinutes(
     exercises,
     restSecondsBetweenExercises,
@@ -221,7 +226,7 @@ export function EditWorkoutScreen({
     setExercises((currentExercises) => [
       ...currentExercises,
       {
-        id: `exercise-edit-${Date.now()}-${currentExercises.length}`,
+        id: exercise.id,
         title: exercise.title,
         description: exercise.description,
         help: exercise.help,
@@ -238,26 +243,27 @@ export function EditWorkoutScreen({
     setMode({ type: "form" });
   };
 
-  const handleSaveAddedExercise = (newExercise: MockAvailableExercise) => {
-    onAddAvailableExercise(newExercise);
+  const handleSaveAddedExercise = async (newExercise: MockAvailableExercise) => {
+    await onAddAvailableExercise(newExercise);
     const nextExercisesLength = availableExercises.length + 1;
     const finalPage = Math.max(1, Math.ceil(nextExercisesLength / numberOfExercisesPerPage));
     setAvailableExercisesPage(finalPage);
     setMode({ type: "form" });
   };
 
-  const handleSaveEditedExercise = (updatedExercise: MockAvailableExercise) => {
-    onUpdateAvailableExercise(updatedExercise);
+  const handleSaveEditedExercise = async (updatedExercise: MockAvailableExercise) => {
+    await onUpdateAvailableExercise(updatedExercise);
     setMode({ type: "form" });
   };
 
-  const handleRemoveExercise = (exerciseId: string) => {
+  const handleRemoveExercise = (occurrenceIndex: number) => {
     setExercises((currentExercises) =>
-      currentExercises.filter((exercise) => exercise.id !== exerciseId),
+      currentExercises.filter((_, index) => index !== occurrenceIndex),
     );
   };
 
-  const handleSaveWorkout = () => {
+  const handleSaveWorkout = async () => {
+    if (isSavingWorkout) return;
     if (!title.trim()) {
       setWorkoutErrorMessage("Workout title is required.");
       return;
@@ -280,16 +286,23 @@ export function EditWorkoutScreen({
       return;
     }
 
-    onSaveWorkout({
-      ...workout,
-      title: title.trim(),
-      description: description.trim(),
-      difficulty,
-      category,
-      totalDurationMinutes: calculatedTotalDurationMinutes,
-      restSecondsBetweenExercises,
-      exercises,
-    });
+    setIsSavingWorkout(true);
+    try {
+      await onSaveWorkout({
+        ...workout,
+        title: title.trim(),
+        description: description.trim(),
+        difficulty,
+        category,
+        totalDurationMinutes: calculatedTotalDurationMinutes,
+        restSecondsBetweenExercises,
+        exercises,
+      });
+    } catch (error) {
+      setWorkoutErrorMessage(error instanceof Error ? error.message : "Unable to save workout.");
+    } finally {
+      setIsSavingWorkout(false);
+    }
   };
 
   const activeExercise =
@@ -614,7 +627,7 @@ export function EditWorkoutScreen({
               </View>
             ) : (
               exercises.map((exercise, index) => (
-                <View key={exercise.id} style={styles.selectedCard}>
+                <View key={index} style={styles.selectedCard}>
                   <View style={styles.selectedCardTop}>
                     <View style={styles.selectedIndexBadge}>
                       <Text style={styles.selectedIndexBadgeText}>{index + 1}</Text>
@@ -637,7 +650,7 @@ export function EditWorkoutScreen({
                     </View>
 
                     <Pressable
-                      onPress={() => handleRemoveExercise(exercise.id)}
+                      onPress={() => handleRemoveExercise(index)}
                       style={styles.deleteButton}
                     >
                       <GoogleMaterialSymbol
@@ -666,7 +679,7 @@ export function EditWorkoutScreen({
             <Pressable onPress={onBackToWorkouts} style={styles.secondaryActionButton}>
               <Text style={styles.secondaryActionButtonText}>Cancel</Text>
             </Pressable>
-            <Pressable onPress={handleSaveWorkout} style={styles.primaryActionButton}>
+            <Pressable disabled={isSavingWorkout} onPress={handleSaveWorkout} style={styles.primaryActionButton}>
               <Text style={styles.primaryActionButtonText}>Save</Text>
             </Pressable>
           </View>

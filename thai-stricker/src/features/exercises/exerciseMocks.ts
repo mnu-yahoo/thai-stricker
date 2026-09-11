@@ -1,3 +1,4 @@
+import { normalizeExerciseName } from "./exerciseIdentity";
 import {
   mockWorkouts,
   type MockExercise,
@@ -14,26 +15,12 @@ export type MockAvailableExercise = {
   target: MockExerciseTarget;
 };
 
-function getExerciseDeduplicationKey(exercise: Pick<MockExercise, "title" | "description" | "help" | "target">) {
-  const targetKey =
-    exercise.target.type === "duration"
-      ? `duration:${exercise.target.seconds}`
-      : `reps:${exercise.target.reps}`;
-
-  return [
-    exercise.title.trim().toLowerCase(),
-    exercise.description.trim().toLowerCase(),
-    exercise.help.trim().toLowerCase(),
-    targetKey,
-  ].join("|");
-}
-
 function buildMockAvailableExercises() {
   const deduplicatedExercises = new Map<string, MockAvailableExercise>();
 
   mockWorkouts.forEach((workout) => {
     workout.exercises.forEach((exercise) => {
-      const key = getExerciseDeduplicationKey(exercise);
+      const key = normalizeExerciseName(exercise.title);
 
       if (deduplicatedExercises.has(key)) {
         return;

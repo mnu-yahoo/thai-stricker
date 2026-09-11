@@ -303,7 +303,7 @@ export function StartWorkoutScreen({
 
                       return (
                         <View
-                          key={workoutExercise.id}
+                          key={index}
                           style={[
                             styles.overviewRow,
                             isActiveExercise ? styles.overviewRowActive : undefined,
@@ -504,7 +504,7 @@ export function StartWorkoutScreen({
 
                     return (
                       <View
-                        key={workoutExercise.id}
+                        key={index}
                         style={[
                           styles.lightOverviewRow,
                           isActiveExercise ? styles.lightOverviewRowActive : undefined,

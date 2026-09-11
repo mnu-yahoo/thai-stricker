@@ -480,7 +480,7 @@ export function WorkoutsScreen({
                   {!isDarkTheme ? <View style={styles.lightDivider} /> : null}
                   {workout.exercises.map((exercise, index) => (
                     <View
-                      key={exercise.id}
+                      key={index}
                       style={[styles.exerciseCard, !isDarkTheme ? styles.lightExerciseCard : undefined]}
                     >
                       {isDarkTheme ? (

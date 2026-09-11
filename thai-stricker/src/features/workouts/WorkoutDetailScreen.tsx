@@ -156,7 +156,7 @@ export function WorkoutDetailScreen({
 
           <View style={styles.exerciseList}>
             {workout.exercises.map((exercise, index) => (
-              <View key={exercise.id} style={styles.exerciseCard}>
+              <View key={index} style={styles.exerciseCard}>
                 <View style={styles.exerciseIndexBadge}>
                   <Text style={styles.exerciseIndexText}>{index + 1}</Text>
                 </View>

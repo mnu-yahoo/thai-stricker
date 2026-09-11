@@ -15,7 +15,7 @@ import { type MockAvailableExercise } from "./exerciseMocks";
 type AddExerciseScreenProps = {
   theme: AppTheme;
   onBackToAddWorkout: () => void;
-  onSaveExercise: (exercise: MockAvailableExercise) => void;
+  onSaveExercise: (exercise: MockAvailableExercise) => Promise<void>;
 };
 
 export function AddExerciseScreen({
@@ -30,7 +30,10 @@ export function AddExerciseScreen({
   const [imageUri, setImageUri] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSaveExercise = () => {
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveExercise = async () => {
+    if (isSaving) return;
     if (!title.trim()) {
       setErrorMessage("Exercise title is required.");
       return;
@@ -46,18 +49,26 @@ export function AddExerciseScreen({
       return;
     }
 
-    onSaveExercise({
-      id: `exercise-${Date.now()}`,
-      title: title.trim(),
-      description: description.trim(),
-      help: help.trim(),
-      imageUri: imageUri.trim() || undefined,
-      // Mock default target until Add Exercise supports target selection.
-      target: {
-        type: "reps",
-        reps: 10,
-      },
-    });
+    setIsSaving(true);
+    setErrorMessage(null);
+    try {
+      await onSaveExercise({
+        id: `exercise-${Date.now()}`,
+        title: title.trim(),
+        description: description.trim(),
+        help: help.trim(),
+        imageUri: imageUri.trim() || undefined,
+        // Mock default target until Add Exercise supports target selection.
+        target: {
+          type: "reps",
+          reps: 10,
+        },
+      });
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Unable to save exercise.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -146,10 +157,10 @@ export function AddExerciseScreen({
         ) : null}
 
         <View style={styles.actionsRow}>
-          <Pressable onPress={onBackToAddWorkout} style={styles.ghostButton}>
+          <Pressable disabled={isSaving} onPress={onBackToAddWorkout} style={styles.ghostButton}>
             <Text style={styles.ghostButtonText}>Back to Add Workout</Text>
           </Pressable>
-          <Pressable onPress={handleSaveExercise} style={styles.primaryButton}>
+          <Pressable disabled={isSaving} onPress={handleSaveExercise} style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>Save exercise</Text>
           </Pressable>
         </View>
