@@ -28,6 +28,7 @@ import {
   type MockWorkoutCategory,
   type MockWorkoutDifficulty,
 } from "./workoutMocks";
+import { reorderWorkoutExercises } from "./reorderWorkoutExercises";
 
 const EXERCISE_THUMB_URI =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuD3C5SDrHOXybW_s5ltu_w7y9f3GD1p4EqUBQ1pc2of6ewG7U9wEwWsJae_KVvSFfNSOmta4dlvbm6MWYCTC6UyJO0B4q4RFm4H-UAcHu4Iqi-pu4QJrrvt3UfWBVGTYlAb-Zv6S6YEQ2ruDMSFxRQXYeyJAkgojkw17GI1XVaentlU4Dcg6A9GwlEQZXareWGIu361fNtyrcNyoyhCNyA1cOVVMkyoT6NC-lXpHr1V2tCdBrPHbgrkaJykY4vvt972cISslWZNFg0";
@@ -260,6 +261,13 @@ export function EditWorkoutScreen({
     setExercises((currentExercises) =>
       currentExercises.filter((_, index) => index !== occurrenceIndex),
     );
+  };
+
+  const handleMoveExercise = (occurrenceIndex: number, direction: -1 | 1) => {
+    setExercises((currentExercises) =>
+      reorderWorkoutExercises(currentExercises, occurrenceIndex, occurrenceIndex + direction),
+    );
+    setWorkoutErrorMessage(null);
   };
 
   const handleSaveWorkout = async () => {
@@ -649,17 +657,70 @@ export function EditWorkoutScreen({
                       </View>
                     </View>
 
-                    <Pressable
-                      onPress={() => handleRemoveExercise(index)}
-                      style={styles.deleteButton}
-                    >
-                      <GoogleMaterialSymbol
-                        color={theme.colors.textPrimary}
-                        fallbackName="delete-outline"
-                        name="delete"
-                        size={20}
-                      />
-                    </Pressable>
+                    <View style={styles.selectedActions}>
+                      <Pressable
+                        accessibilityLabel={`Move ${exercise.title} up`}
+                        accessibilityRole="button"
+                        accessibilityState={{ disabled: index === 0 }}
+                        disabled={index === 0}
+                        hitSlop={6}
+                        onPress={() => handleMoveExercise(index, -1)}
+                        style={({ pressed }) => [
+                          styles.reorderButton,
+                          index === 0 ? styles.reorderButtonDisabled : undefined,
+                          pressed && index !== 0 ? styles.reorderButtonPressed : undefined,
+                        ]}
+                      >
+                        <GoogleMaterialSymbol
+                          color={index === 0 ? theme.colors.textMuted : theme.colors.primary}
+                          fallbackName="arrow-upward"
+                          name="arrow_upward"
+                          size={20}
+                        />
+                      </Pressable>
+                      <Pressable
+                        accessibilityLabel={`Move ${exercise.title} down`}
+                        accessibilityRole="button"
+                        accessibilityState={{ disabled: index === exercises.length - 1 }}
+                        disabled={index === exercises.length - 1}
+                        hitSlop={6}
+                        onPress={() => handleMoveExercise(index, 1)}
+                        style={({ pressed }) => [
+                          styles.reorderButton,
+                          index === exercises.length - 1
+                            ? styles.reorderButtonDisabled
+                            : undefined,
+                          pressed && index !== exercises.length - 1
+                            ? styles.reorderButtonPressed
+                            : undefined,
+                        ]}
+                      >
+                        <GoogleMaterialSymbol
+                          color={
+                            index === exercises.length - 1
+                              ? theme.colors.textMuted
+                              : theme.colors.primary
+                          }
+                          fallbackName="arrow-downward"
+                          name="arrow_downward"
+                          size={20}
+                        />
+                      </Pressable>
+                      <Pressable
+                        accessibilityLabel={`Remove ${exercise.title}`}
+                        accessibilityRole="button"
+                        hitSlop={6}
+                        onPress={() => handleRemoveExercise(index)}
+                        style={styles.deleteButton}
+                      >
+                        <GoogleMaterialSymbol
+                          color={theme.colors.textPrimary}
+                          fallbackName="delete-outline"
+                          name="delete"
+                          size={20}
+                        />
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
               ))
@@ -1194,9 +1255,30 @@ function getStyles(theme: AppTheme) {
       textTransform: "uppercase",
       letterSpacing: 1.2,
     },
+    selectedActions: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+    },
+    reorderButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: isDarkTheme ? "#42565B" : "#C5D1E5",
+      backgroundColor: isDarkTheme ? "#29282C" : "#F1F5FC",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    reorderButtonDisabled: {
+      opacity: 0.4,
+    },
+    reorderButtonPressed: {
+      opacity: 0.65,
+    },
     deleteButton: {
-      width: 28,
-      height: 28,
+      width: 32,
+      height: 32,
       alignItems: "center",
       justifyContent: "center",
     },

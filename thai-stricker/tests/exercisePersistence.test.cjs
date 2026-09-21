@@ -162,8 +162,27 @@ test('manual duplicate create/rename rejected; shared edits propagate without ch
   const { shareExerciseDetails } = h.load(path.resolve(__dirname, '../src/features/exercises/exerciseIdentity.ts'));
   assert.deepEqual(shareExerciseDetails(occurrences, [renamed]).map((e) => e.target), occurrences.map((e) => e.target));
   const w = snapshot.workouts[0];
-  await h.repo.updateWorkout({ ...w, exercises: w.exercises.filter((_, index) => index !== 0) });
-  assert.equal((await h.repo.loadAppData()).workouts[0].exercises[0].target.reps, 22);
+  const { reorderWorkoutExercises } = h.load(path.resolve(__dirname, '../src/features/workouts/reorderWorkoutExercises.ts'));
+  const reorderedExercises = reorderWorkoutExercises(w.exercises, 1, 0);
+  assert.notEqual(reorderedExercises, w.exercises);
+  assert.deepEqual(reorderedExercises.map((item) => item.target), [
+    { type: 'reps', reps: 22 },
+    { type: 'duration', seconds: 30 },
+  ]);
+  await h.repo.updateWorkout({ ...w, exercises: reorderedExercises });
+  assert.deepEqual((await h.repo.loadAppData()).workouts[0].exercises.map((item) => item.target), [
+    { type: 'reps', reps: 22 },
+    { type: 'duration', seconds: 30 },
+  ]);
+  assert.deepEqual(
+    all(h.database, "SELECT sort_order, target_type, target_value FROM workout_exercises WHERE workout_id='manual' ORDER BY sort_order"),
+    [
+      { sort_order: 0, target_type: 'reps', target_value: 22 },
+      { sort_order: 1, target_type: 'duration', target_value: 30 },
+    ],
+  );
+  await h.repo.updateWorkout({ ...w, exercises: reorderedExercises.filter((_, index) => index !== 0) });
+  assert.equal((await h.repo.loadAppData()).workouts[0].exercises[0].target.seconds, 30);
   await assert.rejects(h.repo.addWorkout({ ...workout([exercise('missing')]), id: 'invalid', totalDurationMinutes: 1 }), /no longer exists/);
   assert.equal(all(h.database, "SELECT * FROM workouts WHERE id='invalid'").length, 0);
   h.database.close();
