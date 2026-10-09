@@ -1,23 +1,15 @@
-# Database Architecture
+# Data Architecture
 
 ## Decision
 
-- SQLite
-- `expo-sqlite`
-- Drizzle ORM planned
+ThaiStricker stores one validated, versioned JSON document in browser
+`localStorage` under `thai-stricker:data:v1`.
 
-## Rationale
+- `ThaiStrickerDataFileV1` is the interchange and backup format.
+- Repository operations clone, validate and then replace the complete document.
+- Full import downloads the previous document before replacement.
+- Workout and technique imports remain available for legacy files.
+- Data is local to one browser profile and is never cached by the service worker.
 
-The app will use local-only storage. SQLite is a good fit for Expo Android and is suitable for structured training data, local coach chat history, and future relational queries.
-
-There will be no cloud database and no sync.
-
-## Rejected Options
-
-- AsyncStorage: too limited for structured relational data
-- Realm: unnecessary native complexity
-- WatermelonDB: overkill for this personal app
-
-## Schema Status
-
-Do not create the database schema yet.
+There is no cloud database or synchronization. Moving to another phone requires
+exporting and importing a JSON backup.

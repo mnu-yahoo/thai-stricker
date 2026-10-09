@@ -4,12 +4,12 @@
 - Read only relevant files
 - Do not implement undefined features
 - Keep changes small and focused
-- Android only
-- Android Emulator required for preview/debugging
+- Mobile-first web application
+- Browser preview for development and debugging
 - No medical advice
 - No nutrition advice
 - No wearable readiness
-- No cloud
+- No backend or cloud data storage
 - No auth
 - Personal/private use only
 

@@ -2,11 +2,11 @@
 
 ## Approved Scope
 
-- Private Android Muay Thai Boxing coaching app
+- Private mobile-first Muay Thai coaching PWA
 - AI coaching with local mocked data only
 - Local training data
 - Local coach tips data
-- Android Emulator development workflow
+- Browser development workflow
 - Professional mobile UI later guided by Stitch
 - Home Screen
 - Workout Screen
@@ -402,7 +402,7 @@ Not implemented:
 ## Explicitly Out Of Scope
 
 - iOS support
-- Web support
+- Native Android APK distribution
 - Cloud sync
 - Authentication
 - Public store release
@@ -413,38 +413,16 @@ Not implemented:
 - Payments
 - Public user accounts
 
-## Private Android Deployment
+## Private Web Deployment
 
-Thai Stricker is deployed privately as an Android APK.
+ThaiStricker is deployed as a personal PWA on Vercel Hobby.
 
-Deployment target:
-- Personal Android device only
-
-Build type:
-- APK
-
-Not used:
-- Google Play Store
-- Android App Bundle for store release
-- iOS build
-- Public distribution
-
-Developer commands:
-
-```powershell
-npm install -g eas-cli
-eas login
-eas build:configure
-eas build --platform android --profile preview-apk
-```
-
-After the APK is built:
-
-```powershell
-adb install path/to/thai-stricker.apk
-```
-
-Or manually copy the APK to the Android phone and install it after allowing installation from unknown sources.
+- React, TypeScript and Vite
+- Installable from the phone browser
+- Offline application shell after the first successful visit
+- Versioned JSON data stored in the browser
+- Manual JSON export/import for backups and device transfers
+- No Expo, APK, app store, backend, account or cloud synchronization
 
 ## Rule
 

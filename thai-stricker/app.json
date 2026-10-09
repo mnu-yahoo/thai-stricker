@@ -1,28 +1,5 @@
 {
-  "expo": {
-    "name": "Thai Stricker",
-    "slug": "thai-stricker",
-    "version": "1.0.0",
-    "platforms": [
-      "android"
-    ],
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "android": {
-      "icon": "./assets/icon.png",
-      "package": "com.personal.thaistricker",
-      "adaptiveIcon": {
-        "backgroundColor": "#140705",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "extra": {
-      "eas": {
-        "projectId": "c57a77cd-1b19-4e83-9bc9-8b49df1877b4"
-      }
-    }
-  }
+  "name": "ThaiStricker",
+  "platform": "web-pwa",
+  "note": "Legacy filename retained; Vite configuration is in vite.config.ts."
 }

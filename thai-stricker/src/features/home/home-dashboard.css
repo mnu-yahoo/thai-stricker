@@ -1,0 +1,111 @@
+.home-dashboard { margin: 0 -18px; padding: 18px 20px 28px; min-height: calc(100dvh - 80px); display: grid; gap: 16px; font-family: "Archivo Narrow", Inter, sans-serif; }
+.home-dashboard section { margin: 0; }
+.home-dashboard button { font-family: inherit; }
+.home-dashboard__topbar, .home-dashboard__light-topbar { display: flex; align-items: center; justify-content: space-between; }
+.home-dashboard__top-action, .home-dashboard__light-topbar button { width: 38px; height: 38px; display: grid; place-items: center; border: 0; color: inherit; background: transparent; border-radius: 50%; cursor: pointer; }
+.home-dashboard__brand { display: flex; align-items: center; gap: 12px; color: #00f0ff; font-size: 18px; text-transform: uppercase; }
+.home-dashboard__badge { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #00f0ff; border-radius: 8px; background: #131315; }
+.home-dashboard__intro { padding: 8px 0 2px; display: grid; gap: 7px; }
+.home-dashboard__intro p { margin: 0; color: #00f0ff; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; }
+.home-dashboard__intro h1 { margin: 0; color: #e5e1e4; font-size: 34px; line-height: 1; font-weight: 900; letter-spacing: -.8px; text-transform: uppercase; }
+.home-dashboard__intro span { color: #b9cacb; font-size: 16px; }
+.home-dashboard__panel { padding: 18px; display: grid; gap: 14px; border: 1px solid #3b494b; border-radius: 18px; background: #201f21; box-shadow: 0 3px 10px rgb(0 0 0 / 18%); }
+.home-dashboard__panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.home-dashboard__panel-heading h2 { margin: 0; color: #e5e1e4; font-size: 20px; }
+.home-dashboard__panel-heading a, .home-dashboard__panel-heading > span { color: #00f0ff; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+.home-dashboard__panel-heading > p { margin: 0; color: #e5e1e4; font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+.home-dashboard__panel-heading > .icon { color: #00f0ff; }
+.home-dashboard__dark-hero { min-height: 166px; padding: 14px; display: flex; flex-direction: column; justify-content: flex-end; gap: 9px; border-radius: 8px; overflow: hidden; background-color: #2a2a2c; background-position: center 35%; background-size: cover; }
+.home-dashboard__hero-tags { display: flex; align-items: center; gap: 8px; }
+.home-dashboard__hero-tags span { padding: 4px 8px; border-radius: 4px; color: #002022; background: #00f0ff; font-size: 10px; font-weight: 900; text-transform: uppercase; }
+.home-dashboard__hero-tags small { color: #e5e1e4; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.home-dashboard__dark-hero h3 { margin: 0; color: white; font-size: 27px; font-style: italic; font-weight: 900; text-transform: uppercase; }
+.home-dashboard__hero-footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.home-dashboard__hero-footer p { margin: 0; color: #e5e1e4; font-size: 14px; line-height: 18px; }
+.home-dashboard__hero-footer button { flex: 0 0 auto; width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 10px; background: #00f0ff; color: #002022; cursor: pointer; }
+.home-dashboard__calories { color: #00f0ff; font-size: 38px; line-height: 1; font-weight: 900; }
+.home-dashboard__calories small { color: #b9cacb; font-size: 18px; }
+.home-dashboard__bars { height: 52px; display: flex; align-items: flex-end; gap: 6px; }
+.home-dashboard__bars i { flex: 1; min-height: 22px; border-radius: 2px; background: #3b494b; }
+.home-dashboard__bars i.active { background: #00f0ff; box-shadow: 0 0 10px rgb(0 240 255 / 32%); }
+.home-dashboard__mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.home-dashboard__mini-grid article { padding: 14px; display: grid; gap: 6px; border: 1px solid #3b494b; border-radius: 8px; background: #201f21; }
+.home-dashboard__mini-grid article > .icon { color: #00f0ff; }
+.home-dashboard__mini-grid span { color: #b9cacb; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.home-dashboard__mini-grid strong { color: #e5e1e4; font-size: 32px; line-height: 1; }
+.home-dashboard__calendar-heading { display: flex; align-items: center; justify-content: space-between; }
+.home-dashboard__calendar-heading h2 { margin: 0; color: #e5e1e4; font-size: 24px; }
+.home-dashboard__calendar-heading > div { display: flex; gap: 10px; }
+.home-dashboard__calendar-heading button { width: 52px; height: 52px; display: grid; place-items: center; border: 0; border-radius: 18px; background: #2a2a2c; color: #e5e1e4; cursor: pointer; }
+.home-dashboard__dark-week-labels, .home-dashboard__dark-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+.home-dashboard__dark-week-labels span { color: #849495; font-size: 12px; font-weight: 700; text-align: center; }
+.home-dashboard__dark-week-labels .sunday, .home-dashboard__dark-week .sunday { color: #00f0ff; }
+.home-dashboard__dark-week > div { min-width: 0; min-height: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; border: 1px solid #3b494b; border-radius: 8px; background: #2a2a2c; }
+.home-dashboard__dark-week > div.active { border-color: #0ea5b7; background: #12333a; }
+.home-dashboard__dark-week strong { color: #849495; font-size: 17px; }
+.home-dashboard__dark-week > div.active strong { color: #e5e1e4; }
+.home-dashboard__dark-week i { width: 9px; height: 9px; border-radius: 50%; }
+.home-dashboard__dark-week > div.active i { background: #1de7ff; }
+.home-dashboard__dark-coach, .home-dashboard__light-coach { width: 100%; position: relative; overflow: hidden; display: grid; text-align: left; cursor: pointer; }
+.home-dashboard__dark-coach { padding: 20px 22px; gap: 12px; border: 1px solid #00f0ff; border-radius: 18px; color: #e5e1e4; background: #201f21; }
+.home-dashboard__coach-watermark { position: absolute; right: -10px; top: 3px; color: rgb(0 240 255 / 12%); pointer-events: none; }
+.home-dashboard__coach-label { position: relative; display: flex; align-items: center; gap: 7px; color: #00f0ff; font-size: 14px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; }
+.home-dashboard__dark-coach > strong { position: relative; width: 86%; font-size: 27px; line-height: 1.42; font-style: italic; }
+.home-dashboard__dark-coach > p { position: relative; margin: 0; color: #b9cacb; font-size: 17px; line-height: 1.7; }
+.home-dashboard__empty-workout { display: grid; gap: 14px; }
+.home-dashboard__empty-workout p { margin: 0; color: #b9cacb; }
+.home-dashboard__empty-workout button { min-height: 50px; border: 0; border-radius: 12px; background: #00f0ff; color: #002022; font-weight: 900; text-transform: uppercase; cursor: pointer; }
+
+.home-dashboard--dark { color: #e5e1e4; background: #131315; }
+.home-dashboard--light { gap: 18px; color: #111; background: #f7f3f0; }
+.home-dashboard__light-topbar { padding: 2px 0 14px; border-bottom: 1px solid #cfd8ea; color: #395a88; }
+.home-dashboard__light-topbar > div { display: flex; align-items: center; gap: 12px; color: #1558bf; }
+.home-dashboard__light-topbar strong { font-size: 24px; letter-spacing: .8px; text-transform: uppercase; }
+.home-dashboard__light-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.home-dashboard__light-week > div { min-width: 0; display: grid; justify-items: center; gap: 9px; }
+.home-dashboard__light-week span { color: #3d5e8c; font-size: 10px; font-weight: 800; letter-spacing: .7px; }
+.home-dashboard__light-week i { width: 100%; max-width: 52px; aspect-ratio: 1; display: grid; place-items: center; border: 2px solid #f1eeec; border-radius: 16px; color: #4a6793; background: #f1eeec; font-size: 15px; font-style: normal; font-weight: 800; }
+.home-dashboard__light-week i.completed { color: white; border-color: #1560c8; background: #1560c8; }
+.home-dashboard__light-week i.today { color: #1560c8; border-color: #1560c8; background: white; }
+.home-dashboard__light-week i.today b { width: 12px; height: 12px; border-radius: 50%; background: #1560c8; }
+.home-dashboard__light-hero { padding: 22px; display: grid; gap: 14px; border: 1px solid #c5d1e5; border-radius: 14px; background: white; box-shadow: 0 4px 14px rgb(57 90 136 / 8%); }
+.home-dashboard__light-hero-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.home-dashboard__light-hero-head > span { padding: 7px 14px; border-radius: 999px; color: #1558bf; background: #e8eef8; font-size: 12px; font-weight: 900; letter-spacing: .8px; text-transform: uppercase; }
+.home-dashboard__light-hero-head small { display: flex; align-items: center; gap: 6px; color: #4a6793; font-size: 14px; }
+.home-dashboard__light-hero h1 { margin: 0; color: #151515; font-size: 28px; line-height: 1.3; }
+.home-dashboard__light-hero > p { margin: 0; color: #2f4b73; font-size: 16px; line-height: 1.5; }
+.home-dashboard__light-meta { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+.home-dashboard__light-meta span { display: flex; align-items: center; gap: 6px; color: #243b5e; }
+.home-dashboard__light-meta span:first-child .icon { color: #1560c8; }
+.home-dashboard__light-meta span:last-child .icon { color: #d91e18; }
+.home-dashboard__light-hero > button { min-height: 70px; display: flex; align-items: center; justify-content: center; gap: 10px; border: 0; border-radius: 6px; color: white; background: #1560c8; font-size: 18px; font-weight: 900; box-shadow: 0 5px 12px rgb(21 96 200 / 15%); cursor: pointer; }
+.home-dashboard__light-activity { display: grid; gap: 16px; }
+.home-dashboard__light-activity h2 { margin: 0; color: #111; font-size: 22px; }
+.home-dashboard__light-activity-grid { display: grid; grid-template-columns: 1.35fr .9fr; gap: 12px; }
+.home-dashboard__light-activity-grid article { border: 1px solid #cbd6e8; border-radius: 14px; background: white; }
+.home-dashboard__light-activity-grid > article { padding: 14px; display: flex; flex-direction: column; justify-content: space-between; gap: 13px; }
+.home-dashboard__light-activity-grid > article > strong { color: #243b5e; font-size: 13px; }
+.home-dashboard__light-activity-grid > div { display: grid; gap: 10px; }
+.home-dashboard__light-activity-grid > div article { padding: 13px; display: grid; gap: 5px; }
+.home-dashboard__light-activity-grid > div span { color: #4a6793; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.home-dashboard__light-activity-grid > div strong { color: #111; font-size: 27px; line-height: 1; }
+.home-dashboard__light-activity-grid small { color: #4a6793; font-size: 12px; }
+.home-dashboard__heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.home-dashboard__heatmap i { aspect-ratio: 1; border-radius: 3px; background: #e9edf3; }
+.home-dashboard__heatmap .level-1 { background: #b7cef0; }
+.home-dashboard__heatmap .level-2 { background: #4f88d4; }
+.home-dashboard__heatmap .level-3 { background: #1560c8; }
+.home-dashboard__light-coach { padding: 20px; gap: 17px; border: 0; border-radius: 14px; color: white; background: #0a2348; box-shadow: 0 8px 20px rgb(10 35 72 / 18%); }
+.home-dashboard__light-coach .home-dashboard__coach-watermark { color: rgb(134 161 207 / 18%); }
+.home-dashboard__light-coach-title { position: relative; display: flex; align-items: center; gap: 11px; font-size: 17px; font-weight: 900; }
+.home-dashboard__light-coach-title i { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 9px; background: #1560c8; font-style: normal; }
+.home-dashboard__light-coach > strong { position: relative; width: 90%; font-size: 24px; line-height: 1.38; font-style: italic; }
+.home-dashboard__light-coach-action { position: relative; min-height: 48px; display: flex; align-items: center; justify-content: center; gap: 9px; border-radius: 7px; color: #0a2348; background: white; font-weight: 900; }
+
+@media (max-width: 360px) {
+  .home-dashboard { padding-inline: 14px; }
+  .home-dashboard__dark-week, .home-dashboard__dark-week-labels { gap: 4px; }
+  .home-dashboard__dark-week > div { min-height: 62px; }
+  .home-dashboard__light-week { gap: 4px; }
+  .home-dashboard__light-topbar strong { font-size: 21px; }
+}

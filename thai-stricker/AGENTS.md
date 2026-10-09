@@ -1,3 +1,6 @@
-# Expo HAS CHANGED
+# ThaiStricker Web
 
-Read the exact versioned docs at https://docs.expo.dev/versions/v56.0.0/ before writing any code.
+- React 19, TypeScript strict and Vite.
+- Mobile-first PWA deployed on Vercel.
+- Browser-local JSON persistence only; no backend or authentication.
+- Preserve the versioned backup format and validate every imported file before replacing local data.

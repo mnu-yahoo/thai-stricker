@@ -1,15 +1,4 @@
 {
-  "build": {
-    "preview": {
-      "distribution": "internal",
-      "android": {
-        "buildType": "apk"
-      }
-    },
-    "production": {
-      "android": {
-        "buildType": "app-bundle"
-      }
-    }
-  }
+  "deprecated": true,
+  "note": "Expo/EAS was replaced by the Vite and Vercel web workflow."
 }

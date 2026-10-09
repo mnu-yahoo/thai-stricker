@@ -1,45 +1,24 @@
 # Platform Architecture
 
-- Android-only app
-- Expo React Native
-- TypeScript
-- Android Emulator as the primary preview tool
-- Android Emulator as the primary debugging tool
-- Expo Go can be used during early development
-- Development build only if later required by native dependencies
-- Local APK installation only
-- No Play Store assumptions
-- No iOS work unless explicitly requested
+- React 19 with semantic HTML, TypeScript strict and Vite.
+- Mobile-first layout targeting a personal phone browser.
+- Installable Progressive Web App with an offline application shell.
+- Browser-local JSON data; no backend, authentication or cloud sync.
+- React Router supplies stable URLs and browser back navigation.
+- Vercel Hobby hosts the production build from `dist`.
 
-## Private Android Deployment
-
-Thai Stricker is deployed privately as an Android APK.
-
-Deployment target:
-- Personal Android device only
-
-Build type:
-- APK
-
-Not used:
-- Google Play Store
-- Android App Bundle for store release
-- iOS build
-- Public distribution
-
-Developer commands:
+## Development and deployment
 
 ```powershell
-npm install -g eas-cli
-eas login
-eas build:configure
-eas build --platform android --profile preview-apk
+npm run dev
+npm run typecheck
+npm test
+npm run build
 ```
 
-After the APK is built:
+Vercel builds with `npm run build`. `vercel.json` rewrites application routes to
+`index.html`. The service worker caches only code and static assets; user data
+remains in local browser storage.
 
-```powershell
-adb install path/to/thai-stricker.apk
-```
-
-Or manually copy the APK to the Android phone and install it after allowing installation from unknown sources.
+The last Expo Android code is retained in the Git tag
+`android-final-pre-web` for recovery and one-time data export work.
