@@ -1,3 +1,5 @@
+import "./Icon.css";
+
 type IconProps = { name: string; label?: string; size?: number };
 
 export function Icon({ name, label, size = 22 }: IconProps) {
