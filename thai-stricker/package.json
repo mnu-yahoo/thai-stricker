@@ -14,10 +14,11 @@
   "dependencies": {
     "@fontsource/material-symbols-rounded": "latest",
     "@vitejs/plugin-react": "latest",
-    "vite-plugin-pwa": "latest",
+    "fflate": "^0.8.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-router-dom": "latest",
+    "vite-plugin-pwa": "latest",
     "zod": "latest"
   },
   "devDependencies": {

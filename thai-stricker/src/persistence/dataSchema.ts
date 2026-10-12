@@ -6,14 +6,14 @@ const targetSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("reps"), reps: positiveInteger }),
 ]);
 
-const exerciseSchema = z.object({
+export const exerciseSchema = z.object({
   id: z.string().min(1), title: z.string().min(1), description: z.string(), help: z.string(),
   category: z.string(), imageUri: z.string().optional(), target: targetSchema,
   techniqueIds: z.array(z.string()).max(5),
 });
 
-const workoutExerciseSchema = exerciseSchema.omit({ techniqueIds: true }).extend({ techniqueIds: z.array(z.string()).max(5).optional() });
-const settingsSchema = z.object({
+export const workoutExerciseSchema = exerciseSchema.omit({ techniqueIds: true }).extend({ techniqueIds: z.array(z.string()).max(5).optional() });
+export const settingsSchema = z.object({
   restSecondsBetweenExercises: z.union([z.literal(15), z.literal(30), z.literal(45), z.literal(60), z.literal(90), z.literal(120)]),
   trainingDaysPerWeek: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5), z.literal(6), z.literal(7)]),
   maxExercisesPerWorkout: z.union([z.literal(5), z.literal(10), z.literal(15), z.literal(20)]),
@@ -57,3 +57,45 @@ export const appDataSchema = z.object({
 });
 
 export const dataFileSchemaV1 = appDataSchema.extend({ schemaVersion: z.literal(1), exportedAt: z.string().min(1) });
+
+const sectionMetadata = <T extends string>(fileType: T) => z.object({
+  schemaVersion: z.literal(1),
+  fileType: z.literal(fileType),
+  exportedAt: z.string().datetime(),
+});
+
+export const settingsDataFileSchemaV1 = sectionMetadata("settings").extend({
+  settings: appDataSchema.shape.settings,
+});
+
+export const workoutsDataFileSchemaV1 = sectionMetadata("workouts").extend({
+  techniques: appDataSchema.shape.techniques,
+  availableExercises: appDataSchema.shape.availableExercises,
+  workouts: appDataSchema.shape.workouts,
+});
+
+export const weeklyWorkoutPlansDataFileSchemaV1 = sectionMetadata("weeklyWorkoutPlans").extend({
+  weeklyWorkoutPlans: appDataSchema.shape.weeklyWorkoutPlans,
+});
+
+export const workoutLogsDataFileSchemaV1 = sectionMetadata("workoutLogs").extend({
+  workoutLogs: appDataSchema.shape.workoutLogs,
+});
+
+export const coachTipsDataFileSchemaV1 = sectionMetadata("coachTips").extend({
+  coachTips: appDataSchema.shape.coachTips,
+});
+
+export const calendarDataFileSchemaV1 = sectionMetadata("calendar").extend({
+  calendarWorkoutDays: appDataSchema.shape.calendarWorkoutDays,
+  monthlySummary: appDataSchema.shape.monthlySummary,
+});
+
+export const sectionDataFileSchemasV1 = {
+  settings: settingsDataFileSchemaV1,
+  workouts: workoutsDataFileSchemaV1,
+  weeklyWorkoutPlans: weeklyWorkoutPlansDataFileSchemaV1,
+  workoutLogs: workoutLogsDataFileSchemaV1,
+  coachTips: coachTipsDataFileSchemaV1,
+  calendar: calendarDataFileSchemaV1,
+} as const;

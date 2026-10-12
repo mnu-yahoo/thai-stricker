@@ -195,6 +195,12 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 dialog { position: static; width: min(100%, 420px); border: 1px solid var(--border); border-radius: 20px; padding: 22px; background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
 dialog p { color: var(--muted); }
 .dialog-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+.backup-options { display: grid; gap: 8px; margin-top: 18px; }
+.backup-options label { min-height: 44px; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); cursor: pointer; }
+.backup-options input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.import-file-list { display: grid; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.import-file-list li { display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-2); font-weight: 700; }
+.import-file-list .icon { color: var(--accent); }
 .toast { position: fixed; z-index: 120; left: 50%; bottom: calc(88px + env(safe-area-inset-bottom, 0)); transform: translateX(-50%); width: min(calc(100% - 36px), 444px); padding: 13px 16px; border-radius: 12px; background: #173f32; color: white; box-shadow: var(--shadow); }
 .toast.error { background: #711526; }
 

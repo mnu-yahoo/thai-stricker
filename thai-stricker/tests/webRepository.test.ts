@@ -1,14 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { createAppRepository, STORAGE_KEY, type StorageAdapter } from "../src/persistence/appRepository";
-import type { Exercise, Workout } from "../src/types/domain";
+import { strFromU8, strToU8, unzipSync, zipSync } from "fflate";
+import { buildSectionArchive, readSectionImports, type BackupInputFile } from "../src/persistence/backupArchive";
+import { createAppRepository, DATA_SECTION_NAMES, LEGACY_STORAGE_KEY, MANIFEST_STORAGE_KEY, SECTION_FILE_NAMES, type StorageAdapter } from "../src/persistence/appRepository";
+import type { Exercise, WeeklyWorkoutPlan, Workout } from "../src/types/domain";
 
-function memoryStorage(): StorageAdapter {
-  const data = new Map<string, string>();
-  return {
-    getItem: (key) => data.get(key) ?? null,
-    setItem: (key, value) => { data.set(key, value); },
-    removeItem: (key) => { data.delete(key); },
+function memoryStorage(initial: Record<string, string> = {}) {
+  const values = new Map(Object.entries(initial));
+  const storage: StorageAdapter = {
+    getItem: (key) => values.get(key) ?? null,
+    setItem: (key, value) => { values.set(key, value); },
+    removeItem: (key) => { values.delete(key); },
   };
+  return { storage, values };
 }
 
 const exercise = (id = "exercise-1", title = "Jab"): Exercise => ({
@@ -21,46 +24,108 @@ const workout = (item = exercise()): Workout => ({
   category: "Fundamentals", totalDurationMinutes: 0, restSecondsBetweenExercises: 30, exercises: [item],
 });
 
-describe("JSON app repository", () => {
-  it("persists data and reloads it from the same browser storage", async () => {
-    const storage = memoryStorage();
-    const repository = createAppRepository(storage);
+const asInputFile = (name: string, bytes: Uint8Array): BackupInputFile => ({
+  name,
+  arrayBuffer: async () => new Uint8Array(bytes).buffer,
+  text: async () => strFromU8(bytes),
+});
+
+describe("split JSON app repository", () => {
+  it("persists data through six section documents and reloads it", async () => {
+    const memory = memoryStorage();
+    const repository = createAppRepository(memory.storage);
     await repository.addAvailableExercise(exercise());
     await repository.addWorkout(workout());
-    const restarted = createAppRepository(storage);
-    const snapshot = await restarted.loadAppData();
+    const snapshot = await createAppRepository(memory.storage).loadAppData();
     expect(snapshot.availableExercises).toHaveLength(1);
     expect(snapshot.workouts[0].totalDurationMinutes).toBe(3);
-    expect(storage.getItem(STORAGE_KEY)).toContain("Fondamentaux");
+    const manifest = JSON.parse(memory.storage.getItem(MANIFEST_STORAGE_KEY) ?? "null") as { sections: Record<string, string> };
+    expect(Object.keys(manifest.sections)).toEqual(DATA_SECTION_NAMES);
+    for (const section of DATA_SECTION_NAMES) expect([...memory.values.keys()].some((key) => key.includes(`:v2:${section}:`))).toBe(true);
   });
 
-  it("rejects duplicate normalized exercise names", async () => {
-    const repository = createAppRepository(memoryStorage());
+  it("migrates the legacy v1 snapshot only after a valid v2 commit", async () => {
+    const source = createAppRepository(memoryStorage().storage);
+    await source.addAvailableExercise(exercise()); await source.addWorkout(workout());
+    const memory = memoryStorage({ [LEGACY_STORAGE_KEY]: JSON.stringify(await source.loadAppData()) });
+    const migrated = await createAppRepository(memory.storage).loadAppData();
+    expect(migrated.workouts[0].title).toBe("Fondamentaux");
+    expect(memory.storage.getItem(MANIFEST_STORAGE_KEY)).not.toBeNull();
+    expect(memory.storage.getItem(LEGACY_STORAGE_KEY)).toBeNull();
+  });
+
+  it("keeps the previous manifest active when its atomic switch fails", async () => {
+    const memory = memoryStorage(); let rejectManifest = false;
+    const failingStorage: StorageAdapter = {
+      getItem: memory.storage.getItem, removeItem: memory.storage.removeItem,
+      setItem: (key, value) => { if (rejectManifest && key === MANIFEST_STORAGE_KEY) throw new Error("quota"); memory.storage.setItem(key, value); },
+    };
+    const repository = createAppRepository(failingStorage); const initialTheme = (await repository.loadAppData()).settings.themePreference;
+    const before = memory.storage.getItem(MANIFEST_STORAGE_KEY); rejectManifest = true;
+    await expect(repository.saveSetting("themePreference", initialTheme === "Light" ? "Dark" : "Light")).rejects.toThrow("n'a pas pu enregistrer");
+    rejectManifest = false;
+    expect(memory.storage.getItem(MANIFEST_STORAGE_KEY)).toBe(before);
+    expect((await repository.loadAppData()).settings.themePreference).toBe(initialTheme);
+  });
+
+  it("rejects duplicate exercise names and missing workout references", async () => {
+    const repository = createAppRepository(memoryStorage().storage);
     await repository.addAvailableExercise(exercise());
     await expect(repository.addAvailableExercise(exercise("exercise-2", "  JAB "))).rejects.toThrow("existe déjà");
+    await expect(createAppRepository(memoryStorage().storage).addWorkout(workout())).rejects.toThrow("n'existe plus");
   });
 
-  it("rejects workouts that reference a missing exercise", async () => {
-    const repository = createAppRepository(memoryStorage());
-    await expect(repository.addWorkout(workout())).rejects.toThrow("n'existe plus");
+  it("exports all six versioned formats with exact filenames", async () => {
+    const files = await createAppRepository(memoryStorage().storage).exportSections(DATA_SECTION_NAMES);
+    expect(files.map((file) => SECTION_FILE_NAMES[file.fileType])).toEqual(["settings.json", "workouts.json", "weeklyWorkoutPlans.json", "workoutLogs.json", "coachTips.json", "calendar.json"]);
+    expect(files.every((file) => file.schemaVersion === 1 && Boolean(file.exportedAt))).toBe(true);
   });
 
-  it("exports a versioned file and imports it atomically with a backup", async () => {
-    const source = createAppRepository(memoryStorage());
-    await source.addAvailableExercise(exercise());
-    await source.addWorkout(workout());
-    const file = await source.exportDataFile();
-    expect(file.schemaVersion).toBe(1);
+  it("builds a ZIP and reads its selected JSON files", async () => {
+    const repository = createAppRepository(memoryStorage().storage);
+    const archive = buildSectionArchive(await repository.exportSections(["settings", "calendar"]));
+    expect(Object.keys(unzipSync(archive))).toEqual(["settings.json", "calendar.json"]);
+    const imported = await readSectionImports([asInputFile("backup.zip", archive)]);
+    expect(imported.map((file) => file.filename)).toEqual(["settings.json", "calendar.json"]);
+  });
 
-    const targetStorage = memoryStorage();
-    const target = createAppRepository(targetStorage);
-    await target.addAvailableExercise(exercise("old", "Ancien"));
-    const backup = await target.importDataFile(file);
-    expect(backup.availableExercises[0].title).toBe("Ancien");
-    expect((await target.loadAppData()).workouts[0].title).toBe("Fondamentaux");
+  it("imports selected sections while preserving unselected data", async () => {
+    const source = createAppRepository(memoryStorage().storage);
+    await source.addAvailableExercise(exercise()); await source.addWorkout(workout());
+    const [workoutsFile] = await source.exportSections(["workouts"]);
+    const target = createAppRepository(memoryStorage().storage); await target.saveSetting("themePreference", "Light");
+    await target.importSections([{ filename: "workouts.json", content: workoutsFile }]);
+    const snapshot = await target.loadAppData();
+    expect(snapshot.settings.themePreference).toBe("Light"); expect(snapshot.workouts[0].title).toBe("Fondamentaux");
+  });
 
-    const before = targetStorage.getItem(STORAGE_KEY);
-    await expect(target.importDataFile({ ...file, schemaVersion: 99 })).rejects.toThrow("version 99");
-    expect(targetStorage.getItem(STORAGE_KEY)).toBe(before);
+  it("rejects unknown names, duplicates, mismatched types and versions", async () => {
+    const repository = createAppRepository(memoryStorage().storage); const [settings] = await repository.exportSections(["settings"]);
+    await expect(repository.importSections([{ filename: "other.json", content: settings }])).rejects.toThrow("inconnu");
+    await expect(repository.importSections([{ filename: "settings.json", content: settings }, { filename: "settings.json", content: settings }])).rejects.toThrow("dupliqué");
+    await expect(repository.importSections([{ filename: "settings.json", content: { ...settings, fileType: "calendar" } }])).rejects.toThrow("au lieu de");
+    await expect(repository.importSections([{ filename: "settings.json", content: { ...settings, schemaVersion: 99 } }])).rejects.toThrow("Version inconnue");
+  });
+
+  it("rejects an entire import when a supplied section breaks references", async () => {
+    const memory = memoryStorage(); const repository = createAppRepository(memory.storage); await repository.loadAppData();
+    const before = memory.storage.getItem(MANIFEST_STORAGE_KEY);
+    const plan: WeeklyWorkoutPlan = { id: "plan-1", weekStartDate: "2026-10-12", weekNumber: 42, year: 2026, requiredTrainingDays: 1, source: "web", plannedDays: [{ dayDate: "2026-10-12", dayLabel: "lundi", workoutId: "missing", workoutTitle: "Absente" }] };
+    await expect(repository.importSections([{ filename: "weeklyWorkoutPlans.json", content: { schemaVersion: 1, fileType: "weeklyWorkoutPlans", exportedAt: new Date().toISOString(), weeklyWorkoutPlans: [plan] } }])).rejects.toThrow("n'existe plus");
+    expect(memory.storage.getItem(MANIFEST_STORAGE_KEY)).toBe(before);
+    expect((await repository.loadAppData()).weeklyWorkoutPlans).toHaveLength(0);
+  });
+
+  it("rejects unknown and duplicate files inside import selections", async () => {
+    await expect(readSectionImports([asInputFile("unknown.zip", zipSync({ "unknown.json": strToU8("{}") }))])).rejects.toThrow("inconnu");
+    await expect(readSectionImports([asInputFile("settings.json", strToU8("{invalid"))])).rejects.toThrow("JSON valide");
+    const repository = createAppRepository(memoryStorage().storage); const [settings] = await repository.exportSections(["settings"]);
+    await expect(readSectionImports([asInputFile("backup.zip", buildSectionArchive([settings])), asInputFile("settings.json", strToU8(JSON.stringify(settings)))])).rejects.toThrow("dupliqué");
+  });
+
+  it("keeps the legacy monolithic import available", async () => {
+    const source = createAppRepository(memoryStorage().storage); await source.addAvailableExercise(exercise()); await source.addWorkout(workout());
+    const target = createAppRepository(memoryStorage().storage); const backup = await target.importLegacyDataFile(await source.exportLegacyDataFile());
+    expect(backup.schemaVersion).toBe(1); expect((await target.loadAppData()).workouts[0].title).toBe("Fondamentaux");
   });
 });

@@ -1,8 +1,20 @@
-import { appDataSchema, dataFileSchemaV1 } from "./dataSchema";
+import { z } from "zod";
+import { appDataSchema, dataFileSchemaV1, sectionDataFileSchemasV1 } from "./dataSchema";
 import { seedData } from "./seedData";
-import type { AppDataSnapshot, Exercise, PersistedSettings, Technique, ThaiStrickerDataFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
+import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
 
-export const STORAGE_KEY = "thai-stricker:data:v1";
+export const LEGACY_STORAGE_KEY = "thai-stricker:data:v1";
+export const MANIFEST_STORAGE_KEY = "thai-stricker:data:v2:manifest";
+export const STORAGE_KEY = MANIFEST_STORAGE_KEY;
+export const DATA_SECTION_NAMES: DataSectionName[] = ["settings", "workouts", "weeklyWorkoutPlans", "workoutLogs", "coachTips", "calendar"];
+export const SECTION_FILE_NAMES: Record<DataSectionName, string> = {
+  settings: "settings.json",
+  workouts: "workouts.json",
+  weeklyWorkoutPlans: "weeklyWorkoutPlans.json",
+  workoutLogs: "workoutLogs.json",
+  coachTips: "coachTips.json",
+  calendar: "calendar.json",
+};
 
 export interface StorageAdapter {
   getItem(key: string): string | null;
@@ -25,10 +37,26 @@ export interface AppRepository {
   importWorkouts(values: WorkoutImportPayload[]): Promise<void>;
   saveWeeklyPlan(value: WeeklyWorkoutPlan): Promise<void>;
   addWorkoutLog(value: WorkoutLogEntry): Promise<void>;
-  exportDataFile(): Promise<ThaiStrickerDataFileV1>;
-  importDataFile(input: unknown): Promise<ThaiStrickerDataFileV1>;
+  exportSections(selection: DataSectionName[]): Promise<ThaiStrickerSectionFileV1[]>;
+  importSections(files: NamedSectionImport[]): Promise<void>;
+  exportLegacyDataFile(): Promise<ThaiStrickerDataFileV1>;
+  importLegacyDataFile(input: unknown): Promise<ThaiStrickerDataFileV1>;
   reset(): Promise<void>;
 }
+
+const storageManifestSchema = z.object({
+  storageVersion: z.literal(2),
+  sections: z.object({
+    settings: z.string().min(1),
+    workouts: z.string().min(1),
+    weeklyWorkoutPlans: z.string().min(1),
+    workoutLogs: z.string().min(1),
+    coachTips: z.string().min(1),
+    calendar: z.string().min(1),
+  }),
+});
+
+type StorageManifestV2 = z.infer<typeof storageManifestSchema>;
 
 const clone = <T,>(value: T): T => structuredClone(value);
 export const normalizeExerciseName = (value: string) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
@@ -71,18 +99,108 @@ function parseData(value: unknown): AppDataSnapshot {
   return parsed;
 }
 
+function buildSectionFile(section: DataSectionName, data: AppDataSnapshot, exportedAt = new Date().toISOString()): ThaiStrickerSectionFileV1 {
+  switch (section) {
+    case "settings": return { schemaVersion: 1, fileType: section, exportedAt, settings: clone(data.settings) };
+    case "workouts": return { schemaVersion: 1, fileType: section, exportedAt, techniques: clone(data.techniques), availableExercises: clone(data.availableExercises), workouts: clone(data.workouts) };
+    case "weeklyWorkoutPlans": return { schemaVersion: 1, fileType: section, exportedAt, weeklyWorkoutPlans: clone(data.weeklyWorkoutPlans) };
+    case "workoutLogs": return { schemaVersion: 1, fileType: section, exportedAt, workoutLogs: clone(data.workoutLogs) };
+    case "coachTips": return { schemaVersion: 1, fileType: section, exportedAt, coachTips: clone(data.coachTips) };
+    case "calendar": return { schemaVersion: 1, fileType: section, exportedAt, calendarWorkoutDays: clone(data.calendarWorkoutDays), monthlySummary: clone(data.monthlySummary) };
+  }
+}
+
+function applySectionFile(data: AppDataSnapshot, file: ThaiStrickerSectionFileV1) {
+  switch (file.fileType) {
+    case "settings": data.settings = clone(file.settings); break;
+    case "workouts": data.techniques = clone(file.techniques); data.availableExercises = clone(file.availableExercises); data.workouts = clone(file.workouts); break;
+    case "weeklyWorkoutPlans": data.weeklyWorkoutPlans = clone(file.weeklyWorkoutPlans); break;
+    case "workoutLogs": data.workoutLogs = clone(file.workoutLogs); break;
+    case "coachTips": data.coachTips = clone(file.coachTips); break;
+    case "calendar": data.calendarWorkoutDays = clone(file.calendarWorkoutDays); data.monthlySummary = clone(file.monthlySummary); break;
+  }
+}
+
+function parseSectionFile(section: DataSectionName, value: unknown): ThaiStrickerSectionFileV1 {
+  if (typeof value === "object" && value !== null && "schemaVersion" in value && value.schemaVersion !== 1) {
+    throw new Error(`Version inconnue dans ${SECTION_FILE_NAMES[section]} : ${String(value.schemaVersion)}.`);
+  }
+  if (typeof value === "object" && value !== null && "fileType" in value && value.fileType !== section) {
+    throw new Error(`${SECTION_FILE_NAMES[section]} annonce le type « ${String(value.fileType)} » au lieu de « ${section} ».`);
+  }
+  const result = sectionDataFileSchemasV1[section].safeParse(value);
+  if (!result.success) throw new Error(`${SECTION_FILE_NAMES[section]} est invalide : ${result.error.issues[0]?.message ?? "format incorrect"}`);
+  return result.data as ThaiStrickerSectionFileV1;
+}
+
+const storageSectionKey = (section: DataSectionName, revision: string) => `thai-stricker:data:v2:${section}:${revision}`;
+const makeRevision = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+
 export function createAppRepository(storage: StorageAdapter): AppRepository {
-  const read = () => {
-    const raw = storage.getItem(STORAGE_KEY);
-    if (!raw) return clone(seedData);
-    try { return parseData(JSON.parse(raw)); }
-    catch (error) { throw new Error(`Impossible de lire les données locales. ${error instanceof Error ? error.message : ""}`.trim()); }
+  const readManifest = (): StorageManifestV2 | null => {
+    const raw = storage.getItem(MANIFEST_STORAGE_KEY);
+    if (!raw) return null;
+    try {
+      const parsed = storageManifestSchema.safeParse(JSON.parse(raw));
+      if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "format incorrect");
+      return parsed.data;
+    } catch (error) {
+      throw new Error(`Manifeste de stockage illisible. ${error instanceof Error ? error.message : ""}`.trim());
+    }
   };
-  const write = (data: AppDataSnapshot) => {
+
+  const readFromManifest = (manifest: StorageManifestV2): AppDataSnapshot => {
+    const data = clone(seedData);
+    for (const section of DATA_SECTION_NAMES) {
+      const raw = storage.getItem(storageSectionKey(section, manifest.sections[section]));
+      if (!raw) throw new Error(`La section ${SECTION_FILE_NAMES[section]} est absente du stockage local.`);
+      try { applySectionFile(data, parseSectionFile(section, JSON.parse(raw))); }
+      catch (error) { throw new Error(`Impossible de lire les données locales. ${error instanceof Error ? error.message : ""}`.trim()); }
+    }
+    return parseData(data);
+  };
+
+  const commit = (data: AppDataSnapshot, previous: StorageManifestV2 | null): StorageManifestV2 => {
     const valid = parseData(data);
-    try { storage.setItem(STORAGE_KEY, JSON.stringify(valid)); }
-    catch { throw new Error("Le navigateur n'a pas pu enregistrer les données. Vérifiez l'espace disponible et le mode de navigation."); }
+    const revisions = Object.fromEntries(DATA_SECTION_NAMES.map((section) => [section, makeRevision()])) as Record<DataSectionName, string>;
+    const next: StorageManifestV2 = { storageVersion: 2, sections: revisions };
+    const writtenKeys: string[] = [];
+    try {
+      const exportedAt = new Date().toISOString();
+      for (const section of DATA_SECTION_NAMES) {
+        const key = storageSectionKey(section, revisions[section]);
+        storage.setItem(key, JSON.stringify(buildSectionFile(section, valid, exportedAt)));
+        writtenKeys.push(key);
+      }
+      storage.setItem(MANIFEST_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      for (const key of writtenKeys) { try { storage.removeItem(key); } catch { /* best effort */ } }
+      throw new Error("Le navigateur n'a pas pu enregistrer les données. Vérifiez l'espace disponible et le mode de navigation.");
+    }
+    if (previous) {
+      for (const section of DATA_SECTION_NAMES) {
+        try { storage.removeItem(storageSectionKey(section, previous.sections[section])); } catch { /* best effort */ }
+      }
+    }
+    return next;
   };
+
+  const ensureManifest = (): StorageManifestV2 => {
+    const current = readManifest();
+    if (current) return current;
+    const legacyRaw = storage.getItem(LEGACY_STORAGE_KEY);
+    let initial = clone(seedData);
+    if (legacyRaw) {
+      try { initial = parseData(JSON.parse(legacyRaw)); }
+      catch (error) { throw new Error(`Impossible de migrer les données locales. ${error instanceof Error ? error.message : ""}`.trim()); }
+    }
+    const manifest = commit(initial, null);
+    if (legacyRaw) storage.removeItem(LEGACY_STORAGE_KEY);
+    return manifest;
+  };
+
+  const read = () => readFromManifest(ensureManifest());
+  const write = (data: AppDataSnapshot) => { commit(data, ensureManifest()); };
   const mutate = async (task: (draft: AppDataSnapshot) => void) => { const draft = clone(read()); task(draft); write(draft); };
   const hydrateWorkout = (draft: AppDataSnapshot, workout: Workout) => {
     const library = new Map(draft.availableExercises.map((item) => [item.id, item]));
@@ -144,13 +262,39 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
         const month = value.completedDate.slice(0, 7); draft.monthlySummary.completedWorkouts = draft.workoutLogs.filter((item) => item.completedDate.startsWith(month)).length;
       });
     },
-    async exportDataFile() { return { ...clone(read()), schemaVersion: 1, exportedAt: new Date().toISOString() }; },
-    async importDataFile(input) {
+    async exportSections(selection) {
+      if (!selection.length) throw new Error("Sélectionnez au moins un fichier à exporter.");
+      if (new Set(selection).size !== selection.length || selection.some((section) => !DATA_SECTION_NAMES.includes(section))) throw new Error("La sélection d'export contient une section inconnue ou dupliquée.");
+      const data = read();
+      const exportedAt = new Date().toISOString();
+      return selection.map((section) => buildSectionFile(section, data, exportedAt));
+    },
+    async importSections(files) {
+      if (!files.length) throw new Error("Aucun fichier à importer.");
+      const byFilename = new Map<string, NamedSectionImport>();
+      const sectionByFilename = Object.fromEntries(DATA_SECTION_NAMES.map((section) => [SECTION_FILE_NAMES[section], section])) as Record<string, DataSectionName>;
+      for (const file of files) {
+        const section = sectionByFilename[file.filename];
+        if (!section) throw new Error(`Nom de fichier inconnu : ${file.filename}.`);
+        if (byFilename.has(file.filename)) throw new Error(`Fichier dupliqué : ${file.filename}.`);
+        byFilename.set(file.filename, file);
+      }
+      const next = clone(read());
+      for (const [filename, file] of byFilename) applySectionFile(next, parseSectionFile(sectionByFilename[filename], file.content));
+      write(parseData(next));
+    },
+    async exportLegacyDataFile() { return { ...clone(read()), schemaVersion: 1, exportedAt: new Date().toISOString() }; },
+    async importLegacyDataFile(input) {
       const parsed = dataFileSchemaV1.safeParse(input);
       if (!parsed.success) { const version = typeof input === "object" && input !== null && "schemaVersion" in input ? String(input.schemaVersion) : "absente"; throw new Error(`Sauvegarde incompatible (version ${version}). ${parsed.error.issues[0]?.message ?? "Format incorrect."}`); }
-      const backup = await this.exportDataFile(); write(parseData(parsed.data)); return backup;
+      const backup = await this.exportLegacyDataFile(); write(parseData(parsed.data)); return backup;
     },
-    async reset() { storage.removeItem(STORAGE_KEY); },
+    async reset() {
+      const manifest = readManifest();
+      if (manifest) for (const section of DATA_SECTION_NAMES) storage.removeItem(storageSectionKey(section, manifest.sections[section]));
+      storage.removeItem(MANIFEST_STORAGE_KEY);
+      storage.removeItem(LEGACY_STORAGE_KEY);
+    },
   };
 }
 

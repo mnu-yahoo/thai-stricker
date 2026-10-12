@@ -128,6 +128,40 @@ export type ThaiStrickerDataFileV1 = AppDataSnapshot & {
   exportedAt: string;
 };
 
+export type DataSectionName =
+  | "settings"
+  | "workouts"
+  | "weeklyWorkoutPlans"
+  | "workoutLogs"
+  | "coachTips"
+  | "calendar";
+
+type SectionFileMetadata<T extends DataSectionName> = {
+  schemaVersion: 1;
+  fileType: T;
+  exportedAt: string;
+};
+
+export type SettingsDataFileV1 = SectionFileMetadata<"settings"> & Pick<AppDataSnapshot, "settings">;
+export type WorkoutsDataFileV1 = SectionFileMetadata<"workouts"> & Pick<AppDataSnapshot, "techniques" | "availableExercises" | "workouts">;
+export type WeeklyWorkoutPlansDataFileV1 = SectionFileMetadata<"weeklyWorkoutPlans"> & Pick<AppDataSnapshot, "weeklyWorkoutPlans">;
+export type WorkoutLogsDataFileV1 = SectionFileMetadata<"workoutLogs"> & Pick<AppDataSnapshot, "workoutLogs">;
+export type CoachTipsDataFileV1 = SectionFileMetadata<"coachTips"> & Pick<AppDataSnapshot, "coachTips">;
+export type CalendarDataFileV1 = SectionFileMetadata<"calendar"> & Pick<AppDataSnapshot, "calendarWorkoutDays" | "monthlySummary">;
+
+export type ThaiStrickerSectionFileV1 =
+  | SettingsDataFileV1
+  | WorkoutsDataFileV1
+  | WeeklyWorkoutPlansDataFileV1
+  | WorkoutLogsDataFileV1
+  | CoachTipsDataFileV1
+  | CalendarDataFileV1;
+
+export type NamedSectionImport = {
+  filename: string;
+  content: unknown;
+};
+
 export type WorkoutImportPayload = Omit<Workout, "id" | "totalDurationMinutes" | "lastDoneDate">;
 
 export const WORKOUT_DIFFICULTIES: WorkoutDifficulty[] = ["Beginner", "Intermediate", "Advanced"];
