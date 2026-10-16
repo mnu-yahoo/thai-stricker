@@ -167,6 +167,54 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 .storage-note { color: var(--muted); font-size: .78rem; display: flex; align-items: flex-start; gap: 8px; padding: 0 8px; }
 
 .session { min-height: 100dvh; display: flex; flex-direction: column; background: radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--primary) 12%, var(--bg)), var(--bg) 56%); }
+.session,
+.recap {
+  --session-blue: #1560c8;
+  --session-blue-strong: #0f4fa8;
+}
+
+/* The light home screen uses blue as its action color. Keep the workout flow
+   in the same visual language while preserving the red danger color globally. */
+:root:not([data-theme="dark"]) .session {
+  --primary: var(--session-blue);
+  --primary-strong: var(--session-blue-strong);
+  --primary-text: #ffffff;
+  --bg: #f7f3f0;
+  --surface: #ffffff;
+  --surface-2: #e8eef8;
+  --text: #151515;
+  --muted: #4a6793;
+  --border: #cbd6e8;
+  background: #f7f3f0;
+}
+
+:root:not([data-theme="dark"]) .recap {
+  --primary: var(--session-blue);
+  --primary-strong: var(--session-blue-strong);
+  --primary-text: #ffffff;
+  --bg: #f7f3f0;
+  --surface: #ffffff;
+  --surface-2: #e8eef8;
+  --text: #151515;
+  --muted: #4a6793;
+  --border: #cbd6e8;
+  background: #f7f3f0;
+}
+
+:root:not([data-theme="dark"]) .session .progress span {
+  background: var(--session-blue);
+}
+
+:root:not([data-theme="dark"]) .session .timer,
+:root:not([data-theme="dark"]) .session .reps {
+  color: var(--session-blue);
+}
+
+:root:not([data-theme="dark"]) .recap-icon {
+  color: var(--session-blue);
+  background: #e8eef8;
+}
+
 .session > header { height: 64px; padding: 0 12px; display: flex; justify-content: space-between; align-items: center; }
 .session > header > span { color: var(--muted); font-weight: 750; }
 .progress { height: 4px; background: var(--surface-2); }
