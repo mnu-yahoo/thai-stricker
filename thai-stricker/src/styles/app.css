@@ -9,8 +9,8 @@
   --text: #171719;
   --muted: #686970;
   --border: #dedee3;
-  --primary: #c20b24;
-  --primary-strong: #9c071b;
+  --primary: #206be0;
+  --primary-strong: #1558bd;
   --primary-text: #ffffff;
   --accent: #1264d3;
   --success: #14845e;
@@ -64,6 +64,17 @@ p { line-height: 1.5; }
 .icon-button.danger { color: var(--danger); }
 .text-button { border: 0; background: transparent; color: var(--primary); font-weight: 750; cursor: pointer; }
 
+:root:not([data-theme="dark"]) .brand-mini,
+:root:not([data-theme="dark"]) .brand-mark {
+  color: #ffffff;
+  background: linear-gradient(145deg, #2b73e2, #1558bd);
+}
+
+:root:not([data-theme="dark"]) .page-header h1,
+:root:not([data-theme="dark"]) .page-header .icon-button {
+  color: #1560c8;
+}
+
 .bottom-nav { position: fixed; z-index: 20; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 480px); display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 7px calc(8px + env(safe-area-inset-bottom, 0)); background: color-mix(in srgb, var(--surface) 94%, transparent); border-top: 1px solid var(--border); backdrop-filter: blur(16px); }
 .bottom-nav a { min-height: 56px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--muted); font-size: .66rem; font-weight: 700; border-radius: 12px; }
 .bottom-nav a.active { color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); }
@@ -75,6 +86,21 @@ p { line-height: 1.5; }
 .hero p:not(.eyebrow), .coach-hero p:not(.eyebrow) { color: #f1cdd3; }
 .eyebrow { color: var(--primary); font-size: .7rem; letter-spacing: .13em; font-weight: 850; margin-bottom: 8px; }
 .hero .eyebrow, .coach-hero .eyebrow { color: #ff98a8; }
+
+:root:not([data-theme="dark"]) .hero,
+:root:not([data-theme="dark"]) .coach-hero {
+  background: linear-gradient(150deg, #0f4fa8, #206be0 65%, #4b8aeb);
+}
+
+:root:not([data-theme="dark"]) .hero p:not(.eyebrow),
+:root:not([data-theme="dark"]) .coach-hero p:not(.eyebrow) {
+  color: #eaf1ff;
+}
+
+:root:not([data-theme="dark"]) .hero .eyebrow,
+:root:not([data-theme="dark"]) .coach-hero .eyebrow {
+  color: #d7e6ff;
+}
 section { margin-bottom: 28px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .section-heading h2, .section-heading p { margin-bottom: 0; }
@@ -87,6 +113,7 @@ section { margin-bottom: 28px; }
 .button.primary { background: var(--primary); color: var(--primary-text); }
 .button.primary:active { background: var(--primary-strong); }
 .hero .button.primary { background: white; color: #7b0719; }
+:root:not([data-theme="dark"]) .hero .button.primary { color: #1558bd; }
 .button.secondary { background: var(--surface); border-color: var(--border); }
 .button.small { min-height: 38px; padding: 0 12px; font-size: .78rem; }
 .button:disabled, button:disabled { opacity: .45; cursor: not-allowed; }
