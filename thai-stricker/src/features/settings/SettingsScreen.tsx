@@ -159,7 +159,7 @@ export function SettingsScreen({
                     size={28}
                   />
                 </View>
-                <Text style={styles.darkHubTitle}>Training Hub</Text>
+                <Text style={styles.darkHubTitle}>THAI STRICKER</Text>
               </View>
               <Pressable style={styles.iconButton}>
                 <GoogleMaterialSymbol

@@ -385,7 +385,7 @@ export function HomeScreen({
                     size={28}
                   />
                 </View>
-                <Text style={styles.darkHubTitle}>Training Hub</Text>
+                <Text style={styles.darkHubTitle}>THAI STRICKER</Text>
               </View>
               <Pressable style={styles.iconButton}>
                 <GoogleMaterialSymbol
@@ -604,7 +604,7 @@ export function HomeScreen({
                   name="sports_martial_arts"
                   size={28}
                 />
-                <Text style={styles.lightBrandTitle}>MUAY THAI PRO</Text>
+                <Text style={styles.lightBrandTitle}>THAI STRICKER</Text>
               </View>
               <Pressable style={styles.lightTopIconButton}>
                 <GoogleMaterialSymbol

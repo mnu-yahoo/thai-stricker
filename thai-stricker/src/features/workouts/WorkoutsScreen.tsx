@@ -179,7 +179,7 @@ export function WorkoutsScreen({
                   size={28}
                 />
               </View>
-              <Text style={styles.darkHubTitle}>Training Hub</Text>
+              <Text style={styles.darkHubTitle}>THAI STRICKER</Text>
             </View>
             <View style={styles.topActions}>
               <Pressable style={styles.iconButton}>

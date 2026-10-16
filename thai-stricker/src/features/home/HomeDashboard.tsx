@@ -106,13 +106,13 @@ export function HomeDashboard({ data }: { data: AppDataSnapshot }) {
   if (isDark) {
     return <div className="home-dashboard home-dashboard--dark">
       <header className="home-dashboard__topbar">
-        <div className="home-dashboard__brand"><span className="home-dashboard__badge"><Icon name="account_circle" size={28} /></span><strong>Training Hub</strong></div>
+        <div className="home-dashboard__brand"><span className="home-dashboard__badge"><Icon name="account_circle" size={28} /></span><strong>THAI STRICKER</strong></div>
         <button className="home-dashboard__top-action" aria-label="Notifications"><Icon name="notifications" /></button>
       </header>
 
       <section className="home-dashboard__intro">
         <p>Private coaching app</p>
-        <h1>Thai Stricker</h1>
+        <h1>THAI STRICKER</h1>
         <span>Train sharp. Stay consistent.</span>
       </section>
 
@@ -152,7 +152,7 @@ export function HomeDashboard({ data }: { data: AppDataSnapshot }) {
   }
 
   return <div className="home-dashboard home-dashboard--light">
-    <header className="home-dashboard__light-topbar"><div><Icon name="sports_martial_arts" size={29} /><strong>Muay Thai Pro</strong></div><button aria-label="Notifications"><Icon name="notifications" /></button></header>
+    <header className="home-dashboard__light-topbar"><div><Icon name="sports_martial_arts" size={29} /><strong>THAI STRICKER</strong></div><button aria-label="Notifications"><Icon name="notifications" /></button></header>
     <div className="home-dashboard__light-week">{days.map((day, index) => {
       const current = day.key === todayKey;
       return <div key={day.key}><span>{LIGHT_WEEK_LABELS[index]}</span><i className={`${day.status === "completed" ? "completed" : ""} ${current ? "today" : ""}`}>{day.status === "completed" ? <Icon name="check" /> : current ? <b /> : day.number}</i></div>;

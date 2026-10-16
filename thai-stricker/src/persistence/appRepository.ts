@@ -93,7 +93,7 @@ function assertIntegrity(data: AppDataSnapshot) {
 
 function parseData(value: unknown): AppDataSnapshot {
   const result = appDataSchema.safeParse(value);
-  if (!result.success) throw new Error(`Invalid ThaiStricker data: ${result.error.issues[0]?.message ?? "incorrect format"}`);
+  if (!result.success) throw new Error(`Invalid THAI STRICKER data: ${result.error.issues[0]?.message ?? "incorrect format"}`);
   const parsed = result.data as AppDataSnapshot;
   assertIntegrity(parsed);
   return parsed;

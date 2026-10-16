@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.png", "icon.png"],
       manifest: {
-        name: "ThaiStricker",
-        short_name: "ThaiStricker",
+        name: "THAI STRICKER",
+        short_name: "THAI STRICKER",
         description: "Personal Muay Thai training journal",
         theme_color: "#131315",
         background_color: "#131315",
