@@ -54,6 +54,9 @@ p { line-height: 1.5; }
 .content.immersive { padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0); }
 .page-header { height: 72px; display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 8px; }
 .page-header h1 { text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.page-header--brand { grid-template-columns: 32px 1fr 44px; gap: 10px; border-bottom: 1px solid var(--border); }
+.page-header--brand h1 { color: var(--primary); font-size: 1.5rem; font-weight: 700; letter-spacing: .8px; text-align: left; text-transform: uppercase; }
+.page-header__brand-icon { display: grid; place-items: center; color: var(--primary); }
 .brand-mini, .brand-mark { display: grid; place-items: center; font-weight: 900; color: white; background: linear-gradient(145deg, #df1632, #8e0014); border-radius: 12px; }
 .brand-mini { width: 38px; height: 38px; font-size: .75rem; transform: skew(-6deg); }
 .brand-mark { width: 72px; height: 72px; font-size: 1.4rem; }

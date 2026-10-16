@@ -20,20 +20,20 @@ export async function readSectionImports(files: BackupInputFile[]): Promise<Name
     if (file.name.toLocaleLowerCase().endsWith(".zip")) {
       const entries = unzipSync(new Uint8Array(await file.arrayBuffer()));
       for (const [filename, bytes] of Object.entries(entries)) {
-        if (filename.endsWith("/") || !knownNames.has(filename)) throw new Error(`Nom de fichier inconnu : ${filename}.`);
+        if (filename.endsWith("/") || !knownNames.has(filename)) throw new Error(`Unknown filename: ${filename}.`);
         try { imports.push({ filename, content: JSON.parse(strFromU8(bytes)) as unknown }); }
-        catch { throw new Error(`${filename} ne contient pas un document JSON valide.`); }
+        catch { throw new Error(`${filename} does not contain a valid JSON document.`); }
       }
     } else {
-      if (!knownNames.has(file.name)) throw new Error(`Nom de fichier inconnu : ${file.name}.`);
+      if (!knownNames.has(file.name)) throw new Error(`Unknown filename: ${file.name}.`);
       try { imports.push({ filename: file.name, content: JSON.parse(await file.text()) as unknown }); }
-      catch { throw new Error(`${file.name} ne contient pas un document JSON valide.`); }
+      catch { throw new Error(`${file.name} does not contain a valid JSON document.`); }
     }
   }
-  if (!imports.length) throw new Error("Aucun fichier JSON reconnu.");
+  if (!imports.length) throw new Error("No recognized JSON files.");
   const names = new Set<string>();
   for (const item of imports) {
-    if (names.has(item.filename)) throw new Error(`Fichier dupliqué : ${item.filename}.`);
+    if (names.has(item.filename)) throw new Error(`Duplicate file: ${item.filename}.`);
     names.add(item.filename);
   }
   return imports;

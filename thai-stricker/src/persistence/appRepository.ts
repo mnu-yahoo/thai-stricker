@@ -59,7 +59,7 @@ const storageManifestSchema = z.object({
 type StorageManifestV2 = z.infer<typeof storageManifestSchema>;
 
 const clone = <T,>(value: T): T => structuredClone(value);
-export const normalizeExerciseName = (value: string) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase("fr");
+export const normalizeExerciseName = (value: string) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
 const makeId = (prefix: string) => `${prefix}-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
 
 export function calculateWorkoutDuration(exercises: Workout["exercises"], restSeconds: number, defaultRepsMinutes: number) {
@@ -73,27 +73,27 @@ function assertIntegrity(data: AppDataSnapshot) {
   const names = new Set<string>();
   for (const exercise of data.availableExercises) {
     const name = normalizeExerciseName(exercise.title);
-    if (exerciseIds.has(exercise.id)) throw new Error(`Identifiant d'exercice dupliqué : ${exercise.id}`);
-    if (names.has(name)) throw new Error(`Un exercice nommé « ${exercise.title.trim()} » existe déjà.`);
-    if (new Set(exercise.techniqueIds).size !== exercise.techniqueIds.length) throw new Error(`Les techniques de « ${exercise.title} » sont dupliquées.`);
-    for (const id of exercise.techniqueIds) if (!techniqueIds.has(id)) throw new Error(`Technique inconnue : ${id}`);
+    if (exerciseIds.has(exercise.id)) throw new Error(`Duplicate exercise ID: ${exercise.id}`);
+    if (names.has(name)) throw new Error(`An exercise named “${exercise.title.trim()}” already exists.`);
+    if (new Set(exercise.techniqueIds).size !== exercise.techniqueIds.length) throw new Error(`The techniques for “${exercise.title}” are duplicated.`);
+    for (const id of exercise.techniqueIds) if (!techniqueIds.has(id)) throw new Error(`Unknown technique: ${id}`);
     exerciseIds.add(exercise.id);
     names.add(name);
   }
   const workoutIds = new Set<string>();
   for (const workout of data.workouts) {
-    if (workoutIds.has(workout.id)) throw new Error(`Identifiant de séance dupliqué : ${workout.id}`);
-    for (const exercise of workout.exercises) if (!exerciseIds.has(exercise.id)) throw new Error(`L'exercice « ${exercise.title} » n'existe plus.`);
+    if (workoutIds.has(workout.id)) throw new Error(`Duplicate workout ID: ${workout.id}`);
+    for (const exercise of workout.exercises) if (!exerciseIds.has(exercise.id)) throw new Error(`The exercise “${exercise.title}” no longer exists.`);
     workoutIds.add(workout.id);
   }
   for (const plan of data.weeklyWorkoutPlans) {
-    for (const day of plan.plannedDays) if (!workoutIds.has(day.workoutId)) throw new Error(`La séance planifiée « ${day.workoutTitle} » n'existe plus.`);
+    for (const day of plan.plannedDays) if (!workoutIds.has(day.workoutId)) throw new Error(`The scheduled workout “${day.workoutTitle}” no longer exists.`);
   }
 }
 
 function parseData(value: unknown): AppDataSnapshot {
   const result = appDataSchema.safeParse(value);
-  if (!result.success) throw new Error(`Données ThaiStricker invalides : ${result.error.issues[0]?.message ?? "format incorrect"}`);
+  if (!result.success) throw new Error(`Invalid ThaiStricker data: ${result.error.issues[0]?.message ?? "incorrect format"}`);
   const parsed = result.data as AppDataSnapshot;
   assertIntegrity(parsed);
   return parsed;
@@ -123,13 +123,13 @@ function applySectionFile(data: AppDataSnapshot, file: ThaiStrickerSectionFileV1
 
 function parseSectionFile(section: DataSectionName, value: unknown): ThaiStrickerSectionFileV1 {
   if (typeof value === "object" && value !== null && "schemaVersion" in value && value.schemaVersion !== 1) {
-    throw new Error(`Version inconnue dans ${SECTION_FILE_NAMES[section]} : ${String(value.schemaVersion)}.`);
+    throw new Error(`Unknown version in ${SECTION_FILE_NAMES[section]}: ${String(value.schemaVersion)}.`);
   }
   if (typeof value === "object" && value !== null && "fileType" in value && value.fileType !== section) {
-    throw new Error(`${SECTION_FILE_NAMES[section]} annonce le type « ${String(value.fileType)} » au lieu de « ${section} ».`);
+    throw new Error(`${SECTION_FILE_NAMES[section]} declares type “${String(value.fileType)}” instead of “${section}”.`);
   }
   const result = sectionDataFileSchemasV1[section].safeParse(value);
-  if (!result.success) throw new Error(`${SECTION_FILE_NAMES[section]} est invalide : ${result.error.issues[0]?.message ?? "format incorrect"}`);
+  if (!result.success) throw new Error(`${SECTION_FILE_NAMES[section]} is invalid: ${result.error.issues[0]?.message ?? "incorrect format"}`);
   return result.data as ThaiStrickerSectionFileV1;
 }
 
@@ -142,10 +142,10 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     if (!raw) return null;
     try {
       const parsed = storageManifestSchema.safeParse(JSON.parse(raw));
-      if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "format incorrect");
+      if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "incorrect format");
       return parsed.data;
     } catch (error) {
-      throw new Error(`Manifeste de stockage illisible. ${error instanceof Error ? error.message : ""}`.trim());
+      throw new Error(`The storage manifest cannot be read. ${error instanceof Error ? error.message : ""}`.trim());
     }
   };
 
@@ -153,9 +153,9 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     const data = clone(seedData);
     for (const section of DATA_SECTION_NAMES) {
       const raw = storage.getItem(storageSectionKey(section, manifest.sections[section]));
-      if (!raw) throw new Error(`La section ${SECTION_FILE_NAMES[section]} est absente du stockage local.`);
+      if (!raw) throw new Error(`The ${SECTION_FILE_NAMES[section]} section is missing from local storage.`);
       try { applySectionFile(data, parseSectionFile(section, JSON.parse(raw))); }
-      catch (error) { throw new Error(`Impossible de lire les données locales. ${error instanceof Error ? error.message : ""}`.trim()); }
+      catch (error) { throw new Error(`Unable to read local data. ${error instanceof Error ? error.message : ""}`.trim()); }
     }
     return parseData(data);
   };
@@ -175,7 +175,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
       storage.setItem(MANIFEST_STORAGE_KEY, JSON.stringify(next));
     } catch {
       for (const key of writtenKeys) { try { storage.removeItem(key); } catch { /* best effort */ } }
-      throw new Error("Le navigateur n'a pas pu enregistrer les données. Vérifiez l'espace disponible et le mode de navigation.");
+      throw new Error("The browser could not save the data. Check the available storage space and browsing mode.");
     }
     if (previous) {
       for (const section of DATA_SECTION_NAMES) {
@@ -192,7 +192,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     let initial = clone(seedData);
     if (legacyRaw) {
       try { initial = parseData(JSON.parse(legacyRaw)); }
-      catch (error) { throw new Error(`Impossible de migrer les données locales. ${error instanceof Error ? error.message : ""}`.trim()); }
+      catch (error) { throw new Error(`Unable to migrate local data. ${error instanceof Error ? error.message : ""}`.trim()); }
     }
     const manifest = commit(initial, null);
     if (legacyRaw) storage.removeItem(LEGACY_STORAGE_KEY);
@@ -206,7 +206,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     const library = new Map(draft.availableExercises.map((item) => [item.id, item]));
     const exercises = workout.exercises.map((occurrence) => {
       const shared = library.get(occurrence.id);
-      if (!shared) throw new Error(`L'exercice « ${occurrence.title} » n'existe plus.`);
+      if (!shared) throw new Error(`The exercise “${occurrence.title}” no longer exists.`);
       return { ...occurrence, title: shared.title, description: shared.description, help: shared.help, category: shared.category, imageUri: shared.imageUri };
     });
     return { ...workout, title: workout.title.trim(), exercises, totalDurationMinutes: calculateWorkoutDuration(exercises, workout.restSecondsBetweenExercises, draft.settings.defaultRepsExerciseDurationMinutes) };
@@ -215,29 +215,29 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
   return {
     async loadAppData() { return clone(read()); },
     async saveSetting(key, value) { await mutate((draft) => { Object.assign(draft.settings, { [key]: value }); }); },
-    async addTechnique(value) { await mutate((draft) => { if (draft.techniques.some((item) => item.id === value.id)) throw new Error("Cette technique existe déjà."); draft.techniques.push(clone(value)); }); },
-    async updateTechnique(value) { await mutate((draft) => { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Technique introuvable."); draft.techniques[index] = clone(value); }); },
+    async addTechnique(value) { await mutate((draft) => { if (draft.techniques.some((item) => item.id === value.id)) throw new Error("This technique already exists."); draft.techniques.push(clone(value)); }); },
+    async updateTechnique(value) { await mutate((draft) => { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Technique not found."); draft.techniques[index] = clone(value); }); },
     async importTechniques(values) { await mutate((draft) => { for (const value of values) { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index >= 0) draft.techniques[index] = clone(value); else draft.techniques.push(clone(value)); } }); },
     async addAvailableExercise(value) {
       await mutate((draft) => {
         const item = { ...clone(value), id: value.id || makeId("exercise"), title: value.title.trim() };
-        if (draft.availableExercises.some((other) => normalizeExerciseName(other.title) === normalizeExerciseName(item.title))) throw new Error(`Un exercice nommé « ${item.title} » existe déjà.`);
+        if (draft.availableExercises.some((other) => normalizeExerciseName(other.title) === normalizeExerciseName(item.title))) throw new Error(`An exercise named “${item.title}” already exists.`);
         draft.availableExercises.push(item);
       });
     },
     async updateAvailableExercise(value) {
       await mutate((draft) => {
         const index = draft.availableExercises.findIndex((item) => item.id === value.id);
-        if (index < 0) throw new Error("Exercice introuvable.");
-        if (draft.availableExercises.some((other) => other.id !== value.id && normalizeExerciseName(other.title) === normalizeExerciseName(value.title))) throw new Error(`Un exercice nommé « ${value.title.trim()} » existe déjà.`);
+        if (index < 0) throw new Error("Exercise not found.");
+        if (draft.availableExercises.some((other) => other.id !== value.id && normalizeExerciseName(other.title) === normalizeExerciseName(value.title))) throw new Error(`An exercise named “${value.title.trim()}” already exists.`);
         const shared = { ...clone(value), title: value.title.trim() };
         draft.availableExercises[index] = shared;
         draft.workouts = draft.workouts.map((workout) => ({ ...workout, exercises: workout.exercises.map((item) => item.id === shared.id ? { ...item, title: shared.title, description: shared.description, help: shared.help, category: shared.category, imageUri: shared.imageUri } : item) }));
       });
     },
-    async deleteAvailableExercise(id) { await mutate((draft) => { if (draft.workouts.some((workout) => workout.exercises.some((item) => item.id === id))) throw new Error("Cet exercice est utilisé dans une séance."); draft.availableExercises = draft.availableExercises.filter((item) => item.id !== id); }); },
-    async addWorkout(value) { await mutate((draft) => { if (draft.workouts.some((item) => item.id === value.id)) throw new Error("Cette séance existe déjà."); draft.workouts.push(hydrateWorkout(draft, value)); }); },
-    async updateWorkout(value) { await mutate((draft) => { const index = draft.workouts.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Séance introuvable."); draft.workouts[index] = hydrateWorkout(draft, value); }); },
+    async deleteAvailableExercise(id) { await mutate((draft) => { if (draft.workouts.some((workout) => workout.exercises.some((item) => item.id === id))) throw new Error("This exercise is used in a workout."); draft.availableExercises = draft.availableExercises.filter((item) => item.id !== id); }); },
+    async addWorkout(value) { await mutate((draft) => { if (draft.workouts.some((item) => item.id === value.id)) throw new Error("This workout already exists."); draft.workouts.push(hydrateWorkout(draft, value)); }); },
+    async updateWorkout(value) { await mutate((draft) => { const index = draft.workouts.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Workout not found."); draft.workouts[index] = hydrateWorkout(draft, value); }); },
     async deleteWorkout(id) { await mutate((draft) => { draft.workouts = draft.workouts.filter((item) => item.id !== id); draft.weeklyWorkoutPlans = draft.weeklyWorkoutPlans.map((plan) => ({ ...plan, plannedDays: plan.plannedDays.filter((day) => day.workoutId !== id) })); }); },
     async importWorkouts(values) {
       await mutate((draft) => {
@@ -263,20 +263,20 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
       });
     },
     async exportSections(selection) {
-      if (!selection.length) throw new Error("Sélectionnez au moins un fichier à exporter.");
-      if (new Set(selection).size !== selection.length || selection.some((section) => !DATA_SECTION_NAMES.includes(section))) throw new Error("La sélection d'export contient une section inconnue ou dupliquée.");
+      if (!selection.length) throw new Error("Select at least one file to export.");
+      if (new Set(selection).size !== selection.length || selection.some((section) => !DATA_SECTION_NAMES.includes(section))) throw new Error("The export selection contains an unknown or duplicate section.");
       const data = read();
       const exportedAt = new Date().toISOString();
       return selection.map((section) => buildSectionFile(section, data, exportedAt));
     },
     async importSections(files) {
-      if (!files.length) throw new Error("Aucun fichier à importer.");
+      if (!files.length) throw new Error("No files to import.");
       const byFilename = new Map<string, NamedSectionImport>();
       const sectionByFilename = Object.fromEntries(DATA_SECTION_NAMES.map((section) => [SECTION_FILE_NAMES[section], section])) as Record<string, DataSectionName>;
       for (const file of files) {
         const section = sectionByFilename[file.filename];
-        if (!section) throw new Error(`Nom de fichier inconnu : ${file.filename}.`);
-        if (byFilename.has(file.filename)) throw new Error(`Fichier dupliqué : ${file.filename}.`);
+        if (!section) throw new Error(`Unknown filename: ${file.filename}.`);
+        if (byFilename.has(file.filename)) throw new Error(`Duplicate file: ${file.filename}.`);
         byFilename.set(file.filename, file);
       }
       const next = clone(read());
@@ -286,7 +286,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     async exportLegacyDataFile() { return { ...clone(read()), schemaVersion: 1, exportedAt: new Date().toISOString() }; },
     async importLegacyDataFile(input) {
       const parsed = dataFileSchemaV1.safeParse(input);
-      if (!parsed.success) { const version = typeof input === "object" && input !== null && "schemaVersion" in input ? String(input.schemaVersion) : "absente"; throw new Error(`Sauvegarde incompatible (version ${version}). ${parsed.error.issues[0]?.message ?? "Format incorrect."}`); }
+      if (!parsed.success) { const version = typeof input === "object" && input !== null && "schemaVersion" in input ? String(input.schemaVersion) : "missing"; throw new Error(`Incompatible backup (version ${version}). ${parsed.error.issues[0]?.message ?? "Incorrect format."}`); }
       const backup = await this.exportLegacyDataFile(); write(parseData(parsed.data)); return backup;
     },
     async reset() {
@@ -300,7 +300,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
 
 const unavailableStorage: StorageAdapter = {
   getItem: () => null,
-  setItem: () => { throw new Error("Stockage navigateur indisponible."); },
+  setItem: () => { throw new Error("Browser storage is unavailable."); },
   removeItem: () => undefined,
 };
 

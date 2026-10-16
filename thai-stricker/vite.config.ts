@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: "ThaiStricker",
         short_name: "ThaiStricker",
-        description: "Carnet personnel d'entraînement Muay Thai",
+        description: "Personal Muay Thai training journal",
         theme_color: "#131315",
         background_color: "#131315",
         display: "standalone",

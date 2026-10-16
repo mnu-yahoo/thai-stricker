@@ -12,7 +12,7 @@ const items = [
 
 export function BottomNav() {
   return (
-    <nav className="bottom-nav" aria-label="Navigation principale">
+    <nav className="bottom-nav" aria-label="Main navigation">
       {items.map(([to, icon, label]) => (
         <NavLink key={to} to={to} end={to === "/"} className={({ isActive }) => isActive ? "active" : ""}>
           <Icon name={icon} size={18} />
