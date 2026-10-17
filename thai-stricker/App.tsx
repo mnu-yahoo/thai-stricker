@@ -349,7 +349,7 @@ export default function App() {
         applySnapshot(snapshot);
         setIsAppReady(true);
       } catch (error) {
-        console.error("Failed to initialize local SQLite data", error);
+        console.error("Failed to initialize local data", error);
 
         if (!isMounted) {
           return;
@@ -441,7 +441,7 @@ export default function App() {
       completedExerciseCount: flow.completedExerciseCount,
       skippedExerciseCount: flow.skippedExerciseCount,
       totalDurationMinutes: completedWorkout.totalDurationMinutes,
-      source: "sqlite",
+      source: "web",
     };
 
     setWorkoutLogs((currentLogs) => [nextLog, ...currentLogs]);
@@ -635,14 +635,14 @@ export default function App() {
       );
       const persistedPlan: MockWeeklyWorkoutPlan = {
         ...plan,
-        source: "sqlite",
+      source: "web",
       };
 
       return [...plansWithoutWeek, persistedPlan].sort((leftPlan, rightPlan) =>
         leftPlan.weekStartDate.localeCompare(rightPlan.weekStartDate),
       );
     });
-    void saveWeeklyPlan({ ...plan, source: "sqlite" });
+    void saveWeeklyPlan({ ...plan, source: "web" });
   };
 
   const handleAddAvailableExercise = async (newExercise: MockAvailableExercise) => {
@@ -700,7 +700,7 @@ export default function App() {
     void (async () => {
       const shouldDeleteWorkouts = await confirmAction(
         "Delete workouts?",
-        "This will permanently delete all workouts stored in SQLite on this device.",
+        "This will permanently delete all workouts stored locally on this device.",
       );
 
       if (!shouldDeleteWorkouts) {
@@ -710,7 +710,7 @@ export default function App() {
       try {
         const shouldDeleteExercises = await confirmAction(
           "Delete all exercises too?",
-          "Choose Confirm to also delete every exercise from SQLite. Choose Cancel to keep the exercise library.",
+        "Choose Confirm to also delete every exercise. Choose Cancel to keep the exercise library.",
         );
 
         await deleteAllWorkouts(shouldDeleteExercises);
@@ -753,7 +753,7 @@ export default function App() {
           "Import workouts?",
           `Import ${importedWorkoutsFromFiles.length} workout${
             importedWorkoutsFromFiles.length === 1 ? "" : "s"
-          } from ${result.assets.length} JSON file${result.assets.length === 1 ? "" : "s"} into SQLite?`,
+          } from ${result.assets.length} JSON file${result.assets.length === 1 ? "" : "s"} into local storage?`,
         );
 
         if (!confirmed) {
@@ -805,7 +805,7 @@ export default function App() {
           "Import techniques?",
           `Import ${importedTechniques.length} technique${
             importedTechniques.length === 1 ? "" : "s"
-          } from ${result.assets.length} JSON file${result.assets.length === 1 ? "" : "s"} into SQLite?`,
+          } from ${result.assets.length} JSON file${result.assets.length === 1 ? "" : "s"} into local storage?`,
         );
 
         if (!confirmed) {

@@ -281,7 +281,7 @@ export function ScheduleScreen({
       year: selectedWeekStart.getFullYear(),
       requiredTrainingDays: trainingDaysPerWeek,
       plannedDays,
-      source: "sqlite",
+      source: "web",
     };
 
     onSaveWeeklyPlan(plan);

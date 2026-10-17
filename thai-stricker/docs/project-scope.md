@@ -109,7 +109,7 @@ Not implemented:
 
 Settings and Workouts currently share mocked rest time state.
 
-This is not persisted and does not use SQLite or Drizzle.
+This is not persisted and does not use the local repository or Drizzle.
 
 ## Add Workout Screen
 
@@ -348,7 +348,7 @@ Not implemented:
 
 Settings and Workouts currently share mocked rest time state.
 
-This is not persisted and does not use SQLite or Drizzle.
+This is not persisted and does not use the local repository or Drizzle.
 
 ## Theme Feature
 

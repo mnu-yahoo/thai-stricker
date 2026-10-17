@@ -10,7 +10,7 @@ export type MockWorkoutLogEntry = {
   completedExerciseCount: number;
   skippedExerciseCount: number;
   totalDurationMinutes: number;
-  source: "mock" | "sqlite";
+  source: "mock" | "web";
 };
 
 export const mockWorkoutLogs: MockWorkoutLogEntry[] = [];

@@ -86,7 +86,6 @@ Current implementation:
 
 No:
 
-- SQLite
 - Drizzle
 - AsyncStorage
 - API

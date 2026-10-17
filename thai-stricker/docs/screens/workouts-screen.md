@@ -135,7 +135,6 @@ Included mocked workouts:
 
 No:
 
-- SQLite
 - Drizzle
 - API
 - Cloud

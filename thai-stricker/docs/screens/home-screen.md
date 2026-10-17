@@ -131,7 +131,6 @@ Current implementation:
 
 No:
 
-- SQLite
 - Drizzle
 - API
 - Cloud
@@ -141,8 +140,8 @@ No:
 
 Planned:
 
-- SQLite using expo-sqlite
-- Drizzle ORM
+- Local web storage repository
+- Zod-validated data model
 
 The Home Screen should eventually consume:
 
@@ -265,7 +264,6 @@ Current:
 
 Future:
 
-- SQLite
 - Drizzle ORM
 
 No additional dependencies should be introduced solely for the Home Screen without approval.

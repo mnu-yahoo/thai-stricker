@@ -12,5 +12,5 @@ export type MockWeeklyWorkoutPlan = {
   year: number;
   requiredTrainingDays: number;
   plannedDays: MockPlannedWorkoutDay[];
-  source: "mock" | "sqlite";
+  source: "mock" | "web";
 };

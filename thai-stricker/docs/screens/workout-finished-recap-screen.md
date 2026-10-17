@@ -40,7 +40,7 @@ When a mocked workout is completed:
 - The log entry is stored in local app-level state
 - The Home screen uses these log entries for the calendar preview
 
-This does not use SQLite, Drizzle, AsyncStorage, or any persistent storage.
+This does not use Drizzle, AsyncStorage, or any persistent storage.
 
 ## Out Of Scope
 

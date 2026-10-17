@@ -44,12 +44,12 @@ export const appDataSchema = z.object({
     id: z.string().min(1), weekStartDate: z.string().min(1), weekNumber: z.number().int().min(1).max(53), year: z.number().int(),
     requiredTrainingDays: z.number().int().min(1).max(7),
     plannedDays: z.array(z.object({ dayDate: z.string().min(1), dayLabel: z.string().min(1), workoutId: z.string().min(1), workoutTitle: z.string().min(1) })),
-    source: z.union([z.literal("web"), z.literal("sqlite"), z.literal("mock")]),
+    source: z.union([z.literal("web"), z.literal("mock")]),
   })),
   workoutLogs: z.array(z.object({
     id: z.string().min(1), workoutId: z.string().min(1), workoutTitle: z.string().min(1), completedAt: z.string().min(1), completedDate: z.string().min(1),
     exerciseCount: z.number().int().nonnegative(), completedExerciseCount: z.number().int().nonnegative(), skippedExerciseCount: z.number().int().nonnegative(),
-    totalDurationMinutes: z.number().int().nonnegative(), source: z.union([z.literal("web"), z.literal("sqlite"), z.literal("mock")]),
+    totalDurationMinutes: z.number().int().nonnegative(), source: z.union([z.literal("web"), z.literal("mock")]),
   })),
   coachTips: z.array(z.object({
     exerciseId: z.string().min(1), exerciseTitle: z.string().min(1), shortTip: z.string(), technicalTips: z.array(z.string()),

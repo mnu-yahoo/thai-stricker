@@ -77,7 +77,7 @@ export type WeeklyWorkoutPlan = {
   year: number;
   requiredTrainingDays: number;
   plannedDays: PlannedWorkoutDay[];
-  source: "web" | "sqlite" | "mock";
+  source: "web" | "mock";
 };
 
 export type WorkoutLogEntry = {
@@ -90,7 +90,7 @@ export type WorkoutLogEntry = {
   completedExerciseCount: number;
   skippedExerciseCount: number;
   totalDurationMinutes: number;
-  source: "web" | "sqlite" | "mock";
+  source: "web" | "mock";
 };
 
 export type CoachTip = {

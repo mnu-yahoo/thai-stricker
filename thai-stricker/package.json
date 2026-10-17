@@ -7,7 +7,6 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "migrate:android": "node scripts/export-android-sqlite.mjs",
     "test": "vitest run tests/webRepository.test.ts",
     "typecheck": "tsc -b"
   },

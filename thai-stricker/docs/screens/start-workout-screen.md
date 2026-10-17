@@ -78,7 +78,6 @@ No database.
 
 ## Out Of Scope
 
-- SQLite
 - Drizzle
 - AsyncStorage
 - Real workout execution persistence

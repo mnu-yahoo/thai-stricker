@@ -434,7 +434,7 @@ export function SettingsScreen({
               </View>
 
               <Text style={styles.settingHint}>
-                Manage local SQLite workout data and import workout JSON files from the device.
+                Manage local workout data and import workout JSON files from the device.
               </Text>
 
               <Pressable onPress={onImportWorkouts} style={styles.dbPrimaryButton}>
@@ -682,7 +682,7 @@ export function SettingsScreen({
 
               <View style={styles.lightPanelCard}>
                 <Text style={styles.lightSettingHint}>
-                  Import local workout or technique JSON files, or delete workouts from SQLite. You can also choose to delete all exercises after confirmation.
+                Import local workout or technique JSON files, or delete workouts from local storage. You can also choose to delete all exercises after confirmation.
                 </Text>
 
                 <View style={styles.lightDbActions}>
