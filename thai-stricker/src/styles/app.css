@@ -106,6 +106,9 @@ p { line-height: 1.5; }
 }
 section { margin-bottom: 28px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.library-nav { display: flex; gap: 8px; overflow-x: auto; margin: -8px 0 18px; padding: 4px 0 8px; }
+.library-nav a { flex: 0 0 auto; border: 1px solid var(--border); border-radius: 999px; padding: 8px 14px; color: var(--muted); font-size: .82rem; font-weight: 700; text-decoration: none; background: var(--surface); }
+.library-nav a.active { border-color: var(--accent); color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
 .section-heading h2, .section-heading p { margin-bottom: 0; }
 .section-heading > a { color: var(--accent); font-size: .85rem; font-weight: 700; }
 .muted { color: var(--muted); }

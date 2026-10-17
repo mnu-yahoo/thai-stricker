@@ -61,8 +61,10 @@ function Layout() {
     <Route path="/workouts/new" element={<WorkoutForm />} />
     <Route path="/workouts/:id" element={<WorkoutDetail />} />
     <Route path="/workouts/:id/edit" element={<WorkoutForm />} />
+    <Route path="/exercises" element={<ExercisesLibrary />} />
     <Route path="/exercises/new" element={<ExerciseForm />} />
     <Route path="/exercises/:id/edit" element={<ExerciseForm />} />
+    <Route path="/techniques" element={<TechniquesLibrary />} />
     <Route path="/schedule" element={<Schedule />} />
     <Route path="/coach" element={<Coach />} />
     <Route path="/settings" element={<Settings />} />
@@ -84,6 +86,15 @@ function Empty({ icon, title, text, action }: { icon: string; title: string; tex
   return <section className="empty"><Icon name={icon} size={42} /><h2>{title}</h2><p>{text}</p>{action}</section>;
 }
 
+function WorkoutLibraryNav() {
+  const location = useLocation();
+  return <nav className="library-nav" aria-label="Workout library navigation">
+    <Link to="/workouts" className={location.pathname === "/workouts" ? "active" : ""}>Workouts</Link>
+    <Link to="/exercises" className={location.pathname.startsWith("/exercises") ? "active" : ""}>Exercises</Link>
+    <Link to="/techniques" className={location.pathname.startsWith("/techniques") ? "active" : ""}>Techniques</Link>
+  </nav>;
+}
+
 function HomeDashboardRoute() {
   const { data } = useApp();
   return <HomeDashboard data={data} />;
@@ -92,7 +103,19 @@ function HomeDashboardRoute() {
 function Workouts() {
   const { data, act } = useApp();
   const [remove, setRemove] = useState<Workout | null>(null);
-  return <><Header title="Workouts" action={<Link className="icon-button" to="/workouts/new" aria-label="New workout"><Icon name="add" /></Link>} />{data.workouts.length ? <div className="stack">{data.workouts.map((workout) => <article className="workout-card" key={workout.id}><div className="card-top"><span className="pill">{workout.category}</span><span className="muted">{workout.difficulty}</span></div><h2>{workout.title}</h2><p>{workout.description}</p><div className="meta"><span><Icon name="schedule" /> {workout.totalDurationMinutes} min</span><span><Icon name="fitness_center" /> {workout.exercises.length}</span><span><Icon name="history" /> {formatDate(workout.lastDoneDate)}</span></div><div className="actions"><Link className="button primary" to={`/session/${workout.id}`}><Icon name="play_arrow" /> Start</Link><Link className="button secondary" to={`/workouts/${workout.id}`}>Details</Link><Link className="icon-button" to={`/workouts/${workout.id}/edit`} aria-label={`Edit ${workout.title}`}><Icon name="edit" /></Link><button className="icon-button danger" onClick={() => setRemove(workout)} aria-label={`Delete ${workout.title}`}><Icon name="delete" /></button></div></article>)}</div> : <Empty icon="fitness_center" title="No workouts yet" text="Create a workout from your exercise library." action={<Link className="button primary" to="/workouts/new">Create a workout</Link>} />}{remove && <ConfirmDialog title="Delete this workout?" text={`“${remove.title}” will be removed from the schedule. Its history will be kept.`} onCancel={() => setRemove(null)} onConfirm={async () => { await act(() => appRepository.deleteWorkout(remove.id), "Workout deleted."); setRemove(null); }} />}</>;
+  return <><Header title="Workouts" action={<Link className="icon-button" to="/workouts/new" aria-label="New workout"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.workouts.length ? <div className="stack">{data.workouts.map((workout) => <article className="workout-card" key={workout.id}><div className="card-top"><span className="pill">{workout.category}</span><span className="muted">{workout.difficulty}</span></div><h2>{workout.title}</h2><p>{workout.description}</p><div className="meta"><span><Icon name="schedule" /> {workout.totalDurationMinutes} min</span><span><Icon name="fitness_center" /> {workout.exercises.length}</span><span><Icon name="history" /> {formatDate(workout.lastDoneDate)}</span></div><div className="actions"><Link className="button primary" to={`/session/${workout.id}`}><Icon name="play_arrow" /> Start</Link><Link className="button secondary" to={`/workouts/${workout.id}`}>Details</Link><Link className="icon-button" to={`/workouts/${workout.id}/edit`} aria-label={`Edit ${workout.title}`}><Icon name="edit" /></Link><button className="icon-button danger" onClick={() => setRemove(workout)} aria-label={`Delete ${workout.title}`}><Icon name="delete" /></button></div></article>)}</div> : <Empty icon="fitness_center" title="No workouts yet" text="Create a workout from your exercise library." action={<Link className="button primary" to="/workouts/new">Create a workout</Link>} />}{remove && <ConfirmDialog title="Delete this workout?" text={`“${remove.title}” will be removed from the schedule. Its history will be kept.`} onCancel={() => setRemove(null)} onConfirm={async () => { await act(() => appRepository.deleteWorkout(remove.id), "Workout deleted."); setRemove(null); }} />}</>;
+}
+
+function ExercisesLibrary() {
+  const { data } = useApp();
+  const techniqueNames = new Map(data.techniques.map((technique) => [technique.id, technique.name]));
+  return <><Header title="Exercises" back="/workouts" action={<Link className="icon-button" to="/exercises/new" aria-label="New exercise"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.exercises.length ? <div className="library">{data.exercises.map((exercise) => <article key={exercise.id}><div><h3>{exercise.title}</h3><p>{exercise.category || "Uncategorized"} · {detailLabel(exercise)}</p><small>{exercise.techniqueIds.map((id) => techniqueNames.get(id) ?? id).join(" · ")}</small></div><Link className="icon-button" to={`/exercises/${exercise.id}/edit`} aria-label={`Edit ${exercise.title}`}><Icon name="edit" /></Link></article>)}</div> : <Empty icon="fitness_center" title="No exercises yet" text="Create an exercise from the technique library." action={<Link className="button primary" to="/exercises/new">Create an exercise</Link>} />}</>;
+}
+
+function TechniquesLibrary() {
+  const { data } = useApp();
+  const usage = new Map(data.techniques.map((technique) => [technique.id, data.exercises.filter((exercise) => exercise.techniqueIds.includes(technique.id)).length]));
+  return <><Header title="Techniques" back="/workouts" /><WorkoutLibraryNav />{data.techniques.length ? <div className="library">{data.techniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div></article>)}</div> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}</>;
 }
 
 function WorkoutDetail() {
