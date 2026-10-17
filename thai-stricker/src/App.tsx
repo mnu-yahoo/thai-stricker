@@ -65,6 +65,7 @@ function Layout() {
     <Route path="/exercises/new" element={<ExerciseForm />} />
     <Route path="/exercises/:id/edit" element={<ExerciseForm />} />
     <Route path="/techniques" element={<TechniquesLibrary />} />
+    <Route path="/techniques/new" element={<TechniqueForm />} />
     <Route path="/schedule" element={<Schedule />} />
     <Route path="/coach" element={<Coach />} />
     <Route path="/settings" element={<Settings />} />
@@ -115,7 +116,36 @@ function ExercisesLibrary() {
 function TechniquesLibrary() {
   const { data } = useApp();
   const usage = new Map(data.techniques.map((technique) => [technique.id, data.exercises.filter((exercise) => exercise.techniqueIds.includes(technique.id)).length]));
-  return <><Header title="Techniques" back="/workouts" /><WorkoutLibraryNav />{data.techniques.length ? <div className="library">{data.techniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div></article>)}</div> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}</>;
+  return <><Header title="Techniques" back="/workouts" action={<Link className="icon-button" to="/techniques/new" aria-label="New technique"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.techniques.length ? <div className="library">{data.techniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div></article>)}</div> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}</>;
+}
+
+const TECHNIQUE_CATEGORIES: Technique["category"][] = ["Muay Thai techniques", "Stretching Techniques", "Strength Techniques"];
+
+function TechniqueForm() {
+  const { act } = useApp();
+  const navigate = useNavigate();
+  const [value, setValue] = useState<Omit<Technique, "id">>({
+    name: "",
+    shortName: "",
+    description: "",
+    category: "Muay Thai techniques",
+    subCategory: "",
+  });
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!value.name.trim() || !value.shortName.trim() || !value.description.trim() || !value.subCategory.trim()) return;
+    const technique: Technique = { ...value, id: uid("technique"), name: value.name.trim(), shortName: value.shortName.trim(), description: value.description.trim(), subCategory: value.subCategory.trim() };
+    const ok = await act(() => appRepository.addTechnique(technique), "Technique added.");
+    if (ok) navigate("/techniques");
+  };
+  return <><Header title="New technique" back="/techniques" /><form className="form" onSubmit={submit}>
+    <label>Name<input required value={value.name} onChange={(event) => setValue({ ...value, name: event.target.value })} placeholder="Jab" /></label>
+    <label>Short name<input required value={value.shortName} onChange={(event) => setValue({ ...value, shortName: event.target.value })} placeholder="Jab" /></label>
+    <label>Description<textarea rows={4} required value={value.description} onChange={(event) => setValue({ ...value, description: event.target.value })} placeholder="Describe the movement." /></label>
+    <label>Category<select value={value.category} onChange={(event) => setValue({ ...value, category: event.target.value as Technique["category"] })}>{TECHNIQUE_CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select></label>
+    <label>Sub-category<input required value={value.subCategory} onChange={(event) => setValue({ ...value, subCategory: event.target.value })} placeholder="Punches" /></label>
+    <button className="button primary sticky-action" type="submit">Save technique</button>
+  </form></>;
 }
 
 function WorkoutDetail() {
