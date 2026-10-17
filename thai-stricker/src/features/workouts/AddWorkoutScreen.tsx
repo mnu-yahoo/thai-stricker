@@ -23,7 +23,7 @@ import {
   countMuayThaiWorkoutExercises,
   isMuayThaiWorkoutExercise,
   type MockExercise,
-  type MockExerciseTarget,
+  type MockExerciseDetail,
   type MockWorkout,
   type MockWorkoutCategory,
   type MockWorkoutDifficulty,
@@ -110,8 +110,8 @@ function calculateWorkoutTotalDurationMinutes(
   defaultRepsExerciseDurationMinutes: number,
 ) {
   const exerciseDurationTotalSeconds = exercises.reduce((totalSeconds, exercise) => {
-    if (exercise.target.type === "duration") {
-      return totalSeconds + exercise.target.seconds;
+    if (exercise.detail.type === "duration") {
+      return totalSeconds + exercise.detail.seconds;
     }
 
     return totalSeconds + defaultRepsExerciseDurationMinutes * 60;
@@ -123,7 +123,7 @@ function calculateWorkoutTotalDurationMinutes(
 }
 
 function formatSelectedExerciseMeta(
-  target: MockExerciseTarget,
+  detail: MockExerciseDetail,
   difficulty: MockWorkoutDifficulty,
 ) {
   const setCount = difficulty === "Advanced" ? 5 : difficulty === "Intermediate" ? 3 : 1;
@@ -205,7 +205,7 @@ export function AddWorkoutScreen({
         help: exercise.help,
         category: exercise.category,
         imageUri: exercise.imageUri,
-        target: exercise.target,
+        detail: exercise.detail,
       },
     ]);
     setSelectionErrorMessage(null);
@@ -538,7 +538,7 @@ export function AddWorkoutScreen({
                   <View style={styles.selectedCopy}>
                     <Text style={styles.selectedTitle}>{exercise.title}</Text>
                     <Text style={styles.selectedMetaText}>
-                      {formatSelectedExerciseMeta(exercise.target, difficulty).toUpperCase()}
+                      {formatSelectedExerciseMeta(exercise.detail, difficulty).toUpperCase()}
                     </Text>
                   </View>
 

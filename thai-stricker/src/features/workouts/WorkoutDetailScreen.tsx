@@ -12,7 +12,7 @@ type WorkoutDetailScreenProps = {
   onOpenEditWorkout: (workoutId: string) => void;
 };
 
-function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
+function formatDetail(detail: MockWorkout["exercises"][number]["detail"]) {
   if (target.type === "duration") {
     return `${target.seconds} sec`;
   }
@@ -163,7 +163,7 @@ export function WorkoutDetailScreen({
                 <View style={styles.exerciseCopy}>
                   <Text style={styles.exerciseTitle}>{exercise.title}</Text>
                   <Text style={styles.exerciseDescription}>{exercise.description}</Text>
-                  <Text style={styles.exerciseTarget}>{formatTarget(exercise.target).toUpperCase()}</Text>
+                  <Text style={styles.exerciseTarget}>{formatDetail(exercise.detail).toUpperCase()}</Text>
                 </View>
               </View>
             ))}

@@ -41,7 +41,7 @@ const DIFFICULTY_ORDER: Record<MockWorkoutDifficulty, number> = {
   Advanced: 2,
 };
 
-function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
+function formatDetail(detail: MockWorkout["exercises"][number]["detail"]) {
   if (target.type === "duration") {
     const minutes = Math.floor(target.seconds / 60);
 
@@ -57,11 +57,11 @@ function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
 
 function formatExerciseMeta(
   difficulty: MockWorkout["difficulty"],
-  target: MockWorkout["exercises"][number]["target"],
+  detail: MockWorkout["exercises"][number]["detail"],
 ) {
   const setCount = difficulty === "Advanced" ? 5 : difficulty === "Intermediate" ? 4 : 3;
 
-  return `${setCount} rounds of ${formatTarget(target)}`;
+  return `${setCount} rounds of ${formatDetail(target)}`;
 }
 
 function formatLastDoneDate(lastDoneDate?: string) {
@@ -500,7 +500,7 @@ export function WorkoutsScreen({
                             </View>
                             <Text style={styles.exerciseDescription}>{exercise.description}</Text>
                             <Text style={styles.exerciseTarget}>
-                              {formatExerciseMeta(workout.difficulty, exercise.target)}
+                              {formatExerciseMeta(workout.difficulty, exercise.detail)}
                             </Text>
                           </View>
                           <View style={styles.exerciseAction}>
@@ -518,7 +518,7 @@ export function WorkoutsScreen({
                           <View style={styles.lightExerciseBody}>
                             <Text style={styles.lightExerciseTitle}>{exercise.title}</Text>
                             <Text style={styles.lightExerciseDescription}>
-                              {formatExerciseMeta(workout.difficulty, exercise.target)} • {exercise.description}
+                              {formatExerciseMeta(workout.difficulty, exercise.detail)} • {exercise.description}
                             </Text>
                           </View>
                         </>

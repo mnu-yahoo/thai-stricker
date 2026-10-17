@@ -178,25 +178,25 @@ function isValidWorkoutImportPayload(value: unknown): value is WorkoutImportPayl
       typeof typedExercise.description !== "string" ||
       typeof typedExercise.help !== "string" ||
       (typedExercise.imageUri !== undefined && typeof typedExercise.imageUri !== "string") ||
-      !typedExercise.target ||
-      typeof typedExercise.target !== "object"
+      !typedExercise.detail ||
+      typeof typedExercise.detail !== "object"
     ) {
       return false;
     }
 
-    if (typedExercise.target.type === "duration") {
+    if (typedExercise.detail.type === "duration") {
       return (
-        typeof typedExercise.target.seconds === "number" &&
-        Number.isInteger(typedExercise.target.seconds) &&
-        typedExercise.target.seconds > 0
+        typeof typedExercise.detail.seconds === "number" &&
+        Number.isInteger(typedExercise.detail.seconds) &&
+        typedExercise.detail.seconds > 0
       );
     }
 
-    if (typedExercise.target.type === "reps") {
+    if (typedExercise.detail.type === "reps") {
       return (
-        typeof typedExercise.target.reps === "number" &&
-        Number.isInteger(typedExercise.target.reps) &&
-        typedExercise.target.reps > 0
+        typeof typedExercise.detail.reps === "number" &&
+        Number.isInteger(typedExercise.detail.reps) &&
+        typedExercise.detail.reps > 0
       );
     }
 

@@ -12,17 +12,17 @@ seed data when an older storage manifest is found.
 ## Exercises
 
 - `exercises` is the canonical exercise library.
-- Each exercise owns its descriptive fields, default target and ordered `techniqueIds`.
+- Each exercise owns its descriptive fields, default detail and ordered `techniqueIds`.
 - An exercise must reference at least one existing technique and may reference at most five distinct techniques.
 - Exercise names are unique after trimming, collapsing whitespace and lowercasing.
 
 ## Workouts
 
 - `workouts` contains the workout definition and an ordered `exercises` array.
-- Each workout occurrence stores only `{ exerciseId, target }`.
+- Each workout occurrence stores only `{ exerciseId, detail }`.
 - The same exercise may appear more than once with different targets.
 - Descriptive exercise data is resolved from the exercise library in memory and is not duplicated in persisted workout data.
-- Workout duration is calculated from occurrence targets and rest time.
+- Workout duration is calculated from occurrence details and rest time.
 
 ## Local storage
 

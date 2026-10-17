@@ -25,7 +25,7 @@ const LIGHT_COACH_IMAGE_URI =
 type CoachPromptKey = "technique" | "mistakes" | "focus" | "explain";
 
 type CoachExerciseContext = {
-  exercise: Pick<MockExercise, "id" | "title" | "description" | "help" | "target">;
+  exercise: Pick<MockExercise, "id" | "title" | "description" | "help" | "detail">;
   coachTip: MockCoachTip | null;
 };
 

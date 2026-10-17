@@ -11,6 +11,6 @@ export function shareExerciseDetails(
   const byId = new Map(library.map((exercise) => [exercise.id, exercise]));
   return occurrences.map((occurrence) => {
     const shared = byId.get(occurrence.id);
-    return shared ? { ...shared, target: occurrence.target } : occurrence;
+    return shared ? { ...shared, detail: occurrence.detail } : occurrence;
   });
 }

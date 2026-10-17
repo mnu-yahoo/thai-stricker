@@ -23,7 +23,7 @@ import {
   countMuayThaiWorkoutExercises,
   isMuayThaiWorkoutExercise,
   type MockExercise,
-  type MockExerciseTarget,
+  type MockExerciseDetail,
   type MockWorkout,
   type MockWorkoutCategory,
   type MockWorkoutDifficulty,
@@ -114,8 +114,8 @@ function calculateWorkoutTotalDurationMinutes(
   defaultRepsExerciseDurationMinutes: number,
 ) {
   const exerciseDurationTotalSeconds = exercises.reduce((totalSeconds, exercise) => {
-    if (exercise.target.type === "duration") {
-      return totalSeconds + exercise.target.seconds;
+    if (exercise.detail.type === "duration") {
+      return totalSeconds + exercise.detail.seconds;
     }
 
     return totalSeconds + defaultRepsExerciseDurationMinutes * 60;
@@ -127,7 +127,7 @@ function calculateWorkoutTotalDurationMinutes(
 }
 
 function formatSelectedExerciseMeta(
-  target: MockExerciseTarget,
+  detail: MockExerciseDetail,
   difficulty: MockWorkoutDifficulty,
 ) {
   const repetitionBlocks =
@@ -233,7 +233,7 @@ export function EditWorkoutScreen({
         help: exercise.help,
         category: exercise.category,
         imageUri: exercise.imageUri,
-        target: exercise.target,
+        detail: exercise.detail,
       },
     ]);
     setSelectionErrorMessage(null);
@@ -652,7 +652,7 @@ export function EditWorkoutScreen({
                           size={15}
                         />
                         <Text style={styles.selectedMetaText}>
-                          {formatSelectedExerciseMeta(exercise.target, difficulty)}
+                          {formatSelectedExerciseMeta(exercise.detail, difficulty)}
                         </Text>
                       </View>
                     </View>

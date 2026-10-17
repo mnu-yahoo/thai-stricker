@@ -196,7 +196,7 @@ Current behavior:
 
 - Opened from the Add Workout Available Exercises list top-level Add button
 - User can create an exercise with title, description, and help
-- Exercise target is assigned a mocked default
+- Exercise detail is assigned a mocked default
 - User can save the exercise
 - New exercise is added to the end of the Available Exercises list
 - Available Exercises pagination recalculates
@@ -205,7 +205,7 @@ Current behavior:
 
 Not implemented:
 
-- Exercise target selection
+- Exercise detail selection
 - Exercise persistence
 - Database integration
 - Exercise deletion
@@ -228,7 +228,7 @@ Current behavior:
 
 Not implemented:
 
-- Editing exercise target
+- Editing exercise detail
 - Exercise persistence
 - Database integration
 - Add Exercise screen

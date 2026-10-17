@@ -16,7 +16,7 @@ A user should be able to:
 - Change exercise title
 - Change exercise description
 - Change exercise help
-- Review the exercise target without editing it
+- Review the exercise detail without editing it
 - Save the updated mocked exercise
 - Return to Add Workout without losing in-progress workout state
 
@@ -38,7 +38,7 @@ Current editable fields:
 
 Current read-only fields:
 
-- Exercise target
+- Exercise detail
 - Exercise id
 
 ## Validation Rules
@@ -55,7 +55,7 @@ Current behavior:
 
 - Saving updates the mocked available exercise in session-only state
 - Exercise id is preserved
-- Exercise target is preserved
+- Exercise detail is preserved
 - User returns to Add Workout after saving
 
 ## Cancel Behavior
@@ -104,7 +104,7 @@ These are not implemented now.
 
 The Edit Exercise screen must not implement:
 
-- Editing exercise target
+- Editing exercise detail
 - Editing exercise id
 - Add Exercise screen
 - Exercise deletion
@@ -115,7 +115,7 @@ The Edit Exercise screen must not implement:
 
 - Edit Exercise is opened from Add Workout Available Exercises list
 - Only title, description, and help are editable
-- Exercise target is not editable
+- Exercise detail is not editable
 - Existing Add Workout form state must be preserved
 - Changes are mocked and session-only
 - No persistence

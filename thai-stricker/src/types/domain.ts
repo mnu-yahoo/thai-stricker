@@ -1,4 +1,4 @@
-export type ExerciseTarget =
+export type ExerciseDetail =
   | { type: "duration"; seconds: number }
   | { type: "reps"; reps: number };
 
@@ -9,7 +9,7 @@ export type Exercise = {
   help: string;
   category: string;
   imageUri?: string;
-  target: ExerciseTarget;
+  detail: ExerciseDetail;
   techniqueIds: string[];
 };
 
@@ -24,7 +24,7 @@ export type WorkoutCategory =
 
 export type WorkoutExercise = {
   exerciseId: string;
-  target: ExerciseTarget;
+  detail: ExerciseDetail;
   /** Resolved display fields are available in memory only; they are not persisted. */
   id?: string;
   title?: string;

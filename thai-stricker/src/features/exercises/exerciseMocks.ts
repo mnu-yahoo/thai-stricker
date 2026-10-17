@@ -2,7 +2,7 @@ import { normalizeExerciseName } from "./exerciseIdentity";
 import {
   mockWorkouts,
   type MockExercise,
-  type MockExerciseTarget,
+  type MockExerciseDetail,
 } from "../workouts/workoutMocks";
 
 export type MockAvailableExercise = {
@@ -12,7 +12,7 @@ export type MockAvailableExercise = {
   help: string;
   category?: string;
   imageUri?: string;
-  target: MockExerciseTarget;
+  detail: MockExerciseDetail;
 };
 
 function buildMockAvailableExercises() {
@@ -33,7 +33,7 @@ function buildMockAvailableExercises() {
         help: exercise.help,
         category: exercise.category,
         imageUri: exercise.imageUri,
-        target: exercise.target,
+        detail: exercise.detail,
       });
     });
   });

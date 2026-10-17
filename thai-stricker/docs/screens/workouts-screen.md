@@ -80,7 +80,7 @@ Displays:
 - Exercise title
 - Exercise description
 - Exercise help
-- Exercise target
+- Exercise detail
 - Rest time after each exercise except the last
 
 ## Workout Data Model Overview

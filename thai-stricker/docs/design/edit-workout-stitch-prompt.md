@@ -45,7 +45,7 @@ Include these controls and behaviors:
     - title
     - description
     - help text
-    - target value
+    - detail value
     - a Remove control
 - An error state for selection errors, such as exceeding the maximum number of exercises.
 - An error state for workout validation errors, such as:

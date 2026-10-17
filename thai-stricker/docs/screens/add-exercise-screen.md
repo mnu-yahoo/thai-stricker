@@ -33,12 +33,12 @@ Current editable fields:
 - Description
 - Help
 
-## Default Target Behavior
+## Default Detail Behavior
 
 Current behavior:
 
-- New exercises are assigned a mocked default target of `10 reps`
-- Target selection is not editable in this screen
+- New exercises are assigned a mocked default detail of `10 reps`
+- Detail selection is not editable in this screen
 
 ## Validation Rules
 
@@ -108,7 +108,7 @@ These are not implemented now.
 
 The Add Exercise screen must not implement:
 
-- Exercise target selection
+- Exercise detail selection
 - Exercise deletion
 - Persistence
 - Database integration

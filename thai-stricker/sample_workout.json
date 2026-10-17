@@ -7,11 +7,11 @@
   "exercises": [
     {
       "exerciseId": "exercise-jab-cross",
-      "target": { "type": "reps", "reps": 20 }
+      "detail": { "type": "reps", "reps": 20 }
     },
     {
       "exerciseId": "exercise-jab-cross",
-      "target": { "type": "duration", "seconds": 60 }
+      "detail": { "type": "duration", "seconds": 60 }
     }
   ]
 }

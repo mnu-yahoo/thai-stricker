@@ -36,7 +36,7 @@ Each exercise step shows:
 - Exercise title
 - Exercise description
 - Exercise help
-- Exercise target
+- Exercise detail
 - Skip exercise action
 
 ## Rest Behavior

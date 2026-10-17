@@ -54,7 +54,7 @@ Displays:
 Displays:
 
 - Current exercises in order
-- Exercise target summary
+- Exercise detail summary
 - Remove action for each exercise
 
 ### Save Actions
@@ -95,7 +95,7 @@ Current behavior:
 
 - Exercises are selected from a mocked available-exercise list
 - The available list displays exercise title and description only
-- Available exercise data includes help text and target data used after selection
+- Available exercise data includes help text and detail data used after selection
 - The same available exercise may be added multiple times
 - The screen blocks adding more than the Settings maximum exercises per workout
 
@@ -141,7 +141,7 @@ Current behavior:
 
 - Opens the mocked Add Exercise screen
 - User can enter exercise title, description, and help
-- Exercise target is assigned a mocked default
+- Exercise detail is assigned a mocked default
 - Saving adds the exercise to the end of the Available Exercises list
 - Pagination recalculates after saving
 - User returns to Add Workout after saving
@@ -149,7 +149,7 @@ Current behavior:
 
 Not implemented:
 
-- Editing exercise target during creation
+- Editing exercise detail during creation
 - Persisting exercise changes
 - Saving exercises to a database
 
@@ -161,14 +161,14 @@ Current behavior:
 
 - Opens the mocked Edit Exercise screen
 - User can edit exercise title, description, and help
-- User cannot edit exercise target
+- User cannot edit exercise detail
 - Saving updates the mocked Available Exercises list
 - User returns to Add Workout after saving
 - Current Add Workout form state is preserved
 
 Not implemented:
 
-- Editing exercise target
+- Editing exercise detail
 - Persisting exercise changes
 - Editing exercises in a database
 

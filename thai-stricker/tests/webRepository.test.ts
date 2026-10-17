@@ -16,12 +16,12 @@ function memoryStorage(initial: Record<string, string> = {}) {
 
 const exercise = (id = "exercise-1", title = "Jab"): Exercise => ({
   id, title, description: "Direct du bras avant", help: "Revenir en garde", category: "Striking",
-  target: { type: "reps", reps: 20 }, techniqueIds: ["technique-seed-jab"],
+  detail: { type: "reps", reps: 20 }, techniqueIds: ["technique-seed-jab"],
 });
 
 const workout = (item = exercise()): Workout => ({
   id: "workout-1", title: "Fondamentaux", description: "Travail propre", difficulty: "Beginner",
-  category: "Fundamentals", totalDurationMinutes: 0, restSecondsBetweenExercises: 30, exercises: [{ exerciseId: item.id, target: item.target }],
+  category: "Fundamentals", totalDurationMinutes: 0, restSecondsBetweenExercises: 30, exercises: [{ exerciseId: item.id, detail: item.detail }],
 });
 
 const asInputFile = (name: string, bytes: Uint8Array): BackupInputFile => ({
@@ -41,7 +41,7 @@ describe("split JSON app repository", () => {
     expect(snapshot.workouts[0].totalDurationMinutes).toBe(3);
     const manifest = JSON.parse(memory.storage.getItem(MANIFEST_STORAGE_KEY) ?? "null") as { sections: Record<string, string> };
     expect(Object.keys(manifest.sections)).toEqual(DATA_SECTION_NAMES);
-    for (const section of DATA_SECTION_NAMES) expect([...memory.values.keys()].some((key) => key.includes(`:v3:${section}:`))).toBe(true);
+    for (const section of DATA_SECTION_NAMES) expect([...memory.values.keys()].some((key) => key.includes(`:v4:${section}:`))).toBe(true);
   });
 
   it("resets legacy storage into the new schema", async () => {
@@ -81,14 +81,14 @@ describe("split JSON app repository", () => {
     const combo: Exercise = { ...exercise("combo", "Jab Cross"), techniqueIds: ["technique-seed-jab", "technique-cross"] };
     await repository.addExercise(combo);
     await repository.addWorkout({ ...workout(), id: "combo-workout", exercises: [
-      { exerciseId: "combo", target: { type: "reps", reps: 10 } },
-      { exerciseId: "combo", target: { type: "duration", seconds: 45 } },
+      { exerciseId: "combo", detail: { type: "reps", reps: 10 } },
+      { exerciseId: "combo", detail: { type: "duration", seconds: 45 } },
     ] });
     const snapshot = await repository.loadAppData();
     expect(snapshot.exercises[0].techniqueIds).toEqual(["technique-seed-jab", "technique-cross"]);
-    expect(snapshot.workouts[0].exercises.map(({ exerciseId, target }) => ({ exerciseId, target }))).toEqual([
-      { exerciseId: "combo", target: { type: "reps", reps: 10 } },
-      { exerciseId: "combo", target: { type: "duration", seconds: 45 } },
+    expect(snapshot.workouts[0].exercises.map(({ exerciseId, detail }) => ({ exerciseId, detail }))).toEqual([
+      { exerciseId: "combo", detail: { type: "reps", reps: 10 } },
+      { exerciseId: "combo", detail: { type: "duration", seconds: 45 } },
     ]);
     expect(snapshot.workouts[0].totalDurationMinutes).toBe(5);
     await repository.updateExercise({ ...combo, description: "Updated combo" });

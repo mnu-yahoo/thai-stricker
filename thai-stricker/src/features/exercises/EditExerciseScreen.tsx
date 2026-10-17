@@ -19,12 +19,12 @@ type EditExerciseScreenProps = {
   onSaveExercise: (exercise: MockAvailableExercise) => Promise<void>;
 };
 
-function formatExerciseTarget(exercise: MockAvailableExercise) {
-  if (exercise.target.type === "duration") {
-    return `${exercise.target.seconds} sec`;
+function formatExerciseDetail(exercise: MockAvailableExercise) {
+  if (exercise.detail.type === "duration") {
+    return `${exercise.detail.seconds} sec`;
   }
 
-  return `${exercise.target.reps} reps`;
+  return `${exercise.detail.reps} reps`;
 }
 
 export function EditExerciseScreen({
@@ -154,7 +154,7 @@ export function EditExerciseScreen({
         <View style={!isDarkTheme ? styles.lightPanelCard : styles.card}>
           <Text style={styles.cardTitle}>Read-only target</Text>
           <View style={styles.readOnlyValue}>
-            <Text style={styles.readOnlyValueText}>{formatExerciseTarget(exercise)}</Text>
+            <Text style={styles.readOnlyValueText}>{formatExerciseDetail(exercise)}</Text>
           </View>
           <Text style={styles.helperText}>
             Target information is shown for context only and cannot be edited here.

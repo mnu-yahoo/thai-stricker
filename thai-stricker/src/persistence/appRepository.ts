@@ -4,9 +4,9 @@ import { seedData } from "./seedData";
 import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, ResolvedWorkoutExercise, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
 
 export const LEGACY_STORAGE_KEY = "thai-stricker:data:v1";
-export const MANIFEST_STORAGE_KEY = "thai-stricker:data:v3:manifest";
+export const MANIFEST_STORAGE_KEY = "thai-stricker:data:v4:manifest";
 export const STORAGE_KEY = MANIFEST_STORAGE_KEY;
-export const STORAGE_VERSION = 3;
+export const STORAGE_VERSION = 4;
 export const DATA_SECTION_NAMES: DataSectionName[] = ["settings", "workouts", "weeklyWorkoutPlans", "workoutLogs", "coachTips", "calendar"];
 export const SECTION_FILE_NAMES: Record<DataSectionName, string> = {
   settings: "settings.json",
@@ -52,7 +52,7 @@ export interface AppRepository {
 }
 
 const storageManifestSchema = z.object({
-  storageVersion: z.literal(2),
+  storageVersion: z.literal(STORAGE_VERSION),
   sections: z.object({
     settings: z.string().min(1),
     workouts: z.string().min(1),
@@ -63,14 +63,14 @@ const storageManifestSchema = z.object({
   }),
 });
 
-type StorageManifestV2 = z.infer<typeof storageManifestSchema>;
+type StorageManifest = z.infer<typeof storageManifestSchema>;
 
 const clone = <T,>(value: T): T => structuredClone(value);
 export const normalizeExerciseName = (value: string) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
 const makeId = (prefix: string) => `${prefix}-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
 
 export function calculateWorkoutDuration(exercises: Workout["exercises"], restSeconds: number, defaultRepsMinutes: number) {
-  const workSeconds = exercises.reduce((sum, exercise) => sum + (exercise.target.type === "duration" ? exercise.target.seconds : defaultRepsMinutes * 60), 0);
+    const workSeconds = exercises.reduce((sum, exercise) => sum + (exercise.detail.type === "duration" ? exercise.detail.seconds : defaultRepsMinutes * 60), 0);
   return Math.ceil((workSeconds + Math.max(0, exercises.length - 1) * restSeconds) / 60);
 }
 
@@ -79,7 +79,7 @@ export function resolveWorkoutExercises(data: AppDataSnapshot, workout: Workout)
   return workout.exercises.map((occurrence) => {
     const exercise = byId.get(occurrence.exerciseId);
     if (!exercise) throw new Error(`The exercise “${occurrence.exerciseId}” no longer exists.`);
-    return { ...occurrence, ...exercise, exerciseId: occurrence.exerciseId, target: clone(occurrence.target) };
+    return { ...occurrence, ...exercise, exerciseId: occurrence.exerciseId, detail: clone(occurrence.detail) };
   });
 }
 
@@ -102,7 +102,7 @@ function canonicalize(data: AppDataSnapshot): AppDataSnapshot {
     exercises: data.exercises.map((exercise) => ({ ...exercise, techniqueIds: [...exercise.techniqueIds] })),
     workouts: data.workouts.map((workout) => ({
       ...workout,
-      exercises: workout.exercises.map(({ exerciseId, target }) => ({ exerciseId, target: clone(target) })),
+      exercises: workout.exercises.map(({ exerciseId, detail }) => ({ exerciseId, detail: clone(detail) })),
     })),
   };
 }
@@ -174,11 +174,11 @@ function parseSectionFile(section: DataSectionName, value: unknown): ThaiStricke
   return result.data as ThaiStrickerSectionFileV1;
 }
 
-const storageSectionKey = (section: DataSectionName, revision: string) => `thai-stricker:data:v3:${section}:${revision}`;
+const storageSectionKey = (section: DataSectionName, revision: string) => `thai-stricker:data:v4:${section}:${revision}`;
 const makeRevision = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 export function createAppRepository(storage: StorageAdapter): AppRepository {
-  const readManifest = (): StorageManifestV2 | null => {
+  const readManifest = (): StorageManifest | null => {
     const raw = storage.getItem(MANIFEST_STORAGE_KEY);
     if (!raw) return null;
     try {
@@ -190,7 +190,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     }
   };
 
-  const readFromManifest = (manifest: StorageManifestV2): AppDataSnapshot => {
+  const readFromManifest = (manifest: StorageManifest): AppDataSnapshot => {
     const data = clone(seedData);
     for (const section of DATA_SECTION_NAMES) {
       const raw = storage.getItem(storageSectionKey(section, manifest.sections[section]));
@@ -201,10 +201,10 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     return materialize(parseData(data));
   };
 
-  const commit = (data: AppDataSnapshot, previous: StorageManifestV2 | null): StorageManifestV2 => {
+  const commit = (data: AppDataSnapshot, previous: StorageManifest | null): StorageManifest => {
     const valid = parseData(data);
     const revisions = Object.fromEntries(DATA_SECTION_NAMES.map((section) => [section, makeRevision()])) as Record<DataSectionName, string>;
-    const next: StorageManifestV2 = { storageVersion: 2, sections: revisions };
+    const next: StorageManifest = { storageVersion: STORAGE_VERSION, sections: revisions };
     const writtenKeys: string[] = [];
     try {
       const exportedAt = new Date().toISOString();
@@ -226,7 +226,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     return next;
   };
 
-  const ensureManifest = (): StorageManifestV2 => {
+  const ensureManifest = (): StorageManifest => {
     const current = readManifest();
     if (current) return current;
     const manifest = commit(clone(seedData), null);
@@ -241,7 +241,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     const exercises = workout.exercises.map((occurrence) => {
       const shared = library.get(occurrence.exerciseId);
       if (!shared) throw new Error(`The exercise “${occurrence.exerciseId}” no longer exists.`);
-      return { exerciseId: shared.id, target: clone(occurrence.target) };
+      return { exerciseId: shared.id, detail: clone(occurrence.detail) };
     });
     return { ...workout, title: workout.title.trim(), exercises, totalDurationMinutes: calculateWorkoutDuration(exercises, workout.restSecondsBetweenExercises, draft.settings.defaultRepsExerciseDurationMinutes) };
   };
@@ -280,7 +280,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
           const occurrences = imported.exercises.map((exercise) => {
             const shared = draft.exercises.find((item) => item.id === exercise.exerciseId);
             if (!shared) throw new Error(`The exercise “${exercise.exerciseId}” no longer exists.`);
-            return { exerciseId: shared.id, target: clone(exercise.target) };
+            return { exerciseId: shared.id, detail: clone(exercise.detail) };
           });
           const workout: Workout = { ...clone(imported), id: makeId("workout"), exercises: occurrences, totalDurationMinutes: 0 };
           draft.workouts.push(hydrateWorkout(draft, workout));

@@ -14,7 +14,7 @@ Include these controls and behaviors:
 - A display for the current exercise title.
 - A display for the current exercise description.
 - A display for the current exercise help text.
-- A display for the current exercise target.
+- A display for the current exercise detail.
 - A skip exercise action.
 
 For time-based exercise steps:

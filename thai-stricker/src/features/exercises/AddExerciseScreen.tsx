@@ -59,7 +59,7 @@ export function AddExerciseScreen({
         help: help.trim(),
         imageUri: imageUri.trim() || undefined,
         // Mock default target until Add Exercise supports target selection.
-        target: {
+        detail: {
           type: "reps",
           reps: 10,
         },

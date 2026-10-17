@@ -1,20 +1,20 @@
 import { z } from "zod";
 
 const positiveInteger = z.number().int().positive();
-const targetSchema = z.discriminatedUnion("type", [
+const detailSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("duration"), seconds: positiveInteger }),
   z.object({ type: z.literal("reps"), reps: positiveInteger }),
 ]);
 
 export const exerciseSchema = z.object({
   id: z.string().min(1), title: z.string().min(1), description: z.string(), help: z.string(),
-  category: z.string(), imageUri: z.string().optional(), target: targetSchema,
+  category: z.string(), imageUri: z.string().optional(), detail: detailSchema,
   techniqueIds: z.array(z.string()).min(1).max(5),
 });
 
 export const workoutExerciseSchema = z.object({
   exerciseId: z.string().min(1),
-  target: targetSchema,
+  detail: detailSchema,
 });
 export const settingsSchema = z.object({
   restSecondsBetweenExercises: z.union([z.literal(15), z.literal(30), z.literal(45), z.literal(60), z.literal(90), z.literal(120)]),

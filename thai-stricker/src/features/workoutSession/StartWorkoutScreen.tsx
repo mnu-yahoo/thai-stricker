@@ -34,7 +34,7 @@ type StartWorkoutScreenProps = {
   onFinishPrestart: () => void;
 };
 
-function formatTarget(target: MockWorkout["exercises"][number]["target"]) {
+function formatDetail(detail: MockWorkout["exercises"][number]["detail"]) {
   if (target.type === "duration") {
     return `${target.seconds} sec`;
   }
@@ -73,13 +73,13 @@ export function StartWorkoutScreen({
   const [failedImageUris, setFailedImageUris] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
-    if (!hasStarted && currentStep === "exercise" && exercise.target.type === "duration") {
-      setRemainingSeconds(exercise.target.seconds);
+    if (!hasStarted && currentStep === "exercise" && exercise.detail.type === "duration") {
+      setRemainingSeconds(exercise.detail.seconds);
       return;
     }
 
-    if (currentStep === "exercise" && exercise.target.type === "duration") {
-      setRemainingSeconds(exercise.target.seconds);
+    if (currentStep === "exercise" && exercise.detail.type === "duration") {
+      setRemainingSeconds(exercise.detail.seconds);
       return;
     }
 
@@ -94,7 +94,7 @@ export function StartWorkoutScreen({
     }
 
     setRemainingSeconds(null);
-  }, [currentStep, currentExerciseIndex, exercise.target, hasStarted, restSecondsBetweenExercises]);
+  }, [currentStep, currentExerciseIndex, exercise.detail, hasStarted, restSecondsBetweenExercises]);
 
   useEffect(() => {
     if (!hasStarted || remainingSeconds === null || remainingSeconds <= 0) {
@@ -118,12 +118,12 @@ export function StartWorkoutScreen({
     if (
       hasStarted &&
       currentStep === "exercise" &&
-      exercise.target.type === "duration" &&
+      exercise.detail.type === "duration" &&
       remainingSeconds === 0
     ) {
       onFinishExercise();
     }
-  }, [currentStep, exercise.target, hasStarted, remainingSeconds, onFinishExercise]);
+  }, [currentStep, exercise.detail, hasStarted, remainingSeconds, onFinishExercise]);
 
   useEffect(() => {
     if (hasStarted && currentStep === "rest" && remainingSeconds === 0) {
@@ -156,14 +156,14 @@ export function StartWorkoutScreen({
     ? "Rest remaining"
     : isPrestartStep
       ? "Starting in"
-      : exercise.target.type === "duration"
+      : exercise.detail.type === "duration"
         ? "Time remaining"
         : "Target";
   const counterValue = isRestStep || isPrestartStep
     ? formatTimerValue(remainingSeconds ?? 0)
-    : exercise.target.type === "duration"
+    : exercise.detail.type === "duration"
       ? formatTimerValue(remainingSeconds ?? 0)
-      : formatTarget(exercise.target).toUpperCase();
+      : formatDetail(exercise.detail).toUpperCase();
   const requestedExerciseImageUri = exercise.imageUri?.trim() || DEFAULT_EXERCISE_IMAGE_URI;
   const exerciseImageUri = failedImageUris.has(requestedExerciseImageUri)
     ? DEFAULT_EXERCISE_IMAGE_URI
@@ -207,12 +207,12 @@ export function StartWorkoutScreen({
       return Math.max(0.08, (remainingSeconds ?? PRESTART_SECONDS) / PRESTART_SECONDS);
     }
 
-    if (exercise.target.type === "duration") {
-      return Math.max(0.08, (remainingSeconds ?? exercise.target.seconds) / exercise.target.seconds);
+    if (exercise.detail.type === "duration") {
+      return Math.max(0.08, (remainingSeconds ?? exercise.detail.seconds) / exercise.detail.seconds);
     }
 
     return 0.75;
-  }, [exercise.target, isPrestartStep, isRestStep, remainingSeconds, restSecondsBetweenExercises]);
+  }, [exercise.detail, isPrestartStep, isRestStep, remainingSeconds, restSecondsBetweenExercises]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -327,7 +327,7 @@ export function StartWorkoutScreen({
                               {workoutExercise.title}
                             </Text>
                             <Text style={styles.overviewTarget}>
-                              {formatTarget(workoutExercise.target).toUpperCase()}
+                              {formatDetail(workoutExercise.detail).toUpperCase()}
                             </Text>
                           </View>
                         </View>
@@ -528,7 +528,7 @@ export function StartWorkoutScreen({
                             {workoutExercise.title}
                           </Text>
                           <Text style={styles.lightOverviewTarget}>
-                            {formatTarget(workoutExercise.target).toUpperCase()}
+                            {formatDetail(workoutExercise.detail).toUpperCase()}
                           </Text>
                         </View>
                       </View>
