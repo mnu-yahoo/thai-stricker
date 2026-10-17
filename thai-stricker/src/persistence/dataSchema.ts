@@ -9,10 +9,13 @@ const targetSchema = z.discriminatedUnion("type", [
 export const exerciseSchema = z.object({
   id: z.string().min(1), title: z.string().min(1), description: z.string(), help: z.string(),
   category: z.string(), imageUri: z.string().optional(), target: targetSchema,
-  techniqueIds: z.array(z.string()).max(5),
+  techniqueIds: z.array(z.string()).min(1).max(5),
 });
 
-export const workoutExerciseSchema = exerciseSchema.omit({ techniqueIds: true }).extend({ techniqueIds: z.array(z.string()).max(5).optional() });
+export const workoutExerciseSchema = z.object({
+  exerciseId: z.string().min(1),
+  target: targetSchema,
+});
 export const settingsSchema = z.object({
   restSecondsBetweenExercises: z.union([z.literal(15), z.literal(30), z.literal(45), z.literal(60), z.literal(90), z.literal(120)]),
   trainingDaysPerWeek: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5), z.literal(6), z.literal(7)]),
@@ -29,7 +32,7 @@ export const appDataSchema = z.object({
     category: z.union([z.literal("Muay Thai techniques"), z.literal("Stretching Techniques"), z.literal("Strength Techniques")]),
     subCategory: z.string(),
   })),
-  availableExercises: z.array(exerciseSchema),
+  exercises: z.array(exerciseSchema),
   workouts: z.array(z.object({
     id: z.string().min(1), title: z.string().min(1), description: z.string(),
     difficulty: z.union([z.literal("Beginner"), z.literal("Intermediate"), z.literal("Advanced")]),
@@ -70,7 +73,7 @@ export const settingsDataFileSchemaV1 = sectionMetadata("settings").extend({
 
 export const workoutsDataFileSchemaV1 = sectionMetadata("workouts").extend({
   techniques: appDataSchema.shape.techniques,
-  availableExercises: appDataSchema.shape.availableExercises,
+  exercises: appDataSchema.shape.exercises,
   workouts: appDataSchema.shape.workouts,
 });
 

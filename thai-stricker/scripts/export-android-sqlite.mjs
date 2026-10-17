@@ -24,13 +24,13 @@ const techniques = hasTable("techniques") ? rows("SELECT id, name, short_name, d
 })) : [];
 const links = hasTable("exercise_techniques") ? rows("SELECT exercise_id, technique_id FROM exercise_techniques ORDER BY exercise_id, sort_order") : [];
 const exerciseRows = hasTable("exercises") ? rows("SELECT id, title, description, help, category, image_uri, target_type, target_value FROM exercises ORDER BY rowid") : [];
-const availableExercises = exerciseRows.map((row) => ({
+const exercises = exerciseRows.map((row) => ({
   id: row.id, title: row.title, description: row.description, help: row.help, category: row.category ?? "",
   ...(row.image_uri ? { imageUri: row.image_uri } : {}),
   target: row.target_type === "duration" ? { type: "duration", seconds: row.target_value } : { type: "reps", reps: row.target_value },
   techniqueIds: links.filter((link) => link.exercise_id === row.id).map((link) => link.technique_id),
 }));
-const exerciseById = new Map(availableExercises.map((item) => [item.id, item]));
+const exerciseById = new Map(exercises.map((item) => [item.id, item]));
 const workoutRows = hasTable("workouts") ? rows("SELECT * FROM workouts ORDER BY rowid") : [];
 const occurrenceRows = hasTable("workout_exercises") ? rows("SELECT * FROM workout_exercises ORDER BY workout_id, sort_order") : [];
 const workouts = workoutRows.map((row) => ({
@@ -38,8 +38,8 @@ const workouts = workoutRows.map((row) => ({
   totalDurationMinutes: row.total_duration_minutes, restSecondsBetweenExercises: row.rest_seconds_between_exercises,
   ...(row.last_done_date ? { lastDoneDate: row.last_done_date } : {}),
   exercises: occurrenceRows.filter((item) => item.workout_id === row.id).map((item) => {
-    const shared = exerciseById.get(item.exercise_id) ?? { id: item.exercise_id, title: item.title, description: item.description, help: item.help, category: "", techniqueIds: [] };
-    return { ...shared, target: item.target_type === "duration" ? { type: "duration", seconds: item.target_value } : { type: "reps", reps: item.target_value } };
+    const shared = exerciseById.get(item.exercise_id);
+    return { exerciseId: shared?.id ?? item.exercise_id, target: item.target_type === "duration" ? { type: "duration", seconds: item.target_value } : { type: "reps", reps: item.target_value } };
   }),
 }));
 const planRows = hasTable("planned_workouts") ? rows("SELECT * FROM planned_workouts ORDER BY week_start_date") : [];
@@ -73,7 +73,7 @@ const output = {
     defaultRepsExerciseDurationMinutes: numberSetting(settings, "defaultRepsExerciseDurationMinutes", 3),
     themePreference: settings.themePreference === "Dark" ? "Dark" : "Light",
   },
-  techniques, availableExercises, workouts, weeklyWorkoutPlans, workoutLogs, coachTips, calendarWorkoutDays,
+  techniques, exercises, workouts, weeklyWorkoutPlans, workoutLogs, coachTips, calendarWorkoutDays,
   monthlySummary: summary ? { completedWorkouts: summary.completed_workouts, plannedWorkouts: summary.planned_workouts, missedWorkouts: summary.missed_workouts } : { completedWorkouts: 0, plannedWorkouts: 0, missedWorkouts: 0 },
 };
 

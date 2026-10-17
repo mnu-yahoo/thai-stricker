@@ -22,7 +22,20 @@ export type WorkoutCategory =
   | "Footwork"
   | "Strength";
 
-export type WorkoutExercise = Omit<Exercise, "techniqueIds"> & { techniqueIds?: string[] };
+export type WorkoutExercise = {
+  exerciseId: string;
+  target: ExerciseTarget;
+  /** Resolved display fields are available in memory only; they are not persisted. */
+  id?: string;
+  title?: string;
+  description?: string;
+  help?: string;
+  category?: string;
+  imageUri?: string;
+  techniqueIds?: string[];
+};
+
+export type ResolvedWorkoutExercise = WorkoutExercise & Exercise;
 
 export type Workout = {
   id: string;
@@ -114,7 +127,7 @@ export type PersistedSettings = {
 export type AppDataSnapshot = {
   settings: PersistedSettings;
   techniques: Technique[];
-  availableExercises: Exercise[];
+  exercises: Exercise[];
   workouts: Workout[];
   weeklyWorkoutPlans: WeeklyWorkoutPlan[];
   workoutLogs: WorkoutLogEntry[];
@@ -143,7 +156,7 @@ type SectionFileMetadata<T extends DataSectionName> = {
 };
 
 export type SettingsDataFileV1 = SectionFileMetadata<"settings"> & Pick<AppDataSnapshot, "settings">;
-export type WorkoutsDataFileV1 = SectionFileMetadata<"workouts"> & Pick<AppDataSnapshot, "techniques" | "availableExercises" | "workouts">;
+export type WorkoutsDataFileV1 = SectionFileMetadata<"workouts"> & Pick<AppDataSnapshot, "techniques" | "exercises" | "workouts">;
 export type WeeklyWorkoutPlansDataFileV1 = SectionFileMetadata<"weeklyWorkoutPlans"> & Pick<AppDataSnapshot, "weeklyWorkoutPlans">;
 export type WorkoutLogsDataFileV1 = SectionFileMetadata<"workoutLogs"> & Pick<AppDataSnapshot, "workoutLogs">;
 export type CoachTipsDataFileV1 = SectionFileMetadata<"coachTips"> & Pick<AppDataSnapshot, "coachTips">;

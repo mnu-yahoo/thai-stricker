@@ -1,6 +1,12 @@
 # Data Model Overview
 
-High-level data groups planned for later:
+The active training model has three compositional levels:
+
+- `techniques`: atomic strikes or movements.
+- `exercises`: one or more ordered techniques, with a default duration or repetition target.
+- `workouts`: ordered exercise occurrences. Each occurrence references an exercise by ID and may override its target.
+
+Additional data groups planned for later:
 
 - training sessions
 - rounds

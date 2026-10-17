@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { appDataSchema, dataFileSchemaV1, sectionDataFileSchemasV1 } from "./dataSchema";
 import { seedData } from "./seedData";
-import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
+import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, ResolvedWorkoutExercise, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
 
 export const LEGACY_STORAGE_KEY = "thai-stricker:data:v1";
-export const MANIFEST_STORAGE_KEY = "thai-stricker:data:v2:manifest";
+export const MANIFEST_STORAGE_KEY = "thai-stricker:data:v3:manifest";
 export const STORAGE_KEY = MANIFEST_STORAGE_KEY;
+export const STORAGE_VERSION = 3;
 export const DATA_SECTION_NAMES: DataSectionName[] = ["settings", "workouts", "weeklyWorkoutPlans", "workoutLogs", "coachTips", "calendar"];
 export const SECTION_FILE_NAMES: Record<DataSectionName, string> = {
   settings: "settings.json",
@@ -28,8 +29,14 @@ export interface AppRepository {
   addTechnique(value: Technique): Promise<void>;
   updateTechnique(value: Technique): Promise<void>;
   importTechniques(values: Technique[]): Promise<void>;
+  addExercise(value: Exercise): Promise<void>;
+  updateExercise(value: Exercise): Promise<void>;
+  deleteExercise(id: string): Promise<void>;
+  /** @deprecated Use addExercise. */
   addAvailableExercise(value: Exercise): Promise<void>;
+  /** @deprecated Use updateExercise. */
   updateAvailableExercise(value: Exercise): Promise<void>;
+  /** @deprecated Use deleteExercise. */
   deleteAvailableExercise(id: string): Promise<void>;
   addWorkout(value: Workout): Promise<void>;
   updateWorkout(value: Workout): Promise<void>;
@@ -67,11 +74,44 @@ export function calculateWorkoutDuration(exercises: Workout["exercises"], restSe
   return Math.ceil((workSeconds + Math.max(0, exercises.length - 1) * restSeconds) / 60);
 }
 
+export function resolveWorkoutExercises(data: AppDataSnapshot, workout: Workout): ResolvedWorkoutExercise[] {
+  const byId = new Map(data.exercises.map((exercise) => [exercise.id, exercise]));
+  return workout.exercises.map((occurrence) => {
+    const exercise = byId.get(occurrence.exerciseId);
+    if (!exercise) throw new Error(`The exercise “${occurrence.exerciseId}” no longer exists.`);
+    return { ...occurrence, ...exercise, exerciseId: occurrence.exerciseId, target: clone(occurrence.target) };
+  });
+}
+
+function materialize(data: AppDataSnapshot): AppDataSnapshot {
+  const exercises = data.exercises.map((exercise) => ({ ...exercise, techniqueIds: [...exercise.techniqueIds] }));
+  const byId = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+  const workouts = data.workouts.map((workout) => ({
+    ...workout,
+    exercises: workout.exercises.map((occurrence) => {
+      const exercise = byId.get(occurrence.exerciseId);
+      return exercise ? { ...exercise, ...occurrence, id: exercise.id } : occurrence;
+    }),
+  }));
+  return { ...data, exercises, workouts };
+}
+
+function canonicalize(data: AppDataSnapshot): AppDataSnapshot {
+  return {
+    ...data,
+    exercises: data.exercises.map((exercise) => ({ ...exercise, techniqueIds: [...exercise.techniqueIds] })),
+    workouts: data.workouts.map((workout) => ({
+      ...workout,
+      exercises: workout.exercises.map(({ exerciseId, target }) => ({ exerciseId, target: clone(target) })),
+    })),
+  };
+}
+
 function assertIntegrity(data: AppDataSnapshot) {
   const techniqueIds = new Set(data.techniques.map((item) => item.id));
   const exerciseIds = new Set<string>();
   const names = new Set<string>();
-  for (const exercise of data.availableExercises) {
+  for (const exercise of data.exercises) {
     const name = normalizeExerciseName(exercise.title);
     if (exerciseIds.has(exercise.id)) throw new Error(`Duplicate exercise ID: ${exercise.id}`);
     if (names.has(name)) throw new Error(`An exercise named “${exercise.title.trim()}” already exists.`);
@@ -83,7 +123,7 @@ function assertIntegrity(data: AppDataSnapshot) {
   const workoutIds = new Set<string>();
   for (const workout of data.workouts) {
     if (workoutIds.has(workout.id)) throw new Error(`Duplicate workout ID: ${workout.id}`);
-    for (const exercise of workout.exercises) if (!exerciseIds.has(exercise.id)) throw new Error(`The exercise “${exercise.title}” no longer exists.`);
+    for (const exercise of workout.exercises) if (!exerciseIds.has(exercise.exerciseId)) throw new Error(`The exercise “${exercise.exerciseId}” no longer exists.`);
     workoutIds.add(workout.id);
   }
   for (const plan of data.weeklyWorkoutPlans) {
@@ -100,20 +140,21 @@ function parseData(value: unknown): AppDataSnapshot {
 }
 
 function buildSectionFile(section: DataSectionName, data: AppDataSnapshot, exportedAt = new Date().toISOString()): ThaiStrickerSectionFileV1 {
+  const canonical = canonicalize(data);
   switch (section) {
-    case "settings": return { schemaVersion: 1, fileType: section, exportedAt, settings: clone(data.settings) };
-    case "workouts": return { schemaVersion: 1, fileType: section, exportedAt, techniques: clone(data.techniques), availableExercises: clone(data.availableExercises), workouts: clone(data.workouts) };
-    case "weeklyWorkoutPlans": return { schemaVersion: 1, fileType: section, exportedAt, weeklyWorkoutPlans: clone(data.weeklyWorkoutPlans) };
-    case "workoutLogs": return { schemaVersion: 1, fileType: section, exportedAt, workoutLogs: clone(data.workoutLogs) };
-    case "coachTips": return { schemaVersion: 1, fileType: section, exportedAt, coachTips: clone(data.coachTips) };
-    case "calendar": return { schemaVersion: 1, fileType: section, exportedAt, calendarWorkoutDays: clone(data.calendarWorkoutDays), monthlySummary: clone(data.monthlySummary) };
+    case "settings": return { schemaVersion: 1, fileType: section, exportedAt, settings: clone(canonical.settings) };
+    case "workouts": return { schemaVersion: 1, fileType: section, exportedAt, techniques: clone(canonical.techniques), exercises: clone(canonical.exercises), workouts: clone(canonical.workouts) };
+    case "weeklyWorkoutPlans": return { schemaVersion: 1, fileType: section, exportedAt, weeklyWorkoutPlans: clone(canonical.weeklyWorkoutPlans) };
+    case "workoutLogs": return { schemaVersion: 1, fileType: section, exportedAt, workoutLogs: clone(canonical.workoutLogs) };
+    case "coachTips": return { schemaVersion: 1, fileType: section, exportedAt, coachTips: clone(canonical.coachTips) };
+    case "calendar": return { schemaVersion: 1, fileType: section, exportedAt, calendarWorkoutDays: clone(canonical.calendarWorkoutDays), monthlySummary: clone(canonical.monthlySummary) };
   }
 }
 
 function applySectionFile(data: AppDataSnapshot, file: ThaiStrickerSectionFileV1) {
   switch (file.fileType) {
     case "settings": data.settings = clone(file.settings); break;
-    case "workouts": data.techniques = clone(file.techniques); data.availableExercises = clone(file.availableExercises); data.workouts = clone(file.workouts); break;
+    case "workouts": data.techniques = clone(file.techniques); data.exercises = clone(file.exercises); data.workouts = clone(file.workouts); break;
     case "weeklyWorkoutPlans": data.weeklyWorkoutPlans = clone(file.weeklyWorkoutPlans); break;
     case "workoutLogs": data.workoutLogs = clone(file.workoutLogs); break;
     case "coachTips": data.coachTips = clone(file.coachTips); break;
@@ -133,7 +174,7 @@ function parseSectionFile(section: DataSectionName, value: unknown): ThaiStricke
   return result.data as ThaiStrickerSectionFileV1;
 }
 
-const storageSectionKey = (section: DataSectionName, revision: string) => `thai-stricker:data:v2:${section}:${revision}`;
+const storageSectionKey = (section: DataSectionName, revision: string) => `thai-stricker:data:v3:${section}:${revision}`;
 const makeRevision = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
 export function createAppRepository(storage: StorageAdapter): AppRepository {
@@ -157,7 +198,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
       try { applySectionFile(data, parseSectionFile(section, JSON.parse(raw))); }
       catch (error) { throw new Error(`Unable to read local data. ${error instanceof Error ? error.message : ""}`.trim()); }
     }
-    return parseData(data);
+    return materialize(parseData(data));
   };
 
   const commit = (data: AppDataSnapshot, previous: StorageManifestV2 | null): StorageManifestV2 => {
@@ -188,14 +229,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
   const ensureManifest = (): StorageManifestV2 => {
     const current = readManifest();
     if (current) return current;
-    const legacyRaw = storage.getItem(LEGACY_STORAGE_KEY);
-    let initial = clone(seedData);
-    if (legacyRaw) {
-      try { initial = parseData(JSON.parse(legacyRaw)); }
-      catch (error) { throw new Error(`Unable to migrate local data. ${error instanceof Error ? error.message : ""}`.trim()); }
-    }
-    const manifest = commit(initial, null);
-    if (legacyRaw) storage.removeItem(LEGACY_STORAGE_KEY);
+    const manifest = commit(clone(seedData), null);
     return manifest;
   };
 
@@ -203,39 +237,40 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
   const write = (data: AppDataSnapshot) => { commit(data, ensureManifest()); };
   const mutate = async (task: (draft: AppDataSnapshot) => void) => { const draft = clone(read()); task(draft); write(draft); };
   const hydrateWorkout = (draft: AppDataSnapshot, workout: Workout) => {
-    const library = new Map(draft.availableExercises.map((item) => [item.id, item]));
+    const library = new Map(draft.exercises.map((item) => [item.id, item]));
     const exercises = workout.exercises.map((occurrence) => {
-      const shared = library.get(occurrence.id);
-      if (!shared) throw new Error(`The exercise “${occurrence.title}” no longer exists.`);
-      return { ...occurrence, title: shared.title, description: shared.description, help: shared.help, category: shared.category, imageUri: shared.imageUri };
+      const shared = library.get(occurrence.exerciseId);
+      if (!shared) throw new Error(`The exercise “${occurrence.exerciseId}” no longer exists.`);
+      return { exerciseId: shared.id, target: clone(occurrence.target) };
     });
     return { ...workout, title: workout.title.trim(), exercises, totalDurationMinutes: calculateWorkoutDuration(exercises, workout.restSecondsBetweenExercises, draft.settings.defaultRepsExerciseDurationMinutes) };
   };
 
   return {
-    async loadAppData() { return clone(read()); },
+    async loadAppData() { return clone(materialize(read())); },
     async saveSetting(key, value) { await mutate((draft) => { Object.assign(draft.settings, { [key]: value }); }); },
     async addTechnique(value) { await mutate((draft) => { if (draft.techniques.some((item) => item.id === value.id)) throw new Error("This technique already exists."); draft.techniques.push(clone(value)); }); },
     async updateTechnique(value) { await mutate((draft) => { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Technique not found."); draft.techniques[index] = clone(value); }); },
     async importTechniques(values) { await mutate((draft) => { for (const value of values) { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index >= 0) draft.techniques[index] = clone(value); else draft.techniques.push(clone(value)); } }); },
-    async addAvailableExercise(value) {
+    async addExercise(value) {
       await mutate((draft) => {
         const item = { ...clone(value), id: value.id || makeId("exercise"), title: value.title.trim() };
-        if (draft.availableExercises.some((other) => normalizeExerciseName(other.title) === normalizeExerciseName(item.title))) throw new Error(`An exercise named “${item.title}” already exists.`);
-        draft.availableExercises.push(item);
+        if (draft.exercises.some((other) => normalizeExerciseName(other.title) === normalizeExerciseName(item.title))) throw new Error(`An exercise named “${item.title}” already exists.`);
+        draft.exercises.push(item);
       });
     },
-    async updateAvailableExercise(value) {
+    async updateExercise(value) {
       await mutate((draft) => {
-        const index = draft.availableExercises.findIndex((item) => item.id === value.id);
+        const index = draft.exercises.findIndex((item) => item.id === value.id);
         if (index < 0) throw new Error("Exercise not found.");
-        if (draft.availableExercises.some((other) => other.id !== value.id && normalizeExerciseName(other.title) === normalizeExerciseName(value.title))) throw new Error(`An exercise named “${value.title.trim()}” already exists.`);
-        const shared = { ...clone(value), title: value.title.trim() };
-        draft.availableExercises[index] = shared;
-        draft.workouts = draft.workouts.map((workout) => ({ ...workout, exercises: workout.exercises.map((item) => item.id === shared.id ? { ...item, title: shared.title, description: shared.description, help: shared.help, category: shared.category, imageUri: shared.imageUri } : item) }));
+        if (draft.exercises.some((other) => other.id !== value.id && normalizeExerciseName(other.title) === normalizeExerciseName(value.title))) throw new Error(`An exercise named “${value.title.trim()}” already exists.`);
+        draft.exercises[index] = { ...clone(value), title: value.title.trim() };
       });
     },
-    async deleteAvailableExercise(id) { await mutate((draft) => { if (draft.workouts.some((workout) => workout.exercises.some((item) => item.id === id))) throw new Error("This exercise is used in a workout."); draft.availableExercises = draft.availableExercises.filter((item) => item.id !== id); }); },
+    async deleteExercise(id) { await mutate((draft) => { if (draft.workouts.some((workout) => workout.exercises.some((item) => item.exerciseId === id))) throw new Error("This exercise is used in a workout."); draft.exercises = draft.exercises.filter((item) => item.id !== id); }); },
+    async addAvailableExercise(value) { return this.addExercise(value); },
+    async updateAvailableExercise(value) { return this.updateExercise(value); },
+    async deleteAvailableExercise(id) { return this.deleteExercise(id); },
     async addWorkout(value) { await mutate((draft) => { if (draft.workouts.some((item) => item.id === value.id)) throw new Error("This workout already exists."); draft.workouts.push(hydrateWorkout(draft, value)); }); },
     async updateWorkout(value) { await mutate((draft) => { const index = draft.workouts.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Workout not found."); draft.workouts[index] = hydrateWorkout(draft, value); }); },
     async deleteWorkout(id) { await mutate((draft) => { draft.workouts = draft.workouts.filter((item) => item.id !== id); draft.weeklyWorkoutPlans = draft.weeklyWorkoutPlans.map((plan) => ({ ...plan, plannedDays: plan.plannedDays.filter((day) => day.workoutId !== id) })); }); },
@@ -243,9 +278,9 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
       await mutate((draft) => {
         for (const imported of values) {
           const occurrences = imported.exercises.map((exercise) => {
-            let shared = draft.availableExercises.find((item) => normalizeExerciseName(item.title) === normalizeExerciseName(exercise.title));
-            if (!shared) { shared = { ...clone(exercise), id: makeId("exercise"), techniqueIds: exercise.techniqueIds ?? [] }; draft.availableExercises.push(shared); }
-            return { ...shared, target: clone(exercise.target) };
+            const shared = draft.exercises.find((item) => item.id === exercise.exerciseId);
+            if (!shared) throw new Error(`The exercise “${exercise.exerciseId}” no longer exists.`);
+            return { exerciseId: shared.id, target: clone(exercise.target) };
           });
           const workout: Workout = { ...clone(imported), id: makeId("workout"), exercises: occurrences, totalDurationMinutes: 0 };
           draft.workouts.push(hydrateWorkout(draft, workout));
@@ -283,7 +318,7 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
       for (const [filename, file] of byFilename) applySectionFile(next, parseSectionFile(sectionByFilename[filename], file.content));
       write(parseData(next));
     },
-    async exportLegacyDataFile() { return { ...clone(read()), schemaVersion: 1, exportedAt: new Date().toISOString() }; },
+    async exportLegacyDataFile() { return { ...clone(canonicalize(read())), schemaVersion: 1, exportedAt: new Date().toISOString() }; },
     async importLegacyDataFile(input) {
       const parsed = dataFileSchemaV1.safeParse(input);
       if (!parsed.success) { const version = typeof input === "object" && input !== null && "schemaVersion" in input ? String(input.schemaVersion) : "missing"; throw new Error(`Incompatible backup (version ${version}). ${parsed.error.issues[0]?.message ?? "Incorrect format."}`); }

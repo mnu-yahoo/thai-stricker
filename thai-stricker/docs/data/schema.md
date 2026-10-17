@@ -3,7 +3,15 @@
 The local SQLite database is `thai-stricker.db`. The repository creates its
 tables and applies migrations before exposing application data.
 
-## Shared exercises (version 14)
+## Canonical exercises and workout occurrences (web schema v3)
+
+- `exercises` is the canonical exercise library. Each row owns its descriptive fields, default target and ordered `techniqueIds`.
+- An exercise must reference at least one existing technique and may reference at most five distinct techniques.
+- `workouts.exercises` stores only `{ exerciseId, target }` occurrences. The array position is the workout order, repeated exercise IDs are valid, and each occurrence can use a different target.
+- Workout display data is resolved from `exercises` in memory and is not duplicated in persisted workout data.
+- The v3 local-storage manifest starts from fresh seed data when an older manifest is present; old local data is not migrated.
+
+## Shared exercises (SQLite version 14)
 
 - `exercises.id` identifies a shared library record. `normalized_name` is the
   complete title after trimming, collapsing whitespace and lowercasing in
