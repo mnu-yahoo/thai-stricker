@@ -30,6 +30,7 @@ export interface AppRepository {
   saveSetting<K extends keyof PersistedSettings>(key: K, value: PersistedSettings[K]): Promise<void>;
   addTechnique(value: Technique): Promise<void>;
   updateTechnique(value: Technique): Promise<void>;
+  deleteTechnique(id: string): Promise<void>;
   importTechniques(values: Technique[]): Promise<void>;
   addExercise(value: Exercise): Promise<void>;
   updateExercise(value: Exercise): Promise<void>;
@@ -238,6 +239,14 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
     async saveSetting(key, value) { await mutate((draft) => { Object.assign(draft.settings, { [key]: value }); }); },
     async addTechnique(value) { await mutate((draft) => { if (draft.techniques.some((item) => item.id === value.id)) throw new Error("This technique already exists."); draft.techniques.push(clone(value)); }); },
     async updateTechnique(value) { await mutate((draft) => { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index < 0) throw new Error("Technique not found."); draft.techniques[index] = clone(value); }); },
+    async deleteTechnique(id) {
+      await mutate((draft) => {
+        const techniqueIndex = draft.techniques.findIndex((item) => item.id === id);
+        if (techniqueIndex < 0) throw new Error("Technique not found.");
+        draft.techniques.splice(techniqueIndex, 1);
+        draft.exercises = draft.exercises.map((exercise) => ({ ...exercise, techniqueIds: exercise.techniqueIds.filter((techniqueId) => techniqueId !== id) }));
+      });
+    },
     async importTechniques(values) { await mutate((draft) => { for (const value of values) { const index = draft.techniques.findIndex((item) => item.id === value.id); if (index >= 0) draft.techniques[index] = clone(value); else draft.techniques.push(clone(value)); } }); },
     async addExercise(value) {
       await mutate((draft) => {
