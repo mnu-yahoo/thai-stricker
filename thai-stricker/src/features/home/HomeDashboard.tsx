@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "../../components/Icon";
-import type { AppDataSnapshot, CalendarWorkoutDay } from "../../types/domain";
+import { addHomeDays, buildHomeDashboardMetrics, formatHomeDate, getHomeWeekDays, getHomeWeekStart, getTodayWorkout, selectCoachTip, selectWorkoutToStart } from "../../application/useCases/homeUseCases";
+import type { AppDataSnapshot } from "../../types/domain";
 import "./home-dashboard.css";
 
 const HERO_IMAGE_URI =
@@ -10,95 +11,20 @@ const HERO_IMAGE_URI =
 const DARK_WEEK_LABELS = ["M", "T", "W", "T", "F", "S", "S"];
 const LIGHT_WEEK_LABELS = ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"];
 
-function formatLocalDate(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function addDays(date: Date, amount: number) {
-  const result = new Date(date);
-  result.setDate(result.getDate() + amount);
-  return result;
-}
-
-function startOfWeek(date: Date) {
-  const result = new Date(date);
-  const day = result.getDay();
-  result.setHours(12, 0, 0, 0);
-  result.setDate(result.getDate() + (day === 0 ? -6 : 1 - day));
-  return result;
-}
-
-function isSameMonth(value: string, reference: Date) {
-  return value.startsWith(`${reference.getFullYear()}-${String(reference.getMonth() + 1).padStart(2, "0")}`);
-}
-
-function buildMetrics(data: AppDataSnapshot, reference: Date) {
-  const today = formatLocalDate(reference);
-  const monthLogs = data.workoutLogs.filter((item) => isSameMonth(item.completedDate, reference));
-  const duration = monthLogs.reduce((sum, item) => sum + item.totalDurationMinutes, 0);
-  const completedDates = new Set(monthLogs.map((item) => item.completedDate));
-  const plannedDates = new Set(
-    data.weeklyWorkoutPlans.flatMap((plan) => plan.plannedDays).filter((item) => isSameMonth(item.dayDate, reference)).map((item) => item.dayDate),
-  );
-  const missedDates = new Set(data.calendarWorkoutDays.filter((item) => item.status === "missed" && isSameMonth(item.date, reference)).map((item) => item.date));
-  const elapsedDates = new Set([...plannedDates, ...missedDates, ...completedDates].filter((date) => date <= today));
-  const consistency = elapsedDates.size ? Math.round((completedDates.size / elapsedDates.size) * 100) : completedDates.size ? 100 : 0;
-  const activityTotals = Array.from({ length: 7 }, (_, index) => {
-    const date = formatLocalDate(addDays(reference, index - 6));
-    return monthLogs.filter((item) => item.completedDate === date).reduce((sum, item) => sum + item.totalDurationMinutes, 0);
-  });
-  const maximum = Math.max(...activityTotals, 1);
-  const heatmap = Array.from({ length: 4 }, (_, row) => Array.from({ length: 7 }, (_, column) => {
-    const date = formatLocalDate(addDays(reference, row * 7 + column - 27));
-    const minutes = data.workoutLogs.filter((item) => item.completedDate === date).reduce((sum, item) => sum + item.totalDurationMinutes, 0);
-    const status = data.calendarWorkoutDays.find((item) => item.date === date)?.status;
-    if (minutes >= 45) return 3;
-    if (minutes > 0) return 2;
-    if (status === "planned" || status === "missed" || plannedDates.has(date)) return 1;
-    return 0;
-  }));
-  return {
-    calories: duration * 12,
-    sessions: monthLogs.length || data.monthlySummary.completedWorkouts,
-    hours: (duration / 60).toFixed(1),
-    consistency,
-    activity: activityTotals.map((value) => value / maximum),
-    heatmap,
-  };
-}
-
-function weekDays(start: Date, data: AppDataSnapshot) {
-  const statusByDate = new Map<string, CalendarWorkoutDay["status"]>();
-  data.calendarWorkoutDays.forEach((item) => statusByDate.set(item.date, item.status));
-  data.workoutLogs.forEach((item) => statusByDate.set(item.completedDate, "completed"));
-  data.weeklyWorkoutPlans.flatMap((plan) => plan.plannedDays).forEach((item) => {
-    if (!statusByDate.has(item.dayDate)) statusByDate.set(item.dayDate, "planned");
-  });
-  return Array.from({ length: 7 }, (_, index) => {
-    const date = addDays(start, index);
-    const key = formatLocalDate(date);
-    return { key, number: date.getDate(), status: statusByDate.get(key), isSunday: index === 6 };
-  });
-}
-
 export function HomeDashboard({ data }: { data: AppDataSnapshot }) {
   const navigate = useNavigate();
   const today = useMemo(() => new Date(), []);
-  const todayKey = formatLocalDate(today);
-  const [selectedWeek, setSelectedWeek] = useState(() => startOfWeek(today));
-  const metrics = useMemo(() => buildMetrics(data, today), [data, today]);
-  const days = useMemo(() => weekDays(selectedWeek, data), [selectedWeek, data]);
-  const plannedDay = data.weeklyWorkoutPlans.flatMap((plan) => plan.plannedDays).find((item) => item.dayDate === todayKey);
-  const plannedWorkout = plannedDay ? data.workouts.find((item) => item.id === plannedDay.workoutId) : undefined;
+  const todayKey = formatHomeDate(today);
+  const [selectedWeek, setSelectedWeek] = useState(() => getHomeWeekStart(today));
+  const metrics = useMemo(() => buildHomeDashboardMetrics(data, today), [data, today]);
+  const days = useMemo(() => getHomeWeekDays(selectedWeek, data), [selectedWeek, data]);
+  const plannedWorkout = getTodayWorkout(data, today);
   const featuredWorkout = plannedWorkout ?? data.workouts[0];
-  const coachTip = useMemo(() => data.coachTips[Math.floor(Math.random() * Math.max(data.coachTips.length, 1))], [data.coachTips]);
+  const coachTip = useMemo(() => selectCoachTip(data), [data.coachTips]);
   const isDark = data.settings.themePreference === "Dark";
 
   const startWorkout = () => {
-    const workout = plannedWorkout ?? data.workouts[Math.floor(Math.random() * Math.max(data.workouts.length, 1))];
+    const workout = selectWorkoutToStart(data, today);
     if (workout) navigate(`/session/${workout.id}`);
     else navigate("/workouts/new");
   };
@@ -137,7 +63,7 @@ export function HomeDashboard({ data }: { data: AppDataSnapshot }) {
       </div>
 
       <section className="home-dashboard__panel home-dashboard__calendar-panel">
-        <div className="home-dashboard__calendar-heading"><h2>{addDays(selectedWeek, 6).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2><div><button onClick={() => setSelectedWeek((date) => addDays(date, -7))} aria-label="Previous week"><Icon name="chevron_left" /></button><button onClick={() => setSelectedWeek((date) => addDays(date, 7))} aria-label="Next week"><Icon name="chevron_right" /></button></div></div>
+        <div className="home-dashboard__calendar-heading"><h2>{addHomeDays(selectedWeek, 6).toLocaleDateString("en-US", { month: "long", year: "numeric" })}</h2><div><button onClick={() => setSelectedWeek((date) => addHomeDays(date, -7))} aria-label="Previous week"><Icon name="chevron_left" /></button><button onClick={() => setSelectedWeek((date) => addHomeDays(date, 7))} aria-label="Next week"><Icon name="chevron_right" /></button></div></div>
         <div className="home-dashboard__dark-week-labels">{DARK_WEEK_LABELS.map((label, index) => <span className={index === 6 ? "sunday" : ""} key={`${label}-${index}`}>{label}</span>)}</div>
         <div className="home-dashboard__dark-week">{days.map((day) => <div className={day.status ? "active" : ""} key={day.key}><strong className={day.isSunday ? "sunday" : ""}>{day.number}</strong><i /></div>)}</div>
       </section>
