@@ -1,4 +1,6 @@
-import type { DataSectionName, NamedSectionImport, PersistedSettings, Technique, ThaiStrickerSectionFileV1, WorkoutImportPayload } from "../../types/domain";
+import type { DataSectionName, NamedSectionImport, ThaiStrickerSectionFileV1, WorkoutImportPayload } from "../../types/domain";
+import type { PersistedSettings } from "../../domain/entities/settings";
+import type { Technique } from "../../domain/entities/technique";
 
 export type SettingsRepository = {
   saveSetting<K extends keyof PersistedSettings>(key: K, value: PersistedSettings[K]): Promise<void>;

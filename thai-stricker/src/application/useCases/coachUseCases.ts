@@ -1,4 +1,4 @@
-import type { CoachTip } from "../../types/domain";
+import type { CoachTip } from "../../domain/entities/coachTip";
 
 export function getCoachTipAtIndex(coachTips: CoachTip[], index: number) {
   return coachTips[index];

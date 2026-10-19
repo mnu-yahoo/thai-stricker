@@ -1,4 +1,5 @@
-import type { Workout, WorkoutLogEntry } from "../../types/domain";
+import type { Workout } from "../../domain/entities/workout";
+import type { WorkoutLogEntry } from "../../domain/entities/workoutLog";
 
 export interface WorkoutSessionRepository {
   addWorkoutLog(value: WorkoutLogEntry): Promise<void>;

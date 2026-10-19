@@ -1,4 +1,6 @@
-import type { AppDataSnapshot, CalendarWorkoutDay, Workout } from "../../types/domain";
+import type { AppDataSnapshot } from "../../types/domain";
+import type { CalendarWorkoutDay } from "../../domain/entities/calendar";
+import type { Workout } from "../../domain/entities/workout";
 
 export type HomeDashboardMetrics = {
   calories: number;

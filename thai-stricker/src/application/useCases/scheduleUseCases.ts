@@ -1,4 +1,5 @@
-import type { WeeklyWorkoutPlan, Workout } from "../../types/domain";
+import type { WeeklyWorkoutPlan } from "../../domain/entities/weeklyWorkoutPlan";
+import type { Workout } from "../../domain/entities/workout";
 
 export interface ScheduleRepository {
   saveWeeklyPlan(value: WeeklyWorkoutPlan): Promise<void>;

@@ -1,5 +1,5 @@
 import type { Exercise } from "../../domain/entities/exercise";
-import type { Workout, WorkoutExercise } from "../../types/domain";
+import type { Workout, WorkoutExercise } from "../../domain/entities/workout";
 
 export type WorkoutDraft = Pick<Workout, "title" | "description" | "difficulty" | "category" | "restSecondsBetweenExercises" | "exercises">;
 
