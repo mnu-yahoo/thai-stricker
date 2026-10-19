@@ -6,9 +6,11 @@ import { HomeDashboard } from "./features/home/HomeDashboard";
 import { createExercise } from "./application/useCases/exerciseUseCases";
 import { ALL_SUB_CATEGORIES, filterTechniquesBySubCategory, searchTechniques } from "./application/useCases/techniqueUseCases";
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
+import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
-import { appRepository, calculateWorkoutDuration, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
+import { appRepository, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
 import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, WeeklyWorkoutPlan, Workout, WorkoutCategory, WorkoutDifficulty, WorkoutLogEntry } from "./types/domain";
+import type { WorkoutDraft } from "./application/useCases/workoutUseCases";
 import { WORKOUT_CATEGORIES, WORKOUT_DIFFICULTIES } from "./types/domain";
 
 type AppContextValue = {
@@ -168,7 +170,6 @@ function WorkoutDetail() {
   return <><Header title="Workout details" back="/workouts" action={<Link className="icon-button" to={`/workouts/${workout.id}/edit`} aria-label="Edit"><Icon name="edit" /></Link>} /><section className="title-block"><span className="pill">{workout.category}</span><h2>{workout.title}</h2><p>{workout.description}</p><div className="meta"><span>{workout.difficulty}</span><span>{workout.totalDurationMinutes} min</span><span>{workout.restSecondsBetweenExercises} sec rest</span></div></section><section><h2>Exercises</h2><ol className="exercise-list">{exercises.map((exercise, index) => <li key={`${exercise.exerciseId}-${index}`}><span className="number">{index + 1}</span><div><h3>{exercise.title}</h3><p>{exercise.description}</p><small>{exercise.techniqueIds.length} technique(s)</small></div><strong>{detailLabel(exercise)}</strong></li>)}</ol></section><Link className="button primary sticky-action" to={`/session/${workout.id}`}><Icon name="play_arrow" /> Start workout</Link></>;
 }
 
-type WorkoutDraft = Pick<Workout, "title" | "description" | "difficulty" | "category" | "restSecondsBetweenExercises" | "exercises">;
 const DRAFT_KEY = "thai-stricker:workout-draft";
 function WorkoutForm() {
   const { id } = useParams(); const { data, act } = useApp(); const navigate = useNavigate();
@@ -177,12 +178,12 @@ function WorkoutForm() {
   const initial: WorkoutDraft = stored ? JSON.parse(stored) : current ? { title: current.title, description: current.description, difficulty: current.difficulty, category: current.category, restSecondsBetweenExercises: current.restSecondsBetweenExercises, exercises: current.exercises } : { title: "", description: "", difficulty: "Beginner", category: "Fundamentals", restSecondsBetweenExercises: data.settings.restSecondsBetweenExercises, exercises: [] };
   const [draft, setDraft] = useState<WorkoutDraft>(initial);
   const update = (next: WorkoutDraft) => { setDraft(next); if (!id) sessionStorage.setItem(DRAFT_KEY, JSON.stringify(next)); };
-  const addOccurrence = (exercise: Exercise) => { if (draft.exercises.length >= data.settings.maxExercisesPerWorkout) return; update({ ...draft, exercises: [...draft.exercises, { exerciseId: exercise.id, detail: { ...exercise.detail } }] }); };
-  const removeOccurrence = (index: number) => update({ ...draft, exercises: draft.exercises.filter((_, itemIndex) => itemIndex !== index) });
-  const move = (index: number, delta: number) => { const target = index + delta; if (target < 0 || target >= draft.exercises.length) return; const exercises = [...draft.exercises]; [exercises[index], exercises[target]] = [exercises[target], exercises[index]]; update({ ...draft, exercises }); };
+  const addOccurrence = (exercise: Exercise) => update({ ...draft, exercises: addExerciseToWorkout(draft.exercises, exercise, data.settings.maxExercisesPerWorkout) });
+  const removeOccurrence = (index: number) => update({ ...draft, exercises: removeExerciseFromWorkout(draft.exercises, index) });
+  const move = (index: number, delta: number) => update({ ...draft, exercises: moveExerciseInWorkout(draft.exercises, index, delta) });
   const submit = async (event: FormEvent) => {
     event.preventDefault(); if (!draft.title.trim() || !draft.exercises.length) return;
-    const value: Workout = { ...draft, id: current?.id ?? uid("workout"), totalDurationMinutes: calculateWorkoutDuration(draft.exercises, draft.restSecondsBetweenExercises, data.settings.defaultRepsExerciseDurationMinutes), lastDoneDate: current?.lastDoneDate };
+    const value = createWorkout(draft, data.settings.defaultRepsExerciseDurationMinutes, current);
     const ok = await act(() => current ? appRepository.updateWorkout(value) : appRepository.addWorkout(value), current ? "Workout updated." : "Workout created.");
     if (ok) { sessionStorage.removeItem(DRAFT_KEY); navigate("/workouts"); }
   };
@@ -221,7 +222,7 @@ function Coach() {
 function InfoList({ title, icon, items }: { title: string; icon: string; items: string[] }) { return <section className="info-card"><h2><Icon name={icon} /> {title}</h2><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></section>; }
 
 function Settings() {
-  const { data, refresh, notify } = useApp();
+  const { data, act, refresh, notify } = useApp();
   const sectionInput = useRef<HTMLInputElement>(null); const legacyInput = useRef<HTMLInputElement>(null); const workoutInput = useRef<HTMLInputElement>(null); const techniqueInput = useRef<HTMLInputElement>(null);
   const [confirmReset, setConfirmReset] = useState(false); const [exportOpen, setExportOpen] = useState(false); const [exportSelection, setExportSelection] = useState<DataSectionName[]>([...DATA_SECTION_NAMES]); const [pendingImport, setPendingImport] = useState<NamedSectionImport[] | null>(null);
   const setSetting = async <K extends keyof PersistedSettings>(key: K, value: PersistedSettings[K]) => { await act(() => updateSetting(appRepository, key, value)); };

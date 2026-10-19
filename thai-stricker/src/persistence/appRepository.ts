@@ -2,6 +2,7 @@ import { z } from "zod";
 import { appDataSchema, dataFileSchemaV1, sectionDataFileSchemasV1 } from "./dataSchema";
 import { seedData } from "./seedData";
 import { assertExerciseCollectionIntegrity, normalizeExerciseName } from "../domain/rules/exerciseRules";
+import { calculateWorkoutDuration } from "../application/useCases/workoutUseCases";
 import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, ResolvedWorkoutExercise, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
 
 export const LEGACY_STORAGE_KEY = "thai-stricker:data:v1";
@@ -68,11 +69,6 @@ type StorageManifest = z.infer<typeof storageManifestSchema>;
 
 const clone = <T,>(value: T): T => structuredClone(value);
 const makeId = (prefix: string) => `${prefix}-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
-
-export function calculateWorkoutDuration(exercises: Workout["exercises"], restSeconds: number, defaultRepsMinutes: number) {
-    const workSeconds = exercises.reduce((sum, exercise) => sum + (exercise.detail.type === "duration" ? exercise.detail.seconds : defaultRepsMinutes * 60), 0);
-  return Math.ceil((workSeconds + Math.max(0, exercises.length - 1) * restSeconds) / 60);
-}
 
 export function resolveWorkoutExercises(data: AppDataSnapshot, workout: Workout): ResolvedWorkoutExercise[] {
   const byId = new Map(data.exercises.map((exercise) => [exercise.id, exercise]));
