@@ -109,8 +109,13 @@ function Workouts() {
 
 function ExercisesLibrary() {
   const { data } = useApp();
+  const [searchTerm, setSearchTerm] = useState("");
   const techniqueNames = new Map(data.techniques.map((technique) => [technique.id, technique.name]));
-  return <><Header title="Exercises" back="/workouts" action={<Link className="icon-button" to="/exercises/new" aria-label="New exercise"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.exercises.length ? <div className="library">{data.exercises.map((exercise) => <article key={exercise.id}><div><h3>{exercise.title}</h3><p>{exercise.category || "Uncategorized"} · {detailLabel(exercise)}</p><small>{exercise.techniqueIds.map((id) => techniqueNames.get(id) ?? id).join(" · ")}</small></div><Link className="icon-button" to={`/exercises/${exercise.id}/edit`} aria-label={`Edit ${exercise.title}`}><Icon name="edit" /></Link></article>)}</div> : <Empty icon="fitness_center" title="No exercises yet" text="Create an exercise from the technique library." action={<Link className="button primary" to="/exercises/new">Create an exercise</Link>} />}</>;
+  const normalizedSearchTerm = searchTerm.trim().toLocaleLowerCase();
+  const filteredExercises = normalizedSearchTerm
+    ? data.exercises.filter((exercise) => exercise.title.toLocaleLowerCase().includes(normalizedSearchTerm))
+    : data.exercises;
+  return <><Header title="Exercises" back="/workouts" action={<Link className="icon-button" to="/exercises/new" aria-label="New exercise"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.exercises.length ? <><label className="filter-control">Search exercises<input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by exercise name" /></label>{filteredExercises.length ? <div className="library">{filteredExercises.map((exercise) => <article key={exercise.id}><div><h3>{exercise.title}</h3><p>{exercise.category || "Uncategorized"} · {detailLabel(exercise)}</p><small>{exercise.techniqueIds.map((id) => techniqueNames.get(id) ?? id).join(" · ")}</small></div><Link className="icon-button" to={`/exercises/${exercise.id}/edit`} aria-label={`Edit ${exercise.title}`}><Icon name="edit" /></Link></article>)}</div> : <Empty icon="search" title="No matching exercises" text="Try another part of the exercise name." />}</> : <Empty icon="fitness_center" title="No exercises yet" text="Create an exercise from the technique library." action={<Link className="button primary" to="/exercises/new">Create an exercise</Link>} />}</>;
 }
 
 function TechniquesLibrary() {

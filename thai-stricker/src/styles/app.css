@@ -174,8 +174,8 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 .segmented button.active { background: var(--surface); color: var(--primary); box-shadow: 0 2px 7px rgb(0 0 0 / 10%); font-weight: 800; }
 .segmented.scroll { display: flex; overflow: auto; margin-bottom: 20px; }
 .filter-control { display: grid; gap: 7px; margin: -2px 0 16px; color: var(--muted); font-size: .78rem; font-weight: 800; }
-.filter-control select { width: 100%; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px; min-height: 46px; outline: none; }
-.filter-control select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
+.filter-control input, .filter-control select { width: 100%; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px; min-height: 46px; outline: none; }
+.filter-control input:focus, .filter-control select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
 .library { display: grid; gap: 9px; }
 .library article > div:first-child { flex: 1; min-width: 0; }
 
