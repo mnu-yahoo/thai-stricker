@@ -40,6 +40,19 @@ export function getTechniqueSubCategories(techniques: Technique[]) {
   return Array.from(new Set(techniques.map((technique) => technique.subCategory)));
 }
 
+export function groupTechniquesBySubCategory(techniques: Technique[]) {
+  const groups = new Map<string, Technique[]>();
+  for (const technique of techniques) {
+    const group = groups.get(technique.subCategory) ?? [];
+    group.push(technique);
+    groups.set(technique.subCategory, group);
+  }
+  return Array.from(groups, ([subCategory, group]) => ({
+    subCategory,
+    techniques: [...group].sort((left, right) => left.name.localeCompare(right.name)),
+  })).sort((left, right) => left.subCategory.localeCompare(right.subCategory));
+}
+
 export function getTechniqueUsage(techniques: Technique[], exercises: Exercise[]) {
   return new Map(techniques.map((technique) => [
     technique.id,
