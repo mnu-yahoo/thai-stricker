@@ -4,10 +4,11 @@ import { BottomNav } from "./components/BottomNav";
 import { Icon } from "./components/Icon";
 import { HomeDashboard } from "./features/home/HomeDashboard";
 import { createExercise, searchExercises } from "./application/useCases/exerciseUseCases";
-import { ALL_SUB_CATEGORIES, filterTechniquesBySubCategory, searchTechniques } from "./application/useCases/techniqueUseCases";
+import { ALL_SUB_CATEGORIES, createTechnique, filterTechniquesBySubCategory, getTechniqueSubCategories, getTechniqueUsage, searchTechniques } from "./application/useCases/techniqueUseCases";
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
 import { createWorkoutSessionRecap, recordWorkoutSession } from "./application/useCases/workoutSessionUseCases";
+import { getCoachTipAtIndex } from "./application/useCases/coachUseCases";
 import { getMonday, getWeekDays, getWeekNumber, saveSchedule, toScheduleDate } from "./application/useCases/scheduleUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
 import { appRepository, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
@@ -124,10 +125,9 @@ function TechniquesLibrary() {
   const { data } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState(ALL_SUB_CATEGORIES);
-  const usage = new Map(data.techniques.map((technique) => [technique.id, data.exercises.filter((exercise) => exercise.techniqueIds.includes(technique.id)).length]));
-  const subCategories = Array.from(new Set(data.techniques.map((technique) => technique.subCategory)));
-  const normalizedSearchTerm = searchTerm.trim().toLocaleLowerCase();
-  const filteredTechniques = filterTechniquesBySubCategory(searchTechniques(data.techniques, normalizedSearchTerm), selectedSubCategory);
+  const usage = getTechniqueUsage(data.techniques, data.exercises);
+  const subCategories = getTechniqueSubCategories(data.techniques);
+  const filteredTechniques = filterTechniquesBySubCategory(searchTechniques(data.techniques, searchTerm), selectedSubCategory);
   return <><Header title="Techniques" back="/workouts" action={<Link className="icon-button" to="/techniques/new" aria-label="New technique"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.techniques.length ? <><label className="filter-control">Search techniques<input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by technique name" /></label><label className="filter-control">Filter by sub-category<select value={selectedSubCategory} onChange={(event) => setSelectedSubCategory(event.target.value)}><option value={ALL_SUB_CATEGORIES}>All sub-categories</option>{subCategories.map((subCategory) => <option key={subCategory} value={subCategory}>{subCategory}</option>)}</select></label>{filteredTechniques.length ? <div className="library">{filteredTechniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div></article>)}</div> : <Empty icon="search" title="No matching techniques" text="Try another part of the technique name or change the sub-category." />}</> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}</>;
 }
 
@@ -146,7 +146,7 @@ function TechniqueForm() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!value.name.trim() || !value.shortName.trim() || !value.description.trim() || !value.subCategory.trim()) return;
-    const technique: Technique = { ...value, id: uid("technique"), name: value.name.trim(), shortName: value.shortName.trim(), description: value.description.trim(), subCategory: value.subCategory.trim() };
+    const technique = createTechnique(value);
     const ok = await act(() => appRepository.addTechnique(technique), "Technique added.");
     if (ok) navigate("/techniques");
   };
@@ -210,7 +210,7 @@ function Schedule() {
 }
 
 function Coach() {
-  const { data } = useApp(); const [selected, setSelected] = useState(0); const tip = data.coachTips[selected];
+  const { data } = useApp(); const [selected, setSelected] = useState(0); const tip = getCoachTipAtIndex(data.coachTips, selected);
   return <><Header title="AI Coach" />{tip ? <><section className="coach-hero"><Icon name="psychology" size={42} /><p className="eyebrow">TECHNIQUE FOCUS</p><h2>{tip.exerciseTitle}</h2><p>{tip.shortTip}</p></section><div className="segmented scroll">{data.coachTips.map((item, index) => <button key={`${item.exerciseId}-${index}`} className={index === selected ? "active" : ""} onClick={() => setSelected(index)}>{item.exerciseTitle}</button>)}</div><InfoList title="Technique tips" icon="bolt" items={tip.technicalTips} /><InfoList title="Common mistakes" icon="warning" items={tip.commonMistakes} /><InfoList title="Focus points" icon="visibility" items={tip.focusPoints} /><section className="info-card"><h2>Why?</h2><p>{tip.explanation}</p></section></> : <Empty icon="psychology" title="No coaching tips available" text="Tips imported with your data will appear here." />}</>;
 }
 function InfoList({ title, icon, items }: { title: string; icon: string; items: string[] }) { return <section className="info-card"><h2><Icon name={icon} /> {title}</h2><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></section>; }

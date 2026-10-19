@@ -100,6 +100,3 @@ export function selectWorkoutToStart(data: AppDataSnapshot, today: Date): Workou
   return getTodayWorkout(data, today) ?? data.workouts[Math.floor(Math.random() * Math.max(data.workouts.length, 1))];
 }
 
-export function selectCoachTip(data: AppDataSnapshot) {
-  return data.coachTips[Math.floor(Math.random() * Math.max(data.coachTips.length, 1))];
-}

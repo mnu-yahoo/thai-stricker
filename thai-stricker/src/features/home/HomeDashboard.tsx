@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "../../components/Icon";
-import { addHomeDays, buildHomeDashboardMetrics, formatHomeDate, getHomeWeekDays, getHomeWeekStart, getTodayWorkout, selectCoachTip, selectWorkoutToStart } from "../../application/useCases/homeUseCases";
+import { addHomeDays, buildHomeDashboardMetrics, formatHomeDate, getHomeWeekDays, getHomeWeekStart, getTodayWorkout, selectWorkoutToStart } from "../../application/useCases/homeUseCases";
+import { selectRandomCoachTip } from "../../application/useCases/coachUseCases";
 import type { AppDataSnapshot } from "../../types/domain";
 import "./home-dashboard.css";
 
@@ -20,7 +21,7 @@ export function HomeDashboard({ data }: { data: AppDataSnapshot }) {
   const days = useMemo(() => getHomeWeekDays(selectedWeek, data), [selectedWeek, data]);
   const plannedWorkout = getTodayWorkout(data, today);
   const featuredWorkout = plannedWorkout ?? data.workouts[0];
-  const coachTip = useMemo(() => selectCoachTip(data), [data.coachTips]);
+  const coachTip = useMemo(() => selectRandomCoachTip(data.coachTips), [data.coachTips]);
   const isDark = data.settings.themePreference === "Dark";
 
   const startWorkout = () => {
