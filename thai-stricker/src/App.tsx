@@ -7,10 +7,11 @@ import { createExercise } from "./application/useCases/exerciseUseCases";
 import { ALL_SUB_CATEGORIES, filterTechniquesBySubCategory, searchTechniques } from "./application/useCases/techniqueUseCases";
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
+import { createWorkoutSessionRecap, recordWorkoutSession } from "./application/useCases/workoutSessionUseCases";
 import { getMonday, getWeekDays, getWeekNumber, saveSchedule, toScheduleDate } from "./application/useCases/scheduleUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
 import { appRepository, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
-import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, Workout, WorkoutCategory, WorkoutDifficulty, WorkoutLogEntry } from "./types/domain";
+import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, Workout, WorkoutCategory, WorkoutDifficulty } from "./types/domain";
 import type { WorkoutDraft } from "./application/useCases/workoutUseCases";
 import { WORKOUT_CATEGORIES, WORKOUT_DIFFICULTIES } from "./types/domain";
 
@@ -266,7 +267,7 @@ function SettingSelect({ label, value, options, suffix = "", onChange }: { label
 function WorkoutSession() {
   const { workoutId } = useParams(); const { data, act } = useApp(); const navigate = useNavigate(); const workout = data.workouts.find((item) => item.id === workoutId);
   const [index, setIndex] = useState(0); const [phase, setPhase] = useState<"exercise" | "rest">("exercise"); const [skipped, setSkipped] = useState(0); const [remaining, setRemaining] = useState(0); const deadline = useRef<number | null>(null); const startedAt = useRef(Date.now());
-  const finish = async (completed: number, skippedCount: number) => { if (!workout) return; const now = new Date(); const recap = { workoutId: workout.id, workoutTitle: workout.title, exerciseCount: workout.exercises.length, completedExerciseCount: completed, skippedExerciseCount: skippedCount, totalDurationMinutes: Math.max(1, Math.ceil((Date.now() - startedAt.current) / 60000)), completedDate: isoDate(now) }; sessionStorage.setItem(`recap:${workout.id}`, JSON.stringify(recap)); const log: WorkoutLogEntry = { ...recap, id: uid("log"), completedAt: now.toISOString(), source: "web" }; await act(() => appRepository.addWorkoutLog(log)); navigate(`/session/${workout.id}/recap`, { replace: true }); };
+  const finish = async (completed: number, skippedCount: number) => { if (!workout) return; const now = new Date(); const recap = createWorkoutSessionRecap(workout, completed, skippedCount, startedAt.current, now); sessionStorage.setItem(`recap:${workout.id}`, JSON.stringify(recap)); await act(() => recordWorkoutSession(appRepository, recap, now)); navigate(`/session/${workout.id}/recap`, { replace: true }); };
   const advance = (skip = false) => { if (!workout) return; const nextSkipped = skipped + (skip && phase === "exercise" ? 1 : 0); if (skip) setSkipped(nextSkipped); if (phase === "exercise" && index === workout.exercises.length - 1) { void finish(workout.exercises.length - nextSkipped, nextSkipped); return; } if (phase === "exercise" && workout.restSecondsBetweenExercises > 0) { setPhase("rest"); deadline.current = Date.now() + workout.restSecondsBetweenExercises * 1000; setRemaining(workout.restSecondsBetweenExercises); } else { setPhase("exercise"); setIndex((value) => value + 1); deadline.current = null; } };
   const exercise = workout?.exercises[index];
   useEffect(() => { if (!exercise || phase !== "exercise" || exercise.detail.type !== "duration") return; deadline.current = Date.now() + exercise.detail.seconds * 1000; setRemaining(exercise.detail.seconds); }, [index, phase, exercise?.id]);
