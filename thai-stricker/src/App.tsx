@@ -7,9 +7,10 @@ import { createExercise } from "./application/useCases/exerciseUseCases";
 import { ALL_SUB_CATEGORIES, filterTechniquesBySubCategory, searchTechniques } from "./application/useCases/techniqueUseCases";
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
+import { getMonday, getWeekDays, getWeekNumber, saveSchedule, toScheduleDate } from "./application/useCases/scheduleUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
 import { appRepository, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
-import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, WeeklyWorkoutPlan, Workout, WorkoutCategory, WorkoutDifficulty, WorkoutLogEntry } from "./types/domain";
+import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, Technique, Workout, WorkoutCategory, WorkoutDifficulty, WorkoutLogEntry } from "./types/domain";
 import type { WorkoutDraft } from "./application/useCases/workoutUseCases";
 import { WORKOUT_CATEGORIES, WORKOUT_DIFFICULTIES } from "./types/domain";
 
@@ -31,8 +32,6 @@ function isoDate(date = new Date()) { return date.toISOString().slice(0, 10); }
 function uid(prefix: string) { return `${prefix}-${crypto.randomUUID()}`; }
 function formatDate(value?: string) { return value ? new Intl.DateTimeFormat("en-US", { day: "numeric", month: "short", year: "numeric" }).format(new Date(`${value}T12:00:00`)) : "Never"; }
 function detailLabel(exercise: Exercise | Workout["exercises"][number]) { return exercise.detail.type === "duration" ? `${exercise.detail.seconds} sec` : `${exercise.detail.reps} reps`; }
-function mondayOf(date: Date) { const result = new Date(date); const day = (result.getDay() + 6) % 7; result.setDate(result.getDate() - day); result.setHours(12, 0, 0, 0); return result; }
-function weekNumber(date: Date) { const utc = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())); const day = utc.getUTCDay() || 7; utc.setUTCDate(utc.getUTCDate() + 4 - day); const start = new Date(Date.UTC(utc.getUTCFullYear(), 0, 1)); return Math.ceil((((utc.getTime() - start.getTime()) / 86400000) + 1) / 7); }
 function downloadBlob(value: Blob, filename: string) { const url = URL.createObjectURL(value); const link = document.createElement("a"); link.href = url; link.download = filename; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }
 function backupTimestamp() { return new Date().toISOString().replace(/[:.]/g, "-"); }
 
@@ -202,17 +201,14 @@ function ExerciseForm() {
 }
 
 function Schedule() {
-  const { data, act } = useApp(); const [weekStart, setWeekStart] = useState(() => mondayOf(new Date()));
-  const start = isoDate(weekStart); const current = data.weeklyWorkoutPlans.find((item) => item.weekStartDate === start);
-  const days = Array.from({ length: 7 }, (_, index) => { const date = new Date(weekStart); date.setDate(date.getDate() + index); return { date: isoDate(date), label: new Intl.DateTimeFormat("en-US", { weekday: "long", day: "numeric", month: "short" }).format(date) }; });
+  const { data, act } = useApp(); const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+  const start = toScheduleDate(weekStart); const current = data.weeklyWorkoutPlans.find((item) => item.weekStartDate === start);
+  const days = getWeekDays(weekStart);
   const saveDay = async (dayDate: string, dayLabel: string, workoutId: string) => {
-    const workout = data.workouts.find((item) => item.id === workoutId); const plannedDays = (current?.plannedDays ?? []).filter((item) => item.dayDate !== dayDate);
-    if (workout) plannedDays.push({ dayDate, dayLabel, workoutId: workout.id, workoutTitle: workout.title });
-    const plan: WeeklyWorkoutPlan = { id: current?.id ?? uid("plan"), weekStartDate: start, weekNumber: weekNumber(weekStart), year: weekStart.getFullYear(), requiredTrainingDays: data.settings.trainingDaysPerWeek, plannedDays, source: "web" };
-    await act(() => appRepository.saveWeeklyPlan(plan), "Schedule saved.");
+    await act(() => saveSchedule(appRepository, { current, weekStart, dayDate, dayLabel, workoutId, workouts: data.workouts, requiredTrainingDays: data.settings.trainingDaysPerWeek }), "Schedule saved.");
   };
   const shift = (amount: number) => { const next = new Date(weekStart); next.setDate(next.getDate() + amount * 7); setWeekStart(next); };
-  return <><Header title="Schedule" /><div className="week-nav"><button className="icon-button" onClick={() => shift(-1)} aria-label="Previous week"><Icon name="chevron_left" /></button><div><strong>Week {weekNumber(weekStart)}</strong><span>Starting {formatDate(start)}</span></div><button className="icon-button" onClick={() => shift(1)} aria-label="Next week"><Icon name="chevron_right" /></button></div><p className="muted center">Goal: {data.settings.trainingDaysPerWeek} workouts this week</p><div className="stack">{days.map((day) => { const planned = current?.plannedDays.find((item) => item.dayDate === day.date); return <article className="day-card" key={day.date}><div><h3>{day.label}</h3><p>{planned?.workoutTitle ?? "Rest"}</p></div><select aria-label={`Workout for ${day.label}`} value={planned?.workoutId ?? ""} onChange={(event) => void saveDay(day.date, day.label, event.target.value)}><option value="">Rest</option>{data.workouts.map((workout) => <option key={workout.id} value={workout.id}>{workout.title}</option>)}</select></article>; })}</div></>;
+  return <><Header title="Schedule" /><div className="week-nav"><button className="icon-button" onClick={() => shift(-1)} aria-label="Previous week"><Icon name="chevron_left" /></button><div><strong>Week {getWeekNumber(weekStart)}</strong><span>Starting {formatDate(start)}</span></div><button className="icon-button" onClick={() => shift(1)} aria-label="Next week"><Icon name="chevron_right" /></button></div><p className="muted center">Goal: {data.settings.trainingDaysPerWeek} workouts this week</p><div className="stack">{days.map((day) => { const planned = current?.plannedDays.find((item) => item.dayDate === day.date); return <article className="day-card" key={day.date}><div><h3>{day.label}</h3><p>{planned?.workoutTitle ?? "Rest"}</p></div><select aria-label={`Workout for ${day.label}`} value={planned?.workoutId ?? ""} onChange={(event) => void saveDay(day.date, day.label, event.target.value)}><option value="">Rest</option>{data.workouts.map((workout) => <option key={workout.id} value={workout.id}>{workout.title}</option>)}</select></article>; })}</div></>;
 }
 
 function Coach() {
