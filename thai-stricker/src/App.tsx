@@ -115,8 +115,13 @@ function ExercisesLibrary() {
 
 function TechniquesLibrary() {
   const { data } = useApp();
+  const [selectedSubCategory, setSelectedSubCategory] = useState("all");
   const usage = new Map(data.techniques.map((technique) => [technique.id, data.exercises.filter((exercise) => exercise.techniqueIds.includes(technique.id)).length]));
-  return <><Header title="Techniques" back="/workouts" action={<Link className="icon-button" to="/techniques/new" aria-label="New technique"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.techniques.length ? <div className="library">{data.techniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div></article>)}</div> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}</>;
+  const subCategories = Array.from(new Set(data.techniques.map((technique) => technique.subCategory)));
+  const filteredTechniques = selectedSubCategory === "all"
+    ? data.techniques
+    : data.techniques.filter((technique) => technique.subCategory === selectedSubCategory);
+  return <><Header title="Techniques" back="/workouts" action={<Link className="icon-button" to="/techniques/new" aria-label="New technique"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.techniques.length ? <><label className="filter-control">Filter by sub-category<select value={selectedSubCategory} onChange={(event) => setSelectedSubCategory(event.target.value)}><option value="all">All sub-categories</option>{subCategories.map((subCategory) => <option key={subCategory} value={subCategory}>{subCategory}</option>)}</select></label><div className="library">{filteredTechniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div></article>)}</div></> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}</>;
 }
 
 const TECHNIQUE_CATEGORIES: Technique["category"][] = ["Muay Thai techniques", "Stretching Techniques", "Strength Techniques"];
