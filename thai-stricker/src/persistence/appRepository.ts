@@ -2,7 +2,7 @@ import { z } from "zod";
 import { appDataSchema, dataFileSchemaV1, sectionDataFileSchemasV1 } from "./dataSchema";
 import { seedData } from "./seedData";
 import { assertExerciseCollectionIntegrity, normalizeExerciseName } from "../domain/rules/exerciseRules";
-import { calculateWorkoutDuration } from "../application/useCases/workoutUseCases";
+import { calculateWorkoutDuration } from "../domain/rules/workoutRules";
 import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, ResolvedWorkoutExercise, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
 
 export const LEGACY_STORAGE_KEY = "thai-stricker:data:v1";

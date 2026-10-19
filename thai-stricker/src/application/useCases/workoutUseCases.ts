@@ -1,12 +1,8 @@
 import type { Exercise } from "../../domain/entities/exercise";
 import type { Workout, WorkoutExercise } from "../../domain/entities/workout";
+import { calculateWorkoutDuration } from "../../domain/rules/workoutRules";
 
 export type WorkoutDraft = Pick<Workout, "title" | "description" | "difficulty" | "category" | "restSecondsBetweenExercises" | "exercises">;
-
-export function calculateWorkoutDuration(exercises: WorkoutExercise[], restSeconds: number, defaultRepsMinutes: number) {
-  const workSeconds = exercises.reduce((sum, exercise) => sum + (exercise.detail.type === "duration" ? exercise.detail.seconds : defaultRepsMinutes * 60), 0);
-  return Math.ceil((workSeconds + Math.max(0, exercises.length - 1) * restSeconds) / 60);
-}
 
 function makeWorkoutId() {
   return `workout-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
