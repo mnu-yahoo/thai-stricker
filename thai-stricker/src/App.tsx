@@ -3,7 +3,7 @@ import { Link, Navigate, Route, Routes, useLocation, useNavigate, useParams, use
 import { BottomNav } from "./components/BottomNav";
 import { Icon } from "./components/Icon";
 import { HomeDashboard } from "./features/home/HomeDashboard";
-import { createExercise } from "./application/useCases/exerciseUseCases";
+import { createExercise, searchExercises } from "./application/useCases/exerciseUseCases";
 import { ALL_SUB_CATEGORIES, filterTechniquesBySubCategory, searchTechniques } from "./application/useCases/techniqueUseCases";
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
@@ -116,10 +116,7 @@ function ExercisesLibrary() {
   const { data } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const techniqueNames = new Map(data.techniques.map((technique) => [technique.id, technique.name]));
-  const normalizedSearchTerm = searchTerm.trim().toLocaleLowerCase();
-  const filteredExercises = normalizedSearchTerm
-    ? data.exercises.filter((exercise) => exercise.title.toLocaleLowerCase().includes(normalizedSearchTerm))
-    : data.exercises;
+  const filteredExercises = searchExercises(data.exercises, searchTerm);
   return <><Header title="Exercises" back="/workouts" action={<Link className="icon-button" to="/exercises/new" aria-label="New exercise"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.exercises.length ? <><label className="filter-control">Search exercises<input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by exercise name" /></label>{filteredExercises.length ? <div className="library">{filteredExercises.map((exercise) => <article key={exercise.id}><div><h3>{exercise.title}</h3><p>{exercise.category || "Uncategorized"} · {detailLabel(exercise)}</p><small>{exercise.techniqueIds.map((id) => techniqueNames.get(id) ?? id).join(" · ")}</small></div><Link className="icon-button" to={`/exercises/${exercise.id}/edit`} aria-label={`Edit ${exercise.title}`}><Icon name="edit" /></Link></article>)}</div> : <Empty icon="search" title="No matching exercises" text="Try another part of the exercise name." />}</> : <Empty icon="fitness_center" title="No exercises yet" text="Create an exercise from the technique library." action={<Link className="button primary" to="/exercises/new">Create an exercise</Link>} />}</>;
 }
 
