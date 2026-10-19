@@ -263,7 +263,21 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
         draft.exercises[index] = { ...clone(value), title: value.title.trim() };
       });
     },
-    async deleteExercise(id) { await mutate((draft) => { if (draft.workouts.some((workout) => workout.exercises.some((item) => item.exerciseId === id))) throw new Error("This exercise is used in a workout."); draft.exercises = draft.exercises.filter((item) => item.id !== id); }); },
+    async deleteExercise(id) {
+      await mutate((draft) => {
+        if (!draft.exercises.some((item) => item.id === id)) throw new Error("Exercise not found.");
+        draft.exercises = draft.exercises.filter((item) => item.id !== id);
+        draft.workouts = draft.workouts.map((workout) => ({
+          ...workout,
+          exercises: workout.exercises.filter((item) => item.exerciseId !== id),
+          totalDurationMinutes: calculateWorkoutDuration(
+            workout.exercises.filter((item) => item.exerciseId !== id),
+            workout.restSecondsBetweenExercises,
+            draft.settings.defaultRepsExerciseDurationMinutes,
+          ),
+        }));
+      });
+    },
     async addAvailableExercise(value) { return this.addExercise(value); },
     async updateAvailableExercise(value) { return this.updateExercise(value); },
     async deleteAvailableExercise(id) { return this.deleteExercise(id); },
