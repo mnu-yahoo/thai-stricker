@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { appDataSchema, dataFileSchemaV1, sectionDataFileSchemasV1 } from "./dataSchema";
 import { seedData } from "./seedData";
+import { assertExerciseCollectionIntegrity, normalizeExerciseName } from "../domain/rules/exerciseRules";
 import type { AppDataSnapshot, DataSectionName, Exercise, NamedSectionImport, PersistedSettings, ResolvedWorkoutExercise, Technique, ThaiStrickerDataFileV1, ThaiStrickerSectionFileV1, WeeklyWorkoutPlan, Workout, WorkoutImportPayload, WorkoutLogEntry } from "../types/domain";
 
 export const LEGACY_STORAGE_KEY = "thai-stricker:data:v1";
@@ -66,7 +67,6 @@ const storageManifestSchema = z.object({
 type StorageManifest = z.infer<typeof storageManifestSchema>;
 
 const clone = <T,>(value: T): T => structuredClone(value);
-export const normalizeExerciseName = (value: string) => value.trim().replace(/\s+/g, " ").toLocaleLowerCase("en");
 const makeId = (prefix: string) => `${prefix}-${globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`}`;
 
 export function calculateWorkoutDuration(exercises: Workout["exercises"], restSeconds: number, defaultRepsMinutes: number) {
@@ -109,17 +109,8 @@ function canonicalize(data: AppDataSnapshot): AppDataSnapshot {
 
 function assertIntegrity(data: AppDataSnapshot) {
   const techniqueIds = new Set(data.techniques.map((item) => item.id));
-  const exerciseIds = new Set<string>();
-  const names = new Set<string>();
-  for (const exercise of data.exercises) {
-    const name = normalizeExerciseName(exercise.title);
-    if (exerciseIds.has(exercise.id)) throw new Error(`Duplicate exercise ID: ${exercise.id}`);
-    if (names.has(name)) throw new Error(`An exercise named “${exercise.title.trim()}” already exists.`);
-    if (new Set(exercise.techniqueIds).size !== exercise.techniqueIds.length) throw new Error(`The techniques for “${exercise.title}” are duplicated.`);
-    for (const id of exercise.techniqueIds) if (!techniqueIds.has(id)) throw new Error(`Unknown technique: ${id}`);
-    exerciseIds.add(exercise.id);
-    names.add(name);
-  }
+  assertExerciseCollectionIntegrity(data.exercises, techniqueIds);
+  const exerciseIds = new Set(data.exercises.map((exercise) => exercise.id));
   const workoutIds = new Set<string>();
   for (const workout of data.workouts) {
     if (workoutIds.has(workout.id)) throw new Error(`Duplicate workout ID: ${workout.id}`);

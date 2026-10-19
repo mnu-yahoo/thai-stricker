@@ -1,17 +1,8 @@
-export type ExerciseDetail =
-  | { type: "duration"; seconds: number }
-  | { type: "reps"; reps: number };
+import type { Exercise, ExerciseDetail } from "../domain/entities/exercise";
+import type { Technique, TechniqueCategory } from "../domain/entities/technique";
 
-export type Exercise = {
-  id: string;
-  title: string;
-  description: string;
-  help: string;
-  category: string;
-  imageUri?: string;
-  detail: ExerciseDetail;
-  techniqueIds: string[];
-};
+export type { Exercise, ExerciseDetail } from "../domain/entities/exercise";
+export type { Technique, TechniqueCategory } from "../domain/entities/technique";
 
 export type WorkoutDifficulty = "Beginner" | "Intermediate" | "Advanced";
 export type WorkoutCategory =
@@ -47,20 +38,6 @@ export type Workout = {
   restSecondsBetweenExercises: number;
   exercises: WorkoutExercise[];
   lastDoneDate?: string;
-};
-
-export type TechniqueCategory =
-  | "Muay Thai techniques"
-  | "Stretching Techniques"
-  | "Strength Techniques";
-
-export type Technique = {
-  id: string;
-  name: string;
-  shortName: string;
-  description: string;
-  category: TechniqueCategory;
-  subCategory: string;
 };
 
 export type PlannedWorkoutDay = {
