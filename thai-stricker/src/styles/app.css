@@ -165,6 +165,8 @@ section { margin-bottom: 28px; }
 .form { display: grid; gap: 18px; }
 .form label, fieldset { display: grid; gap: 7px; font-size: .8rem; font-weight: 760; }
 .form input, .form select, .form textarea, .setting-row select, .day-card select { width: 100%; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 12px; padding: 12px; min-height: 46px; outline: none; }
+.form fieldset input[type="checkbox"] { width: 23px; height: 23px; min-height: 0; padding: 0; }
+.form fieldset:first-of-type > label { display: flex; align-items: center; gap: 8px; }
 .form textarea { resize: vertical; }
 .form input:focus, .form select:focus, .form textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent); }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
