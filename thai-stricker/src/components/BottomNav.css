@@ -41,8 +41,8 @@
 }
 
 :root[data-theme="dark"] .bottom-nav.bottom-nav {
-  bottom: calc(14px + env(safe-area-inset-bottom));
-  width: min(calc(100% - 24px), 456px);
+  width: calc(100% - 24px);
+  margin: 0 12px calc(12px + env(safe-area-inset-bottom));
   gap: 4px;
   padding: 10px 6px;
   background: #17171a;
