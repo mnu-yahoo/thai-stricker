@@ -125,7 +125,7 @@ section { margin-bottom: 28px; }
 .button.small { min-height: 38px; padding: 0 12px; font-size: .78rem; }
 .button:disabled, button:disabled { opacity: .45; cursor: not-allowed; }
 .danger-button { background: var(--danger); color: white; }
-.sticky-action { width: 100%; position: sticky; bottom: calc(78px + env(safe-area-inset-bottom, 0)); z-index: 5; box-shadow: 0 10px 28px rgb(0 0 0 / 18%); }
+.sticky-action { width: 100%; }
 
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; }
 .stats article { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px 8px; text-align: center; }
