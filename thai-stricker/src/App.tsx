@@ -70,6 +70,7 @@ function Layout() {
     <Route path="/exercises/:id/edit" element={<ExerciseForm />} />
     <Route path="/techniques" element={<TechniquesLibrary />} />
     <Route path="/techniques/new" element={<TechniqueForm />} />
+    <Route path="/techniques/:id/edit" element={<TechniqueForm />} />
     <Route path="/schedule" element={<Schedule />} />
     <Route path="/coach" element={<Coach />} />
     <Route path="/settings" element={<Settings />} />
@@ -128,15 +129,23 @@ function TechniquesLibrary() {
   const usage = getTechniqueUsage(data.techniques, data.exercises);
   const subCategories = getTechniqueSubCategories(data.techniques);
   const filteredTechniques = filterTechniquesBySubCategory(searchTechniques(data.techniques, searchTerm), selectedSubCategory);
-  return <><Header title="Techniques" back="/workouts" action={<Link className="icon-button" to="/techniques/new" aria-label="New technique"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.techniques.length ? <><label className="filter-control">Search techniques<input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by technique name" /></label><label className="filter-control">Filter by sub-category<select value={selectedSubCategory} onChange={(event) => setSelectedSubCategory(event.target.value)}><option value={ALL_SUB_CATEGORIES}>All sub-categories</option>{subCategories.map((subCategory) => <option key={subCategory} value={subCategory}>{subCategory}</option>)}</select></label>{filteredTechniques.length ? <div className="library">{filteredTechniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div><button className="icon-button danger" onClick={() => setRemove(technique)} aria-label={`Delete ${technique.name}`}><Icon name="delete" /></button></article>)}</div> : <Empty icon="search" title="No matching techniques" text="Try another part of the technique name or change the sub-category." />}</> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}{remove && <ConfirmDialog title="Delete this technique?" text={`“${remove.name}” will be permanently removed. Its references will also be removed from exercises.`} confirmLabel="Delete" onCancel={() => setRemove(null)} onConfirm={async () => { await act(() => appRepository.deleteTechnique(remove.id), "Technique deleted."); setRemove(null); }} />}</>;
+  return <><Header title="Techniques" back="/workouts" action={<Link className="icon-button" to="/techniques/new" aria-label="New technique"><Icon name="add" /></Link>} /><WorkoutLibraryNav />{data.techniques.length ? <><label className="filter-control">Search techniques<input type="search" value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search by technique name" /></label><label className="filter-control">Filter by sub-category<select value={selectedSubCategory} onChange={(event) => setSelectedSubCategory(event.target.value)}><option value={ALL_SUB_CATEGORIES}>All sub-categories</option>{subCategories.map((subCategory) => <option key={subCategory} value={subCategory}>{subCategory}</option>)}</select></label>{filteredTechniques.length ? <div className="library">{filteredTechniques.map((technique) => <article className="list-card" key={technique.id}><div><h3>{technique.name}</h3><p>{technique.shortName} · {technique.category}</p><small>{technique.subCategory} · Used in {usage.get(technique.id) ?? 0} exercise(s)</small></div><div className="mini-actions"><Link className="icon-button" to={`/techniques/${technique.id}/edit`} aria-label={`Edit ${technique.name}`}><Icon name="edit" /></Link><button className="icon-button danger" onClick={() => setRemove(technique)} aria-label={`Delete ${technique.name}`}><Icon name="delete" /></button></div></article>)}</div> : <Empty icon="search" title="No matching techniques" text="Try another part of the technique name or change the sub-category." />}</> : <Empty icon="sports_martial_arts" title="No techniques yet" text="Import techniques from Settings to populate the library." />}{remove && <ConfirmDialog title="Delete this technique?" text={`“${remove.name}” will be permanently removed. Its references will also be removed from exercises.`} confirmLabel="Delete" onCancel={() => setRemove(null)} onConfirm={async () => { await act(() => appRepository.deleteTechnique(remove.id), "Technique deleted."); setRemove(null); }} />}</>;
 }
 
 const TECHNIQUE_CATEGORIES: Technique["category"][] = ["Muay Thai techniques", "Stretching Techniques", "Strength Techniques"];
 
 function TechniqueForm() {
-  const { act } = useApp();
+  const { id } = useParams();
+  const { data, act } = useApp();
   const navigate = useNavigate();
-  const [value, setValue] = useState<Omit<Technique, "id">>({
+  const current = data.techniques.find((item) => item.id === id);
+  const [value, setValue] = useState<Omit<Technique, "id">>(current ? {
+    name: current.name,
+    shortName: current.shortName,
+    description: current.description,
+    category: current.category,
+    subCategory: current.subCategory,
+  } : {
     name: "",
     shortName: "",
     description: "",
@@ -146,11 +155,12 @@ function TechniqueForm() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!value.name.trim() || !value.shortName.trim() || !value.description.trim() || !value.subCategory.trim()) return;
-    const technique = createTechnique(value);
-    const ok = await act(() => appRepository.addTechnique(technique), "Technique added.");
+    const technique = createTechnique(value, current?.id);
+    const ok = await act(() => current ? appRepository.updateTechnique(technique) : appRepository.addTechnique(technique), current ? "Technique updated." : "Technique added.");
     if (ok) navigate("/techniques");
   };
-  return <><Header title="New technique" back="/techniques" /><form className="form" onSubmit={submit}>
+  if (id && !current) return <Navigate to="/techniques" replace />;
+  return <><Header title={current ? "Edit technique" : "New technique"} back="/techniques" /><form className="form" onSubmit={submit}>
     <label>Name<input required value={value.name} onChange={(event) => setValue({ ...value, name: event.target.value })} placeholder="Jab" /></label>
     <label>Short name<input required value={value.shortName} onChange={(event) => setValue({ ...value, shortName: event.target.value })} placeholder="Jab" /></label>
     <label>Description<textarea rows={4} required value={value.description} onChange={(event) => setValue({ ...value, description: event.target.value })} placeholder="Describe the movement." /></label>
