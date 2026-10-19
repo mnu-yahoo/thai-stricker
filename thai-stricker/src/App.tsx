@@ -30,8 +30,6 @@ const useApp = () => {
   return value;
 };
 
-function isoDate(date = new Date()) { return date.toISOString().slice(0, 10); }
-function uid(prefix: string) { return `${prefix}-${crypto.randomUUID()}`; }
 function formatDate(value?: string) { return value ? new Intl.DateTimeFormat("en-US", { day: "numeric", month: "short", year: "numeric" }).format(new Date(`${value}T12:00:00`)) : "Never"; }
 function detailLabel(exercise: Exercise | Workout["exercises"][number]) { return exercise.detail.type === "duration" ? `${exercise.detail.seconds} sec` : `${exercise.detail.reps} reps`; }
 function downloadBlob(value: Blob, filename: string) { const url = URL.createObjectURL(value); const link = document.createElement("a"); link.href = url; link.download = filename; link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000); }
