@@ -152,6 +152,7 @@ function TechniqueForm() {
     category: "Muay Thai techniques",
     subCategory: "",
   });
+  const suggestedSubCategories = getTechniqueSubCategories(data.techniques.filter((technique) => technique.category === value.category));
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (!value.name.trim() || !value.shortName.trim() || !value.description.trim() || !value.subCategory.trim()) return;
@@ -165,7 +166,7 @@ function TechniqueForm() {
     <label>Short name<input required value={value.shortName} onChange={(event) => setValue({ ...value, shortName: event.target.value })} placeholder="Jab" /></label>
     <label>Description<textarea rows={4} required value={value.description} onChange={(event) => setValue({ ...value, description: event.target.value })} placeholder="Describe the movement." /></label>
     <label>Category<select value={value.category} onChange={(event) => setValue({ ...value, category: event.target.value as Technique["category"] })}>{TECHNIQUE_CATEGORIES.map((category) => <option key={category}>{category}</option>)}</select></label>
-    <label>Sub-category<input required value={value.subCategory} onChange={(event) => setValue({ ...value, subCategory: event.target.value })} placeholder="Punches" /></label>
+    <label>Sub-category<input required list="technique-sub-categories" value={value.subCategory} onChange={(event) => setValue({ ...value, subCategory: event.target.value })} placeholder="Choose a suggestion or type your own" /><datalist id="technique-sub-categories">{suggestedSubCategories.map((subCategory) => <option value={subCategory} key={subCategory} />)}</datalist></label>
     <button className="button primary sticky-action" type="submit">Save technique</button>
   </form></>;
 }
