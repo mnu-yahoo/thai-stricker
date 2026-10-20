@@ -264,7 +264,9 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 .progress span { display: block; height: 100%; background: var(--primary); transition: width .25s; }
 .session-center { flex: 1; margin: 0; padding: 48px 24px 30px; display: flex; flex-direction: column; align-items: center; text-align: center; }
 .session-center h1 { font-size: 2.1rem; margin: 10px 0; }
-.session-description { color: var(--muted); max-width: 34ch; }
+.session-exercise-description { width: 100%; max-width: 34rem; margin: 4px 0 2px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); text-align: left; }
+.session-exercise-description .eyebrow { margin-bottom: 4px; }
+.session-exercise-description p:last-child { margin-bottom: 0; color: var(--text); }
 .timer { width: 178px; height: 178px; border-radius: 50%; border: 10px solid color-mix(in srgb, var(--primary) 25%, var(--surface-2)); display: grid; place-items: center; font-size: 4.3rem; font-weight: 900; margin: 30px 0; color: var(--primary); box-shadow: inset 0 0 0 2px var(--primary); }
 .reps { font-size: 5rem; font-weight: 900; color: var(--primary); margin: 36px 0; }
 .reps span { display: block; color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .12em; }
