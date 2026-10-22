@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildCoachPrompt, getFallbackCoachResponse } from "../src/application/services/coachEngine";
+import { getCoachKnowledgeForTechniqueNames } from "../src/application/services/coachKnowledge";
 import type { Exercise, Technique, Workout } from "../src/types/domain";
 
 const exercise: Exercise = {
@@ -16,18 +17,20 @@ const workout: Workout = {
 
 describe("local coach engine", () => {
   it("builds a strict prompt from the selected exercise and workout context", () => {
-    const prompt = buildCoachPrompt({ action: "technicalTips", exercise, techniques: [technique], workout });
+    const knowledge = getCoachKnowledgeForTechniqueNames([technique.name]);
+    const prompt = buildCoachPrompt({ action: "technicalTips", exercise, techniques: [technique], knowledge, workout });
     expect(prompt).toContain("Jab cross");
     expect(prompt).toContain(exercise.description);
     expect(prompt).toContain("Gardez les épaules relâchées.");
     expect(prompt).toContain("JAB");
     expect(prompt).toContain("Fondamentaux");
+    expect(prompt).toContain("Technique validée : JAB");
     expect(prompt).toContain("Do not give medical, injury, nutrition, or supplement advice.");
   });
 
   it("provides a local response for every guided action", () => {
     for (const action of ["technicalTips", "commonMistakes", "focusPoints", "explanation"] as const) {
-      expect(getFallbackCoachResponse({ action, exercise, techniques: [technique], workout })).toBeTruthy();
+      expect(getFallbackCoachResponse({ action, exercise, techniques: [technique], knowledge: [], workout })).toBeTruthy();
     }
   });
 });

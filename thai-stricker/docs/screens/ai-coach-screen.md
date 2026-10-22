@@ -54,6 +54,7 @@ The AI runtime is loaded only when the user requests a guided response. The mode
 - Context is restricted to the selected exercise, its description and Tip, its techniques, and the matching workout when available
 - Existing imported coach tips remain the local fallback source
 - Exercise matching prefers id and falls back to exercise title
+- The first validated local knowledge entry is currently `JAB`; AI generation remains disabled for techniques without a validated entry
 
 ## Loading and failure behavior
 

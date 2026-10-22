@@ -1,5 +1,6 @@
 import type { TextGenerationPipeline } from "@huggingface/transformers";
 import type { Exercise, Technique, Workout } from "../../types/domain";
+import type { CoachKnowledge } from "./coachKnowledge";
 
 export const COACH_MODEL_ID = "onnx-community/LFM2.5-350M-ONNX";
 export const COACH_ACTIONS = ["technicalTips", "commonMistakes", "focusPoints", "explanation"] as const;
@@ -9,6 +10,7 @@ export type CoachGenerationContext = {
   action: CoachAction;
   exercise: Exercise;
   techniques: Technique[];
+  knowledge: CoachKnowledge[];
   workout?: Workout;
 };
 
@@ -35,6 +37,16 @@ async function createGenerator() {
 
 export function buildCoachPrompt(context: CoachGenerationContext) {
   const techniqueNames = context.techniques.map((technique) => technique.name).join(", ") || "None";
+  const validatedKnowledge = context.knowledge.length
+    ? context.knowledge.map((item) => [
+      `Technique validée : ${item.technique}`,
+      `Principes : ${item.principles.join(" | ")}`,
+      `Erreurs fréquentes : ${item.commonMistakes.join(" | ")}`,
+      `Points de concentration : ${item.focusPoints.join(" | ")}`,
+      `Variantes : ${item.variations.join(" | ")}`,
+      `Sécurité : ${item.safetyNote}`,
+    ].join("\n")).join("\n")
+    : "Aucune fiche technique validée disponible.";
   const workoutContext = context.workout
     ? `${context.workout.title} | ${context.workout.description || "No workout description"}`
     : "No workout selected";
@@ -60,6 +72,7 @@ export function buildCoachPrompt(context: CoachGenerationContext) {
     `Description : ${context.exercise.description || "Aucune description"}`,
     `Conseil complémentaire (Tip) : ${context.exercise.help || "Aucun conseil"}`,
     `Techniques : ${techniqueNames}`,
+    validatedKnowledge,
     `Workout courant : ${workoutContext}`,
     "<|im_end|>",
     "<|im_start|>assistant",
@@ -91,6 +104,7 @@ function cleanGeneratedText(value: string, prompt: string) {
 }
 
 export async function generateCoachResponse(context: CoachGenerationContext, timeoutMs = 25_000) {
+  if (!context.knowledge.length) throw new Error("No validated coach knowledge is available for this technique");
   if (!generatorPromise) generatorPromise = createGenerator();
   const generator = await Promise.race([
     generatorPromise,

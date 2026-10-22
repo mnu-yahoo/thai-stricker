@@ -212,6 +212,7 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 .coach-action.active { border-color: var(--primary); color: var(--primary); }
 .coach-action:disabled { opacity: .65; cursor: wait; }
 .coach-generated { border-color: var(--primary); }
+.coach-knowledge-status { margin: 0 0 10px; }
 
 .settings-group { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 18px; }
 .settings-group > .eyebrow { padding: 16px 16px 6px; margin: 0; }

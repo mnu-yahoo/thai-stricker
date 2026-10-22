@@ -9,6 +9,7 @@ import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques,
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
 import { createWorkoutSessionRecap, recordWorkoutSession } from "./application/useCases/workoutSessionUseCases";
 import { buildCoachPrompt, generateCoachResponse, getFallbackCoachResponse, type CoachAction, type CoachGenerationContext } from "./application/services/coachEngine";
+import { getCoachKnowledgeForTechniqueNames } from "./application/services/coachKnowledge";
 import { getMonday, getWeekDays, getWeekNumber, saveSchedule, toScheduleDate } from "./application/useCases/scheduleUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
 import { appRepository, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
@@ -264,18 +265,19 @@ function Coach() {
   const selectedExercise = tip ? data.exercises.find((exercise) => exercise.id === tip.exerciseId || exercise.title === tip.exerciseTitle) : data.exercises[selected];
   const workout = selectedExercise ? data.workouts.find((item) => item.exercises.some((exercise) => exercise.exerciseId === selectedExercise.id)) : undefined;
   const techniques = selectedExercise ? data.techniques.filter((technique) => selectedExercise.techniqueIds.includes(technique.id)) : [];
+  const knowledge = getCoachKnowledgeForTechniqueNames(techniques.map((technique) => technique.name));
   const fallbackTip = tip ?? (selectedExercise ? {
     exerciseId: selectedExercise.id,
     exerciseTitle: selectedExercise.title,
     shortTip: selectedExercise.help || selectedExercise.description,
-    technicalTips: [getFallbackCoachResponse({ action: "technicalTips", exercise: selectedExercise, techniques, workout })],
-    commonMistakes: [getFallbackCoachResponse({ action: "commonMistakes", exercise: selectedExercise, techniques, workout })],
-    focusPoints: [getFallbackCoachResponse({ action: "focusPoints", exercise: selectedExercise, techniques, workout })],
+    technicalTips: [getFallbackCoachResponse({ action: "technicalTips", exercise: selectedExercise, techniques, knowledge, workout })],
+    commonMistakes: [getFallbackCoachResponse({ action: "commonMistakes", exercise: selectedExercise, techniques, knowledge, workout })],
+    focusPoints: [getFallbackCoachResponse({ action: "focusPoints", exercise: selectedExercise, techniques, knowledge, workout })],
     explanation: selectedExercise.description,
   } : undefined);
-  const context = selectedExercise ? (action: CoachAction): CoachGenerationContext => ({ action, exercise: selectedExercise, techniques, workout }) : undefined;
+  const context = selectedExercise ? (action: CoachAction): CoachGenerationContext => ({ action, exercise: selectedExercise, techniques, knowledge, workout }) : undefined;
   const requestGeneration = async (action: CoachAction) => {
-    if (!context) return;
+    if (!context || !knowledge.length) return;
     setActiveAction(action); setGenerationState("loading"); setGenerated(""); setGenerationError("");
     try { setGenerated(await generateCoachResponse(context(action))); setGenerationState("ready"); }
     catch (error) { setGenerated(getFallbackCoachResponse(context(action))); setGenerationError(error instanceof Error ? error.message : "The local AI model is unavailable."); setGenerationState("fallback"); }
@@ -285,7 +287,7 @@ function Coach() {
   const selectableItems = data.coachTips.length ? data.coachTips : data.exercises;
   const itemLabel = (item: typeof selectableItems[number]) => "exerciseTitle" in item ? item.exerciseTitle : item.title;
   const itemId = (item: typeof selectableItems[number]) => "exerciseId" in item ? item.exerciseId : item.id;
-  return <><Header title="AI Coach" />{fallbackTip ? <><section className="coach-hero"><Icon name="psychology" size={42} /><p className="eyebrow">TECHNIQUE FOCUS</p><h2>{fallbackTip.exerciseTitle}</h2><p>{fallbackTip.shortTip}</p></section><div className="segmented scroll">{selectableItems.map((item, index) => <button key={`${itemId(item)}-${index}`} className={index === selected ? "active" : ""} onClick={() => { setSelected(index); setGenerated(""); setGenerationState("idle"); setGenerationError(""); }}>{itemLabel(item)}</button>)}</div><div className="coach-actions" aria-label="Coach actions">{(Object.keys(actionLabels) as CoachAction[]).map((action) => <button key={action} className={`coach-action ${activeAction === action ? "active" : ""}`} onClick={() => void requestGeneration(action)} disabled={generationState === "loading"}><Icon name={actionIcons[action]} />{actionLabels[action]}</button>)}</div>{generationState !== "idle" && <section className="info-card coach-generated"><h2><Icon name="psychology" /> {generationState === "loading" ? "Coach is preparing advice…" : generationState === "fallback" ? "Local coaching advice" : "AI Coach"}</h2>{generationState === "loading" ? <p className="muted">The model is loading for the first use. It will be cached by your browser.</p> : <><p>{generated}</p>{generationError && <p className="muted">AI indisponible : {generationError}. Les conseils locaux restent disponibles.</p>}</>}</section>}<InfoList title="Technique tips" icon="bolt" items={fallbackTip.technicalTips} /><InfoList title="Common mistakes" icon="warning" items={fallbackTip.commonMistakes} /><InfoList title="Focus points" icon="visibility" items={fallbackTip.focusPoints} /><section className="info-card"><h2>Why?</h2><p>{fallbackTip.explanation}</p></section></> : <Empty icon="psychology" title="No coaching context available" text="Add an exercise or import coaching data to use the guided coach." />}</>;
+  return <><Header title="AI Coach" />{fallbackTip ? <><section className="coach-hero"><Icon name="psychology" size={42} /><p className="eyebrow">TECHNIQUE FOCUS</p><h2>{fallbackTip.exerciseTitle}</h2><p>{fallbackTip.shortTip}</p></section><div className="segmented scroll">{selectableItems.map((item, index) => <button key={`${itemId(item)}-${index}`} className={index === selected ? "active" : ""} onClick={() => { setSelected(index); setGenerated(""); setGenerationState("idle"); setGenerationError(""); }}>{itemLabel(item)}</button>)}</div><p className="muted coach-knowledge-status">{knowledge.length ? "AI coaching is currently available for the validated JAB technique." : "AI generation is not yet available for this exercise. Local coaching advice is shown below."}</p><div className="coach-actions" aria-label="Coach actions">{(Object.keys(actionLabels) as CoachAction[]).map((action) => <button key={action} className={`coach-action ${activeAction === action ? "active" : ""}`} onClick={() => void requestGeneration(action)} disabled={generationState === "loading" || !knowledge.length}><Icon name={actionIcons[action]} />{actionLabels[action]}</button>)}</div>{generationState !== "idle" && <section className="info-card coach-generated"><h2><Icon name="psychology" /> {generationState === "loading" ? "Coach is preparing advice…" : generationState === "fallback" ? "Local coaching advice" : "AI Coach"}</h2>{generationState === "loading" ? <p className="muted">The model is loading for the first use. It will be cached by your browser.</p> : <><p>{generated}</p>{generationError && <p className="muted">AI indisponible : {generationError}. Les conseils locaux restent disponibles.</p>}</>}</section>}<InfoList title="Technique tips" icon="bolt" items={fallbackTip.technicalTips} /><InfoList title="Common mistakes" icon="warning" items={fallbackTip.commonMistakes} /><InfoList title="Focus points" icon="visibility" items={fallbackTip.focusPoints} /><section className="info-card"><h2>Why?</h2><p>{fallbackTip.explanation}</p></section></> : <Empty icon="psychology" title="No coaching context available" text="Add an exercise or import coaching data to use the guided coach." />}</>;
 }
 function InfoList({ title, icon, items }: { title: string; icon: string; items: string[] }) { return <section className="info-card"><h2><Icon name={icon} /> {title}</h2><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></section>; }
 
