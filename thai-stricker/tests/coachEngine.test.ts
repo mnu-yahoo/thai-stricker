@@ -33,7 +33,8 @@ describe("local coach engine", () => {
     expect(prompt).toContain("Copy exactly 1 existing principle");
     expect(prompt).toContain("Final constraint: stay specific to the requested action");
     expect(prompt).toContain("create space");
-    expect(prompt).toContain("Return exactly 1 existing response");
+    expect(prompt).toContain("Return only the integer index of exactly 1 allowed response");
+    expect(prompt).toContain("Allowed responses (select exactly one index):");
     expect(prompt).toContain("Focus technique: JAB");
     expect(prompt).toContain("Copy exactly 1 existing principle");
     expect(prompt).toContain("Do not explain another technique");

@@ -42,10 +42,41 @@ async function createGenerator(forceWasm = false) {
   return generator;
 }
 
+function formatCombinationMistake(technique: CoachKnowledge, point: string) {
+  return `For the ${technique.technique}, ${point.charAt(0).toLocaleLowerCase()}${point.slice(1)}`;
+}
+
+/**
+ * These are the only responses the model is allowed to select. The model
+ * returns an index; the UI always displays the corresponding source entry.
+ */
+export function getCoachCandidateResponses(context: CoachGenerationContext) {
+  if (context.knowledge.length > 1) {
+    if (context.action === "technicalTips") return context.knowledge.flatMap((item) => item.principles);
+    if (context.action === "commonMistakes") return context.knowledge.flatMap((item) => item.commonMistakes.map((point) => formatCombinationMistake(item, point)));
+    if (context.action === "focusPoints") return context.knowledge.flatMap((item) => item.focusPoints);
+    return context.knowledge.flatMap((item) => [item.explanation, ...item.combinations.flatMap((combination) => [combination.role, combination.transition])]);
+  }
+
+  const knowledge = context.knowledge[0];
+  if (knowledge) {
+    if (context.action === "technicalTips") return knowledge.principles;
+    if (context.action === "commonMistakes") return knowledge.commonMistakes;
+    if (context.action === "focusPoints") return knowledge.focusPoints;
+    return [knowledge.explanation, ...knowledge.combinations.flatMap((combination) => [combination.role, combination.transition])];
+  }
+
+  if (context.action === "explanation") return [context.exercise.description || `Work on ${context.exercise.title} with control.`];
+  if (context.action === "technicalTips") return [context.exercise.help || `Stay precise and controlled on ${context.exercise.title}.`];
+  if (context.action === "commonMistakes") return ["Avoid rushing, dropping your guard, or sacrificing precision for speed."];
+  return [`Stay focused on posture, breathing, and returning to guard during ${context.exercise.title}.`];
+}
+
 export function buildCoachMessages(context: CoachGenerationContext): CoachMessage[] {
   const techniqueNames = context.techniques.map((technique) => technique.name).join(", ") || "None";
   const focusTechnique = context.focusTechnique.trim().toLocaleUpperCase();
   const isCombination = context.knowledge.length > 1;
+  const candidateResponses = getCoachCandidateResponses(context);
   const validatedKnowledge = context.knowledge.length
     ? context.knowledge.map((item) => [
       `Validated technique: ${item.technique}`,
@@ -103,8 +134,8 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         "Do not give medical, injury, nutrition, or supplement advice.",
         "If the user mentions pain or a health problem, advise them to consult a qualified professional instead of coaching the symptom.",
         "Use only the supplied validated knowledge. Never invent techniques or workout facts.",
-        "Return exactly 1 existing response from the supplied fiche, in English, and nothing else.",
-        "Copy the selected responses verbatim, except for the explicitly requested 'For the JAB,' or 'For the CROSS,' prefix on mistakes. Do not paraphrase, merge, interpret, correct, or invent information.",
+        "Return only the integer index of exactly 1 allowed response, and nothing else.",
+        "Never write the response itself. Never paraphrase, merge, interpret, correct, or invent information.",
         "Do not repeat a response unless it appears as a separate validated entry in the fiche.",
         "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
         isCombination
@@ -130,6 +161,8 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         validatedKnowledge,
         finalActionConstraint,
         `Current workout: ${workoutContext}`,
+        "Allowed responses (select exactly one index):",
+        ...candidateResponses.map((response, index) => `${index}: ${response}`),
       ].join("\n"),
     },
   ];
@@ -187,18 +220,28 @@ function cleanGeneratedText(value: string) {
     .trim();
 }
 
+function selectGeneratedCandidate(value: string, candidates: string[]) {
+  const match = value.match(/(?:^|\s)(\d+)\s*$/);
+  if (!match) throw new Error("Coach returned an invalid response selection");
+  const index = Number(match[1]);
+  if (!Number.isInteger(index) || index < 0 || index >= candidates.length) {
+    throw new Error("Coach selected an unavailable response");
+  }
+  return candidates[index];
+}
+
 export async function generateCoachResponse(context: CoachGenerationContext, timeoutMs = 25_000) {
   if (!context.knowledge.length) throw new Error("No validated coach knowledge is available for this technique");
   if (!generatorPromise) generatorPromise = createGenerator();
   const messages = buildCoachMessages(context);
+  const candidates = getCoachCandidateResponses(context);
   const run = async (generator: TextGenerationPipeline) => {
     const output = await Promise.race([
       generator(messages, { max_new_tokens: 64, do_sample: false, temperature: 0.1, return_full_text: true }),
       new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach generation timed out")), timeoutMs)),
     ]);
     const text = cleanGeneratedText(extractGeneratedText(output as GeneratedText | GeneratedText[]));
-    if (!text || text.length > 500) throw new Error("Coach generated an unusable response");
-    return text;
+    return selectGeneratedCandidate(text, candidates);
   };
   try {
     const generator = await Promise.race([
