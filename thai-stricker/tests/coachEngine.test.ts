@@ -60,4 +60,21 @@ describe("local coach engine", () => {
       expect(getFallbackCoachResponse({ action, focusTechnique: "JAB", exercise, techniques: [technique], knowledge: [], workout })).toBeTruthy();
     }
   });
+
+  it("builds cross-specific coaching context without jab-only instructions", () => {
+    const cross = { ...technique, name: "CROSS", shortName: "CROSS" };
+    const knowledge = getCoachKnowledgeForTechniqueNames([cross.name]);
+    expect(knowledge).toHaveLength(1);
+    expect(knowledge[0].technique).toBe("CROSS");
+    expect(knowledge[0].principles).toContain("Drive from the rear foot and rotate the rear hip, waist, and shoulder together.");
+    expect(knowledge[0].criticalGuardCue).toContain("lead hand close to the chin");
+    const prompt = buildCoachPrompt({ action: "technicalTips", focusTechnique: "CROSS", exercise, techniques: [cross], knowledge, workout });
+    expect(prompt).toContain("Focus technique: CROSS");
+    expect(prompt).toContain("rear-foot drive");
+    expect(prompt).toContain("lead hand close to the chin");
+    expect(prompt).not.toContain("front-hand straight punch");
+    const mistakes = buildCoachPrompt({ action: "commonMistakes", focusTechnique: "CROSS", exercise, techniques: [cross], knowledge, workout });
+    expect(mistakes).toContain("validated cross mistakes");
+    expect(mistakes).not.toContain("four requested jab mistakes");
+  });
 });
