@@ -71,27 +71,27 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
     explanation: "a short explanation of the exercise",
   }[context.action];
   const actionInstructions = isCombination ? {
-    technicalTips: "Give concise cues for each validated technique in the order used, then one cue for the transition between them. Explain the role of the first technique, the handoff into the next technique, and the return to guard.",
-    commonMistakes: "Give concise, technique-specific mistakes from the validated sheets, followed by the most important combination mistake. Do not replace the individual technique guidance with generic advice.",
-    focusPoints: "Cover the most important validated focus points for each technique and add the coordination point that links them. Keep the answer practical and avoid repeating the same point.",
-    explanation: "Explain how the validated techniques work together in sequence, what each technique contributes, how to transfer from one to the next, and how to return to guard after the combination.",
+    technicalTips: "Select only 2 or 3 validated execution cues across the combination, including the most useful transition cue. Do not list the whole sheets.",
+    commonMistakes: "Select only 2 or 3 validated mistakes across the combination. State each mistake with its correction, using only corrections supported by the validated principles.",
+    focusPoints: "Select only 2 or 3 validated points to monitor during the combination, including a useful transition point. Do not list every focus point.",
+    explanation: "Select only 2 or 3 validated points explaining the role of the techniques, their tactical objective, and one relevant variation or follow-up. Do not list the whole sheets.",
   }[context.action] : focusTechnique === "JAB" ? {
-    technicalTips: "Give 2 or 3 concrete execution cues. Explain that the rear elbow stays down to protect the upper torso, while the rear hand stays close to the cheek for protection against a simultaneous or early counter from the opposite side, not to disrupt timing.",
-    commonMistakes: "Give only these four short mistakes: do not drop the rear hand; do not expose the chin or lead cheek; snap the punch instead of pushing it; return to guard after the strike. Do not add elbow, stance, balance, or other details.",
-    focusPoints: "Use exactly these eight short focus points and do not add other details: stay stable and balanced; keep the lead shoulder slightly raised; keep the rear hand close to the cheek; keep the elbow down and punch on a straight path; use coordination between the foot, hip, shoulder, and fist; rotate the front fist shortly before impact; prefer accuracy before power; quickly return to guard.",
-    explanation: "Use exactly these explanation points and do not add other details: maintain stable posture to avoid falling; keep the rear hand close to the cheek to avoid counter attacks and stay protected; use the jab to disrupt the opponent's timing, measure distance, make contact, and prepare follow-up actions; make the jab explosive but controlled with the hand returning quickly to guard; keep this quick front-hand straight punch direct to the target.",
+    technicalTips: "Select only 2 or 3 concrete execution cues from the validated jab principles, including the critical guard cue when relevant. Explain that rear-hand protection is for a counter, not to disrupt timing. Do not list the whole sheet.",
+    commonMistakes: "Select only 2 or 3 of the validated jab mistakes. State each mistake with its correction, using only corrections supported by the validated principles; do not add elbow, stance, balance, or other details.",
+    focusPoints: "Select only 2 or 3 short focus points from the validated jab sheet. Choose the points most useful for the requested action; do not list all eight.",
+    explanation: "Select only 2 or 3 validated points covering the jab's role, tactical objectives, and one relevant variation or follow-up. Do not list the whole sheet.",
   }[context.action] : {
-    technicalTips: "Give 2 or 3 concrete execution cues from the validated technique sheet, focusing on rear-foot drive, hip and shoulder rotation, a direct rear-hand path, lead-hand protection, and a quick return to guard.",
-    commonMistakes: "Use only the validated common mistakes for the cross. Keep them short and specific to the rear-hand straight punch; do not substitute jab-specific mistakes.",
-    focusPoints: "Use exactly the eight validated cross focus points and do not add other details.",
-    explanation: "Use the validated cross explanation: stable defensive posture, lead hand protecting the chin, power transferred from the rear foot through the hip, waist, and shoulder, fist rotation shortly before contact, and a quick return to guard. Mention that the cross can follow the jab and set up kicks or combinations.",
+    technicalTips: "Select only 2 or 3 concrete execution cues from the validated cross principles. Prioritize rear-foot drive, rotation, a direct path, lead-hand protection, or return to guard as relevant. Do not list the whole sheet.",
+    commonMistakes: "Select only 2 or 3 validated cross mistakes. State each mistake with its correction, using only corrections supported by the validated principles; do not substitute jab-specific mistakes.",
+    focusPoints: "Select only 2 or 3 short focus points from the validated cross sheet. Do not list all eight.",
+    explanation: "Select only 2 or 3 validated points covering the cross's role, tactical objectives, and one relevant variation or follow-up. Do not list the whole sheet.",
   }[context.action];
   const finalActionConstraint = context.action === "commonMistakes"
     ? isCombination
       ? "Final constraint: cover the validated mistakes for every technique in the combination and include the key transition mistake."
       : focusTechnique === "JAB"
-      ? "Final constraint: output only the four requested jab mistakes. Do not mention the elbow cue in this answer."
-      : "Final constraint: output only the validated cross mistakes. Do not add jab-specific mistakes or unrelated details."
+      ? "Final constraint: output only 2 or 3 validated jab mistakes, each paired with its correction. Do not mention the elbow cue unless it is part of the selected mistake correction."
+      : "Final constraint: output only 2 or 3 validated cross mistakes, each paired with its correction. Do not add jab-specific mistakes or unrelated details."
     : "Final constraint: stay specific to the requested action and focus technique.";
 
   return [
@@ -103,8 +103,9 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         "Do not give medical, injury, nutrition, or supplement advice.",
         "If the user mentions pain or a health problem, advise them to consult a qualified professional instead of coaching the symptom.",
         "Use only the supplied validated knowledge. Never invent techniques or workout facts.",
-        "Answer in English, in 1 or 2 short sentences, directly addressing the requested action.",
-        "Do not repeat the same generic advice across different actions.",
+        "Answer in English with 2 or 3 short, distinct points or sentences, directly addressing the requested action.",
+        "Select only 2 or 3 relevant elements from the validated sheet; do not reproduce the whole sheet.",
+        "Do not repeat the same generic advice across different actions. Each action must have a different purpose and wording.",
         "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
         isCombination
           ? `This is combination coaching for ${context.knowledge.map((item) => item.technique).join(" then ")}. Coach the sequence in order, keep each technique's guard cue distinct, and include the transition between techniques. Validated cues: ${context.knowledge.map((item) => `${item.technique}: ${item.criticalGuardCue}`).join(" | ")}`
@@ -138,27 +139,30 @@ export function buildCoachPrompt(context: CoachGenerationContext) {
   return buildCoachMessages(context).map((message) => `${message.role}: ${message.content}`).join("\n");
 }
 
-export function getFallbackCoachResponse(context: CoachGenerationContext) {
+export function getFallbackCoachItems(context: CoachGenerationContext) {
   const focusTechnique = context.focusTechnique.trim().toLocaleUpperCase();
   const knowledge = context.knowledge.find((item) => item.technique === focusTechnique) || context.knowledge[0];
   if (context.knowledge.length > 1) {
-    const names = context.knowledge.map((item) => item.technique).join(" then ");
-    if (context.action === "technicalTips") return context.knowledge.map((item) => `${item.technique}: ${item.principles.slice(0, 2).join(" ")}`).join(" ");
-    if (context.action === "commonMistakes") return context.knowledge.map((item) => `${item.technique}: ${item.commonMistakes[0]}`).join(" ");
-    if (context.action === "focusPoints") return `${context.knowledge.map((item) => `${item.technique}: ${item.focusPoints[0]}`).join(" ")} Link the techniques smoothly and return to guard after the combination.`;
-    return `${names}: ${context.knowledge.map((item) => item.explanation).join(" Then ")}`;
+    if (context.action === "technicalTips") return context.knowledge.flatMap((item) => item.principles.slice(0, 2).map((point) => `${item.technique}: ${point}`)).slice(0, 3);
+    if (context.action === "commonMistakes") return context.knowledge.flatMap((item) => item.commonMistakes.slice(0, 2).map((point) => `${item.technique}: ${point}`)).slice(0, 3);
+    if (context.action === "focusPoints") return [...context.knowledge.flatMap((item) => item.focusPoints.slice(0, 1).map((point) => `${item.technique}: ${point}`)).slice(0, 2), "Combination: link the techniques smoothly and return to guard after the combination."];
+    return context.knowledge.flatMap((item) => [`${item.technique}: ${item.explanation}`]).slice(0, 3);
   }
   if (knowledge) {
-    if (context.action === "technicalTips") return knowledge.principles.slice(0, 3).join(" ");
-    if (context.action === "commonMistakes") return knowledge.commonMistakes.slice(0, 2).join(" ");
-    if (context.action === "focusPoints") return knowledge.focusPoints.slice(0, 2).join(" ");
-    return knowledge.explanation;
+    if (context.action === "technicalTips") return knowledge.principles.slice(0, 3);
+    if (context.action === "commonMistakes") return knowledge.commonMistakes.slice(0, 3);
+    if (context.action === "focusPoints") return knowledge.focusPoints.slice(0, 3);
+    return [knowledge.explanation, ...knowledge.variations.slice(0, 2)];
   }
   const techniqueNames = context.techniques.map((technique) => technique.name).join(", ");
-  if (context.action === "explanation") return context.exercise.description || `Work on ${context.exercise.title} with control.`;
-  if (context.action === "technicalTips") return context.exercise.help || `Stay precise and controlled on ${techniqueNames || context.exercise.title}.`;
-  if (context.action === "commonMistakes") return "Avoid rushing, dropping your guard, or sacrificing precision for speed.";
-  return `Stay focused on posture, breathing, and returning to guard during ${context.exercise.title}.`;
+  if (context.action === "explanation") return [context.exercise.description || `Work on ${context.exercise.title} with control.`];
+  if (context.action === "technicalTips") return [context.exercise.help || `Stay precise and controlled on ${techniqueNames || context.exercise.title}.`];
+  if (context.action === "commonMistakes") return ["Avoid rushing, dropping your guard, or sacrificing precision for speed."];
+  return [`Stay focused on posture, breathing, and returning to guard during ${context.exercise.title}.`];
+}
+
+export function getFallbackCoachResponse(context: CoachGenerationContext) {
+  return getFallbackCoachItems(context).join(" ");
 }
 
 function extractGeneratedText(output: GeneratedText | GeneratedText[]) {

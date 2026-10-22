@@ -8,7 +8,7 @@ import { ALL_SUB_CATEGORIES, createTechnique, filterTechniquesBySubCategory, get
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
 import { createWorkoutSessionRecap, recordWorkoutSession } from "./application/useCases/workoutSessionUseCases";
-import { buildCoachPrompt, generateCoachResponse, getFallbackCoachResponse, type CoachAction, type CoachGenerationContext } from "./application/services/coachEngine";
+import { buildCoachPrompt, generateCoachResponse, getFallbackCoachItems, getFallbackCoachResponse, type CoachAction, type CoachGenerationContext } from "./application/services/coachEngine";
 import { getCoachKnowledgeForTechniqueNames } from "./application/services/coachKnowledge";
 import { getMonday, getWeekDays, getWeekNumber, saveSchedule, toScheduleDate } from "./application/useCases/scheduleUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
@@ -277,9 +277,9 @@ function Coach() {
     exerciseId: selectedExercise.id,
     exerciseTitle: selectedExercise.title,
     shortTip: selectedExercise.help || selectedExercise.description,
-    technicalTips: [getFallbackCoachResponse({ action: "technicalTips", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout })],
-    commonMistakes: [getFallbackCoachResponse({ action: "commonMistakes", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout })],
-    focusPoints: [getFallbackCoachResponse({ action: "focusPoints", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout })],
+    technicalTips: getFallbackCoachItems({ action: "technicalTips", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }),
+    commonMistakes: getFallbackCoachItems({ action: "commonMistakes", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }),
+    focusPoints: getFallbackCoachItems({ action: "focusPoints", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }),
     explanation: selectedExercise.description,
   } : undefined);
   const context = selectedExercise ? (action: CoachAction): CoachGenerationContext => ({ action, focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }) : undefined;
