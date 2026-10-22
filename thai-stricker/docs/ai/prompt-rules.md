@@ -17,3 +17,10 @@ AI Coach uses guided prompt buttons only:
 
 No open-ended user text input is implemented yet.
 Responses must come from local mocked coach data.
+
+## Knowledge Base Constraints
+
+- Knowledge files are stored in the local-only `knowledge base/` directory and must not be committed or sent to Git.
+- PDF files in that directory may be used to enrich the coach, provided the relevant content is validated and attributed to its source.
+- URLs may be read only from `knowledge base/urls`; for those URLs, remain on the Evolve MMA website and use only Muay Thai content.
+- Do not use unrelated pages, unrelated martial arts content, or unverified web material to build coaching advice.

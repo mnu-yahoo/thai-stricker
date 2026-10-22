@@ -18,6 +18,13 @@ AI coaching must stay within safe coaching guidance.
 - supplement advice
 - replacing a real coach, doctor, or physiotherapist
 
+## Knowledge Sources
+
+- Use the local `knowledge base/` directory as the source for PDF-based Muay Thai knowledge and coaching sheets.
+- This directory is private local material and must never be committed or sent to Git.
+- The `knowledge base/urls` file may reference Evolve MMA Muay Thai blog pages. Only Evolve MMA pages that remain within the Muay Thai context are allowed as web sources.
+- Preserve source attribution and validate each new technique sheet before using it in the coach.
+
 ## Local Rule-Based Coach
 
 Current behavior:

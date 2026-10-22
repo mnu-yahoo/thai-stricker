@@ -3,6 +3,9 @@
 # dependencies
 node_modules/
 
+# Private local AI knowledge sources
+knowledge base/
+
 # Expo
 .expo/
 dist/
