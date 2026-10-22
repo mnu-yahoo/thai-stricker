@@ -24,8 +24,8 @@ describe("local coach engine", () => {
     expect(prompt).toContain("Gardez les épaules relâchées.");
     expect(prompt).toContain("JAB");
     expect(prompt).toContain("Fondamentaux");
-    expect(prompt).toContain("Technique validée : JAB");
-    expect(prompt).toContain("Do not give medical, injury, nutrition, or supplement advice.");
+    expect(prompt).toContain("Validated technique: JAB");
+    expect(prompt).toContain("Answer in English");
   });
 
   it("provides a local response for every guided action", () => {

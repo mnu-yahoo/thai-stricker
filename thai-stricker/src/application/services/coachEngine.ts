@@ -39,14 +39,14 @@ export function buildCoachPrompt(context: CoachGenerationContext) {
   const techniqueNames = context.techniques.map((technique) => technique.name).join(", ") || "None";
   const validatedKnowledge = context.knowledge.length
     ? context.knowledge.map((item) => [
-      `Technique validée : ${item.technique}`,
-      `Principes : ${item.principles.join(" | ")}`,
-      `Erreurs fréquentes : ${item.commonMistakes.join(" | ")}`,
-      `Points de concentration : ${item.focusPoints.join(" | ")}`,
-      `Variantes : ${item.variations.join(" | ")}`,
-      `Sécurité : ${item.safetyNote}`,
+      `Validated technique: ${item.technique}`,
+      `Principles: ${item.principles.join(" | ")}`,
+      `Common mistakes: ${item.commonMistakes.join(" | ")}`,
+      `Focus points: ${item.focusPoints.join(" | ")}`,
+      `Variations: ${item.variations.join(" | ")}`,
+      `Safety: ${item.safetyNote}`,
     ].join("\n")).join("\n")
-    : "Aucune fiche technique validée disponible.";
+    : "No validated technique sheet available.";
   const workoutContext = context.workout
     ? `${context.workout.title} | ${context.workout.description || "No workout description"}`
     : "No workout selected";
@@ -64,14 +64,14 @@ export function buildCoachPrompt(context: CoachGenerationContext) {
     "Do not give medical, injury, nutrition, or supplement advice.",
     "If the user mentions pain or a health problem, advise them to consult a qualified professional.",
     "Use only the supplied context. Never invent techniques or workout facts.",
-    "Answer in French, in 2 or 3 short sentences, directly addressing the requested action.",
+    "Answer in English, in 2 or 3 short sentences, directly addressing the requested action.",
     "<|im_end|>",
     "<|im_start|>user",
-    `Action demandée : ${actionLabel}`,
-    `Exercice : ${context.exercise.title}`,
-    `Description : ${context.exercise.description || "Aucune description"}`,
-    `Conseil complémentaire (Tip) : ${context.exercise.help || "Aucun conseil"}`,
-    `Techniques : ${techniqueNames}`,
+    `Requested action: ${actionLabel}`,
+    `Exercise: ${context.exercise.title}`,
+    `Description: ${context.exercise.description || "No description"}`,
+    `Additional tip: ${context.exercise.help || "No additional tip"}`,
+    `Techniques: ${techniqueNames}`,
     validatedKnowledge,
     `Workout courant : ${workoutContext}`,
     "<|im_end|>",
@@ -81,10 +81,10 @@ export function buildCoachPrompt(context: CoachGenerationContext) {
 
 export function getFallbackCoachResponse(context: CoachGenerationContext) {
   const techniqueNames = context.techniques.map((technique) => technique.name).join(", ");
-  if (context.action === "explanation") return context.exercise.description || `Travaillez ${context.exercise.title} avec contrôle.`;
-  if (context.action === "technicalTips") return context.exercise.help || `Restez précis et contrôlé sur ${techniqueNames || context.exercise.title}.`;
-  if (context.action === "commonMistakes") return "Évitez de vous précipiter, de perdre votre garde ou de sacrifier la précision pour la vitesse.";
-  return `Restez concentré sur la posture, la respiration et le retour en garde pendant ${context.exercise.title}.`;
+  if (context.action === "explanation") return context.exercise.description || `Work on ${context.exercise.title} with control.`;
+  if (context.action === "technicalTips") return context.exercise.help || `Stay precise and controlled on ${techniqueNames || context.exercise.title}.`;
+  if (context.action === "commonMistakes") return "Avoid rushing, dropping your guard, or sacrificing precision for speed.";
+  return `Stay focused on posture, breathing, and returning to guard during ${context.exercise.title}.`;
 }
 
 function extractGeneratedText(output: GeneratedText | GeneratedText[]) {
