@@ -69,10 +69,10 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
     explanation: "a short explanation of the exercise",
   }[context.action];
   const actionInstructions = isCombination ? {
-    technicalTips: "Copy exactly 3 existing principles, transitions, or mistakes from the validated combination sheets. Do not rephrase, merge, or add text.",
-    commonMistakes: "Copy exactly 3 existing combination mistakes from the validated sheets. Do not rephrase, merge, correct, or add text.",
-    focusPoints: `Copy exactly these 3 validated responses and nothing else: "Focus point: Stay stable and balanced."; "Validated technique: ${context.knowledge.at(-1)?.technique || "the final technique"}: Keep the lead hand close to the chin."; "Transition: ${context.knowledge.flatMap((item) => item.combinations).find((combination) => combination.sequence.at(-1) === context.knowledge.at(-1)?.technique)?.transition || "Link the techniques smoothly and return to guard after the combination."}". Do not rephrase, merge, or add text.`,
-    explanation: "Copy exactly 3 existing role, transition, or variation statements from the validated sheets. Do not rephrase, merge, or add text.",
+    technicalTips: "Copy exactly 3 existing principles from the combination techniques. Do not prefix them with JAB: or CROSS:; keep entries such as 'Use the jab...' or 'Use the cross...' as written. Do not rephrase, merge, or add text.",
+    commonMistakes: "Copy exactly 3 existing combination mistakes. Prefix each with 'For the JAB,' or 'For the CROSS,' according to its source technique. Never use the format 'JAB:' or 'CROSS:'. Do not rephrase or add text.",
+    focusPoints: "Copy exactly 3 existing focus points from the techniques in the combination. Return only the three plain focus point sentences, without 'Focus points:', 'Focus:', technique labels, combination labels, or metadata.",
+    explanation: "Copy exactly 3 existing role or transition statements from the documented combinations. Do not rephrase, merge, or add text.",
   }[context.action] : focusTechnique === "JAB" ? {
     technicalTips: "Copy exactly 3 existing principles from the validated jab sheet. Do not rephrase, merge, or add text.",
     commonMistakes: "Copy exactly 3 existing mistakes from the validated jab sheet. Do not rephrase, merge, correct, or add text.",
@@ -91,7 +91,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
       ? "Final constraint: output exactly 3 existing mistakes from the validated jab sheet and nothing else."
       : "Final constraint: output exactly 3 existing mistakes from the validated cross sheet and nothing else."
     : isCombination && context.action === "focusPoints"
-      ? "Final constraint: output exactly the three requested labeled points and nothing else. Do not mention the prompt, metadata, or the full knowledge sheet."
+      ? "Final constraint: output exactly the three requested plain focus points and nothing else. Do not add labels, combination names, metadata, or the full knowledge sheet."
       : "Final constraint: stay specific to the requested action and focus technique.";
 
   return [
@@ -104,7 +104,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         "If the user mentions pain or a health problem, advise them to consult a qualified professional instead of coaching the symptom.",
         "Use only the supplied validated knowledge. Never invent techniques or workout facts.",
         "Return exactly 3 existing responses from the supplied fiche, in English, and nothing else.",
-        "Copy the selected responses verbatim. Do not paraphrase, merge, interpret, correct, or invent information.",
+        "Copy the selected responses verbatim, except for the explicitly requested 'For the JAB,' or 'For the CROSS,' prefix on mistakes. Do not paraphrase, merge, interpret, correct, or invent information.",
         "Do not repeat a response unless it appears as a separate validated entry in the fiche.",
         "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
         isCombination
@@ -125,7 +125,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         `Additional tip: ${context.exercise.help || "No additional tip"}`,
         `Techniques in exercise: ${techniqueNames}`,
         isCombination
-          ? "This is combination coaching. Address every validated technique in sequence and explain the transition between them. Do not omit a validated technique."
+          ? "This is combination coaching. Use the documented technique entries in sequence, but never output combination names, technique metadata, or labels such as 'Validated combination:'."
           : "Answer only about the focus technique. Do not explain another technique in the exercise unless explicitly requested.",
         validatedKnowledge,
         finalActionConstraint,
@@ -143,24 +143,18 @@ export function getFallbackCoachItems(context: CoachGenerationContext) {
   const focusTechnique = context.focusTechnique.trim().toLocaleUpperCase();
   const knowledge = context.knowledge.find((item) => item.technique === focusTechnique) || context.knowledge[0];
   if (context.knowledge.length > 1) {
-    if (context.action === "technicalTips") return context.knowledge.flatMap((item) => item.principles.slice(0, 2).map((point) => `${item.technique}: ${point}`)).slice(0, 3);
-    if (context.action === "commonMistakes") return context.knowledge.flatMap((item) => item.commonMistakes.slice(0, 2).map((point) => `${item.technique}: ${point}`)).slice(0, 3);
+    if (context.action === "technicalTips") return context.knowledge.flatMap((item) => item.principles.slice(0, 2)).slice(0, 3);
+    if (context.action === "commonMistakes") return context.knowledge.flatMap((item) => item.commonMistakes.slice(0, 2).map((point) => `For the ${item.technique}, ${point.charAt(0).toLocaleLowerCase()}${point.slice(1)}`)).slice(0, 3);
     if (context.action === "focusPoints") {
-      const finalTechnique = context.knowledge.at(-1);
-      const combination = context.knowledge.flatMap((item) => item.combinations).find((item) => item.sequence.at(-1) === finalTechnique?.technique);
-      return [
-        "Focus point: Stay stable and balanced.",
-        `Validated technique: ${finalTechnique?.technique || "Final technique"}: ${finalTechnique?.focusPoints.find((point) => point.toLocaleLowerCase().includes("chin")) || finalTechnique?.focusPoints[0] || "Stay stable and balanced."}`,
-        `Transition: ${combination?.transition || "Link the techniques smoothly and return to guard after the combination."}`,
-      ];
+      return context.knowledge.flatMap((item) => item.focusPoints.slice(0, 2)).slice(0, 3);
     }
-    return context.knowledge.flatMap((item) => [`${item.technique}: ${item.explanation}`]).slice(0, 3);
+    return context.knowledge.flatMap((item) => item.combinations.slice(0, 2).map((combination) => combination.role)).slice(0, 3);
   }
   if (knowledge) {
     if (context.action === "technicalTips") return knowledge.principles.slice(0, 3);
     if (context.action === "commonMistakes") return knowledge.commonMistakes.slice(0, 3);
     if (context.action === "focusPoints") return knowledge.focusPoints.slice(0, 3);
-    return [knowledge.explanation, ...knowledge.combinations.slice(0, 2).map((combination) => combination.role)];
+    return [knowledge.explanation, ...knowledge.combinations.slice(0, 2).map((combination) => combination.role)].slice(0, 3);
   }
   const techniqueNames = context.techniques.map((technique) => technique.name).join(", ");
   if (context.action === "explanation") return [context.exercise.description || `Work on ${context.exercise.title} with control.`];
@@ -184,6 +178,9 @@ function cleanGeneratedText(value: string) {
   return value
     .replace(/<\|im_end\|>[\s\S]*$/i, "")
     .replace(/^(assistant\s*[:：-]?\s*)/i, "")
+    .replace(/\b(?:focus\s+points?|focus)\s*:\s*/gi, "")
+    .replace(/\bvalidated\s+combination\s*:\s*[A-Z][A-Z–-]*(?:\s*\/\s*[A-Z][A-Z–-]*)?/gi, "")
+    .replace(/\b(?:JAB|CROSS)\s*:\s*/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
