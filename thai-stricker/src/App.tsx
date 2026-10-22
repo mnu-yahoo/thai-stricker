@@ -185,7 +185,7 @@ function WorkoutDetail() {
   const { id } = useParams(); const { data } = useApp(); const workout = data.workouts.find((item) => item.id === id);
   const [page, setPage] = useState(1);
   if (!workout) return <Navigate to="/workouts" replace />;
-  const exercises = resolveWorkoutExercises(data, workout);
+  const exercises = resolveWorkoutExercises(data, workout).map((exercise) => ({ ...exercise, description: data.exercises.find((item) => item.id === exercise.exerciseId)?.description ?? exercise.description }));
   const pageSize = data.settings.numberOfExercisesPerPage;
   const pageCount = Math.max(1, Math.ceil(exercises.length / pageSize));
   const currentPage = Math.min(page, pageCount);
