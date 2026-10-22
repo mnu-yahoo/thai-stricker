@@ -80,7 +80,7 @@ function Layout() {
   </Routes></main>{!immersive && <BottomNav />}</div>;
 }
 
-function Header({ title, back, action, brand = false }: { title: string; back?: string; action?: ReactNode; brand?: boolean }) {
+function Header({ title, back, action, brand = Boolean(back) }: { title: string; back?: string; action?: ReactNode; brand?: boolean }) {
   const { data } = useApp();
   const isDark = data.settings.themePreference === "Dark";
   const heading = back ? title : "THAI STRICKER";
