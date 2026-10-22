@@ -74,7 +74,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
   const actionInstructions = isCombination ? {
     technicalTips: "Select only 2 or 3 validated execution cues across the combination, including the most useful transition cue. Do not list the whole sheets.",
     commonMistakes: "Select only 2 or 3 validated mistakes across the combination. State each mistake with its correction, using only corrections supported by the validated principles.",
-    focusPoints: "Select only 2 or 3 validated points to monitor during the combination, including a useful transition point. Do not list every focus point.",
+    focusPoints: `Output exactly 3 short labeled points for the combination: "Focus point: Stay stable and balanced."; "Validated technique: ${context.knowledge.at(-1)?.technique || "the final technique"}: [use its validated critical guard cue]."; "Transition: [use the documented transition into ${context.knowledge.at(-1)?.technique || "the final technique"}]." Use only the validated values. Do not repeat prompt metadata or list every focus point.`,
     explanation: "Select only 2 or 3 validated points explaining the role of the techniques, their tactical objective, and one relevant variation or follow-up. Do not list the whole sheets.",
   }[context.action] : focusTechnique === "JAB" ? {
     technicalTips: "Select only 2 or 3 concrete execution cues from the validated jab principles, including the critical guard cue when relevant. Explain that rear-hand protection is for a counter, not to disrupt timing. Do not list the whole sheet.",
@@ -93,7 +93,9 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
       : focusTechnique === "JAB"
       ? "Final constraint: output only 2 or 3 validated jab mistakes, each paired with its correction. Do not mention the elbow cue unless it is part of the selected mistake correction."
       : "Final constraint: output only 2 or 3 validated cross mistakes, each paired with its correction. Do not add jab-specific mistakes or unrelated details."
-    : "Final constraint: stay specific to the requested action and focus technique.";
+    : isCombination && context.action === "focusPoints"
+      ? "Final constraint: output exactly the three requested labeled points and nothing else. Do not mention the prompt, metadata, or the full knowledge sheet."
+      : "Final constraint: stay specific to the requested action and focus technique.";
 
   return [
     {
@@ -146,7 +148,15 @@ export function getFallbackCoachItems(context: CoachGenerationContext) {
   if (context.knowledge.length > 1) {
     if (context.action === "technicalTips") return context.knowledge.flatMap((item) => item.principles.slice(0, 2).map((point) => `${item.technique}: ${point}`)).slice(0, 3);
     if (context.action === "commonMistakes") return context.knowledge.flatMap((item) => item.commonMistakes.slice(0, 2).map((point) => `${item.technique}: ${point}`)).slice(0, 3);
-    if (context.action === "focusPoints") return [...context.knowledge.flatMap((item) => item.focusPoints.slice(0, 1).map((point) => `${item.technique}: ${point}`)).slice(0, 2), "Combination: link the techniques smoothly and return to guard after the combination."];
+    if (context.action === "focusPoints") {
+      const finalTechnique = context.knowledge.at(-1);
+      const combination = context.knowledge.flatMap((item) => item.combinations).find((item) => item.sequence.at(-1) === finalTechnique?.technique);
+      return [
+        "Focus point: Stay stable and balanced.",
+        `Validated technique: ${finalTechnique?.technique || "Final technique"}: ${finalTechnique?.criticalGuardCue || "Keep the guard active and return quickly to stance."}`,
+        `Transition: ${combination?.transition || "Link the techniques smoothly and return to guard after the combination."}`,
+      ];
+    }
     return context.knowledge.flatMap((item) => [`${item.technique}: ${item.explanation}`]).slice(0, 3);
   }
   if (knowledge) {

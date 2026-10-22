@@ -88,8 +88,14 @@ describe("local coach engine", () => {
     expect(prompt).toContain("transition between techniques");
     expect(prompt).toContain("Validated technique: JAB");
     expect(prompt).toContain("Validated technique: CROSS");
+    const focusPrompt = buildCoachPrompt({ action: "focusPoints", focusTechnique: "JAB + CROSS", exercise, techniques, knowledge, workout });
+    expect(focusPrompt).toContain("Output exactly 3 short labeled points");
+    expect(focusPrompt).toContain("Focus point: Stay stable and balanced");
+    expect(focusPrompt).toContain("Transition:");
+    expect(focusPrompt).toContain("output exactly the three requested labeled points and nothing else");
     const fallback = getFallbackCoachResponse({ action: "focusPoints", focusTechnique: "JAB + CROSS", exercise, techniques, knowledge, workout });
-    expect(fallback).toContain("JAB:");
-    expect(fallback).toContain("CROSS:");
+    expect(fallback).toContain("Focus point: Stay stable and balanced.");
+    expect(fallback).toContain("Validated technique: CROSS:");
+    expect(fallback).toContain("Transition:");
   });
 });
