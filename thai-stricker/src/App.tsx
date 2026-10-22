@@ -226,7 +226,7 @@ function WorkoutForm() {
 
 function ExerciseForm() {
   const { id } = useParams(); const { data, act } = useApp(); const navigate = useNavigate(); const [params] = useSearchParams();
-  const current = data.exercises.find((item) => item.id === id); const returnTo = params.get("return") || "/workouts/new";
+  const current = data.exercises.find((item) => item.id === id); const returnTo = params.get("return") || "/exercises";
   const [value, setValue] = useState<Exercise>(current ?? { id: "", title: "", description: "", help: "", category: "", detail: { type: "reps", reps: 15 }, techniqueIds: [] });
   const [selectedTechniqueId, setSelectedTechniqueId] = useState("");
   const [techniqueSearch, setTechniqueSearch] = useState("");
