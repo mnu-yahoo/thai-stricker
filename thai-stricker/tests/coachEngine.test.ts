@@ -32,6 +32,7 @@ describe("local coach engine", () => {
     expect(prompt).toContain("Keep the elbow down");
     expect(prompt).toContain("for as long as possible");
     expect(prompt).toContain("Do not replace this with 'quick elbow movement'");
+    expect(prompt).toContain("Final constraint: stay specific to the requested action");
     expect(prompt).toContain("front foot");
     expect(prompt).toContain("create space");
     expect(prompt).toContain("Double or triple jab");
@@ -39,6 +40,16 @@ describe("local coach engine", () => {
     expect(prompt).toContain("Focus technique: JAB");
     expect(prompt).toContain("Give 2 or 3 concrete execution cues");
     expect(prompt).toContain("Do not explain another technique");
+    const mistakePrompt = buildCoachPrompt({ action: "commonMistakes", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });
+    expect(mistakePrompt).toContain("Do not add elbow, stance, balance, or other details");
+    expect(mistakePrompt).toContain("Do not mention the elbow cue in this answer");
+    const focusPrompt = buildCoachPrompt({ action: "focusPoints", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });
+    expect(focusPrompt).toContain("Use exactly these eight short focus points");
+    expect(focusPrompt).toContain("rotate the front fist shortly before impact");
+    const explanationPrompt = buildCoachPrompt({ action: "explanation", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });
+    expect(explanationPrompt).toContain("Use exactly these explanation points");
+    expect(explanationPrompt).toContain("disrupt the opponent's timing");
+    expect(explanationPrompt).toContain("keep it direct to the target");
   });
 
   it("provides a local response for every guided action", () => {
