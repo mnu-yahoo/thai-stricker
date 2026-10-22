@@ -280,7 +280,11 @@ function Coach() {
     if (!context || !knowledge.length) return;
     setActiveAction(action); setGenerationState("loading"); setGenerated(""); setGenerationError("");
     try { setGenerated(await generateCoachResponse(context(action))); setGenerationState("ready"); }
-    catch (error) { setGenerated(getFallbackCoachResponse(context(action))); setGenerationError(error instanceof Error ? error.message : "The local AI model is unavailable."); setGenerationState("fallback"); }
+    catch (error) {
+      console.error("Local AI coach generation failed", error);
+      const message = error instanceof Error ? error.message : String(error || "The local AI model is unavailable.");
+      setGenerated(getFallbackCoachResponse(context(action))); setGenerationError(message); setGenerationState("fallback");
+    }
   };
   const actionLabels: Record<CoachAction, string> = { technicalTips: "Technique tips", commonMistakes: "Common mistakes", focusPoints: "Focus points", explanation: "Explain" };
   const actionIcons: Record<CoachAction, string> = { technicalTips: "bolt", commonMistakes: "warning", focusPoints: "visibility", explanation: "help" };
