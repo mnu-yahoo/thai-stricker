@@ -18,22 +18,27 @@ type GeneratedText = { generated_text: string | Array<{ role: string; content: s
 type CoachMessage = { role: "system" | "user"; content: string };
 
 let generatorPromise: Promise<TextGenerationPipeline> | null = null;
+let generatorDevice: "webgpu" | "wasm" = "wasm";
 
 function hasWebGpu() {
   return typeof navigator !== "undefined" && "gpu" in navigator;
 }
 
-async function createGenerator() {
+async function createGenerator(forceWasm = false) {
   const { pipeline } = await import("@huggingface/transformers");
   const options = { dtype: "q4" as const };
-  if (hasWebGpu()) {
+  if (!forceWasm && hasWebGpu()) {
     try {
-      return await pipeline("text-generation", COACH_MODEL_ID, { ...options, device: "webgpu" });
+      const generator = await pipeline("text-generation", COACH_MODEL_ID, { ...options, device: "webgpu" });
+      generatorDevice = "webgpu";
+      return generator;
     } catch {
       // WebGPU can be exposed but unavailable to the model; fall through to WASM.
     }
   }
-  return pipeline("text-generation", COACH_MODEL_ID, options);
+  const generator = await pipeline("text-generation", COACH_MODEL_ID, options);
+  generatorDevice = "wasm";
+  return generator;
 }
 
 export function buildCoachMessages(context: CoachGenerationContext): CoachMessage[] {
@@ -115,20 +120,34 @@ function cleanGeneratedText(value: string) {
 export async function generateCoachResponse(context: CoachGenerationContext, timeoutMs = 25_000) {
   if (!context.knowledge.length) throw new Error("No validated coach knowledge is available for this technique");
   if (!generatorPromise) generatorPromise = createGenerator();
-  const generator = await Promise.race([
-    generatorPromise,
-    new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach model loading timed out")), timeoutMs)),
-  ]);
   const messages = buildCoachMessages(context);
-  const output = await Promise.race([
-    generator(messages, { max_new_tokens: 80, do_sample: false, temperature: 0.1, return_full_text: true }),
-    new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach generation timed out")), timeoutMs)),
-  ]);
-  const text = cleanGeneratedText(extractGeneratedText(output as GeneratedText | GeneratedText[]));
-  if (!text || text.length > 500) throw new Error("Coach generated an unusable response");
-  return text;
+  const run = async (generator: TextGenerationPipeline) => {
+    const output = await Promise.race([
+      generator(messages, { max_new_tokens: 80, do_sample: false, temperature: 0.1, return_full_text: true }),
+      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach generation timed out")), timeoutMs)),
+    ]);
+    const text = cleanGeneratedText(extractGeneratedText(output as GeneratedText | GeneratedText[]));
+    if (!text || text.length > 500) throw new Error("Coach generated an unusable response");
+    return text;
+  };
+  try {
+    const generator = await Promise.race([
+      generatorPromise,
+      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach model loading timed out")), timeoutMs)),
+    ]);
+    return await run(generator);
+  } catch (error) {
+    if (generatorDevice !== "webgpu") throw error;
+    generatorPromise = createGenerator(true);
+    const cpuGenerator = await Promise.race([
+      generatorPromise,
+      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach CPU model loading timed out")), timeoutMs)),
+    ]);
+    return run(cpuGenerator);
+  }
 }
 
 export function resetCoachEngineForTests() {
   generatorPromise = null;
+  generatorDevice = "wasm";
 }
