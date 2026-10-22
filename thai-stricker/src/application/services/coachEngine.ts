@@ -46,6 +46,9 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
   const validatedKnowledge = context.knowledge.length
     ? context.knowledge.map((item) => [
       `Validated technique: ${item.technique}`,
+      `Stance: ${item.stance}`,
+      `Scope: ${item.scope}`,
+      `Explanation: ${item.explanation}`,
       `Principles: ${item.principles.join(" | ")}`,
       `Common mistakes: ${item.commonMistakes.join(" | ")}`,
       `Focus points: ${item.focusPoints.join(" | ")}`,
