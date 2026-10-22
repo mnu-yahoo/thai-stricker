@@ -207,6 +207,11 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
 .info-card h2 { display: flex; align-items: center; gap: 8px; }
 .info-card li { margin-bottom: 8px; color: var(--muted); line-height: 1.45; }
+.coach-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 14px; }
+.coach-action { display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 9px 8px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); cursor: pointer; }
+.coach-action.active { border-color: var(--primary); color: var(--primary); }
+.coach-action:disabled { opacity: .65; cursor: wait; }
+.coach-generated { border-color: var(--primary); }
 
 .settings-group { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 18px; }
 .settings-group > .eyebrow { padding: 16px 16px 6px; margin: 0; }

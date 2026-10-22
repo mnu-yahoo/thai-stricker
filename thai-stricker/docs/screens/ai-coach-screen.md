@@ -4,18 +4,9 @@ Status: Approved
 
 ## Purpose
 
-The AI Coach screen gives the user local technique guidance based on mocked developer-provided coach-tip data.
+The AI Coach screen gives the user local, guided technique guidance. It uses the browser-local `onnx-community/LFM2.5-350M-ONNX` model through Transformers.js when available, with the existing local coach tips as an automatic fallback.
 
-AI Coach is local and rule-based.
-
-It does not use:
-- LLM
-- API
-- Backend
-- Database
-- Persistence
-
-AI Coach responses come from developer-provided mocked coach tip data.
+The AI runtime is loaded only when the user requests a guided response. The model is cached by the browser after its first download. WebGPU is preferred and WebAssembly CPU is used as a fallback.
 
 ## User Goals
 
@@ -58,11 +49,17 @@ AI Coach responses come from developer-provided mocked coach tip data.
 - Explain exercise returns `explanation`
 - No open-ended text input is implemented
 
-## Local Mocked Data Source
+## Context and fallback data
 
-- Coach tips are defined in `src/features/aiCoach/coachTipsMocks.ts`
-- Context uses mocked weekly workout plans, mocked workouts, and mocked available exercises
+- Context is restricted to the selected exercise, its description and Tip, its techniques, and the matching workout when available
+- Existing imported coach tips remain the local fallback source
 - Exercise matching prefers id and falls back to exercise title
+
+## Loading and failure behavior
+
+- The first guided action displays a loading state while the model is downloaded or initialized
+- Network, model, WebGPU/WebAssembly, timeout, empty, and overlong-response failures use local coaching advice
+- No model is loaded on other screens
 
 ## Safety Guardrails
 
@@ -76,7 +73,6 @@ AI Coach responses come from developer-provided mocked coach tip data.
 
 ## Out Of Scope
 
-- Real LLM
 - API calls
 - Backend AI
 - Database persistence
@@ -84,9 +80,8 @@ AI Coach responses come from developer-provided mocked coach tip data.
 - Voice input
 - Speech output
 
-## Codex Rules
+## Implementation rules
 
-- Keep AI Coach local and deterministic
-- Use developer-provided mocked coach data only
-- Do not add persistence or external dependencies
-- Do not add medical or nutrition advice
+- Keep the first version guided and contextualized; no open-ended prompt is exposed
+- Do not add persistence or server credentials
+- Do not add medical, injury, nutrition, or supplement advice

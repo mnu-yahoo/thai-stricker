@@ -8,7 +8,7 @@ import { ALL_SUB_CATEGORIES, createTechnique, filterTechniquesBySubCategory, get
 import { exportBackup, importLegacyBackup, importSectionFiles, importTechniques, importWorkouts, resetApplication, updateSetting } from "./application/useCases/settingsUseCases";
 import { addExerciseToWorkout, createWorkout, moveExerciseInWorkout, removeExerciseFromWorkout } from "./application/useCases/workoutUseCases";
 import { createWorkoutSessionRecap, recordWorkoutSession } from "./application/useCases/workoutSessionUseCases";
-import { getCoachTipAtIndex } from "./application/useCases/coachUseCases";
+import { buildCoachPrompt, generateCoachResponse, getFallbackCoachResponse, type CoachAction, type CoachGenerationContext } from "./application/services/coachEngine";
 import { getMonday, getWeekDays, getWeekNumber, saveSchedule, toScheduleDate } from "./application/useCases/scheduleUseCases";
 import { buildSectionArchive, readSectionImports } from "./persistence/backupArchive";
 import { appRepository, DATA_SECTION_NAMES, resolveWorkoutExercises, SECTION_FILE_NAMES, STORAGE_KEY } from "./persistence/appRepository";
@@ -254,8 +254,38 @@ function Schedule() {
 }
 
 function Coach() {
-  const { data } = useApp(); const [selected, setSelected] = useState(0); const tip = getCoachTipAtIndex(data.coachTips, selected);
-  return <><Header title="AI Coach" />{tip ? <><section className="coach-hero"><Icon name="psychology" size={42} /><p className="eyebrow">TECHNIQUE FOCUS</p><h2>{tip.exerciseTitle}</h2><p>{tip.shortTip}</p></section><div className="segmented scroll">{data.coachTips.map((item, index) => <button key={`${item.exerciseId}-${index}`} className={index === selected ? "active" : ""} onClick={() => setSelected(index)}>{item.exerciseTitle}</button>)}</div><InfoList title="Technique tips" icon="bolt" items={tip.technicalTips} /><InfoList title="Common mistakes" icon="warning" items={tip.commonMistakes} /><InfoList title="Focus points" icon="visibility" items={tip.focusPoints} /><section className="info-card"><h2>Why?</h2><p>{tip.explanation}</p></section></> : <Empty icon="psychology" title="No coaching tips available" text="Tips imported with your data will appear here." />}</>;
+  const { data } = useApp();
+  const [selected, setSelected] = useState(0);
+  const [activeAction, setActiveAction] = useState<CoachAction>("technicalTips");
+  const [generated, setGenerated] = useState("");
+  const [generationState, setGenerationState] = useState<"idle" | "loading" | "ready" | "fallback">("idle");
+  const [generationError, setGenerationError] = useState("");
+  const tip = data.coachTips[selected];
+  const selectedExercise = tip ? data.exercises.find((exercise) => exercise.id === tip.exerciseId || exercise.title === tip.exerciseTitle) : data.exercises[selected];
+  const workout = selectedExercise ? data.workouts.find((item) => item.exercises.some((exercise) => exercise.exerciseId === selectedExercise.id)) : undefined;
+  const techniques = selectedExercise ? data.techniques.filter((technique) => selectedExercise.techniqueIds.includes(technique.id)) : [];
+  const fallbackTip = tip ?? (selectedExercise ? {
+    exerciseId: selectedExercise.id,
+    exerciseTitle: selectedExercise.title,
+    shortTip: selectedExercise.help || selectedExercise.description,
+    technicalTips: [getFallbackCoachResponse({ action: "technicalTips", exercise: selectedExercise, techniques, workout })],
+    commonMistakes: [getFallbackCoachResponse({ action: "commonMistakes", exercise: selectedExercise, techniques, workout })],
+    focusPoints: [getFallbackCoachResponse({ action: "focusPoints", exercise: selectedExercise, techniques, workout })],
+    explanation: selectedExercise.description,
+  } : undefined);
+  const context = selectedExercise ? (action: CoachAction): CoachGenerationContext => ({ action, exercise: selectedExercise, techniques, workout }) : undefined;
+  const requestGeneration = async (action: CoachAction) => {
+    if (!context) return;
+    setActiveAction(action); setGenerationState("loading"); setGenerated(""); setGenerationError("");
+    try { setGenerated(await generateCoachResponse(context(action))); setGenerationState("ready"); }
+    catch (error) { setGenerated(getFallbackCoachResponse(context(action))); setGenerationError(error instanceof Error ? error.message : "The local AI model is unavailable."); setGenerationState("fallback"); }
+  };
+  const actionLabels: Record<CoachAction, string> = { technicalTips: "Technique tips", commonMistakes: "Common mistakes", focusPoints: "Focus points", explanation: "Explain" };
+  const actionIcons: Record<CoachAction, string> = { technicalTips: "bolt", commonMistakes: "warning", focusPoints: "visibility", explanation: "help" };
+  const selectableItems = data.coachTips.length ? data.coachTips : data.exercises;
+  const itemLabel = (item: typeof selectableItems[number]) => "exerciseTitle" in item ? item.exerciseTitle : item.title;
+  const itemId = (item: typeof selectableItems[number]) => "exerciseId" in item ? item.exerciseId : item.id;
+  return <><Header title="AI Coach" />{fallbackTip ? <><section className="coach-hero"><Icon name="psychology" size={42} /><p className="eyebrow">TECHNIQUE FOCUS</p><h2>{fallbackTip.exerciseTitle}</h2><p>{fallbackTip.shortTip}</p></section><div className="segmented scroll">{selectableItems.map((item, index) => <button key={`${itemId(item)}-${index}`} className={index === selected ? "active" : ""} onClick={() => { setSelected(index); setGenerated(""); setGenerationState("idle"); setGenerationError(""); }}>{itemLabel(item)}</button>)}</div><div className="coach-actions" aria-label="Coach actions">{(Object.keys(actionLabels) as CoachAction[]).map((action) => <button key={action} className={`coach-action ${activeAction === action ? "active" : ""}`} onClick={() => void requestGeneration(action)} disabled={generationState === "loading"}><Icon name={actionIcons[action]} />{actionLabels[action]}</button>)}</div>{generationState !== "idle" && <section className="info-card coach-generated"><h2><Icon name="psychology" /> {generationState === "loading" ? "Coach is preparing advice…" : generationState === "fallback" ? "Local coaching advice" : "AI Coach"}</h2>{generationState === "loading" ? <p className="muted">The model is loading for the first use. It will be cached by your browser.</p> : <><p>{generated}</p>{generationError && <p className="muted">AI indisponible : {generationError}. Les conseils locaux restent disponibles.</p>}</>}</section>}<InfoList title="Technique tips" icon="bolt" items={fallbackTip.technicalTips} /><InfoList title="Common mistakes" icon="warning" items={fallbackTip.commonMistakes} /><InfoList title="Focus points" icon="visibility" items={fallbackTip.focusPoints} /><section className="info-card"><h2>Why?</h2><p>{fallbackTip.explanation}</p></section></> : <Empty icon="psychology" title="No coaching context available" text="Add an exercise or import coaching data to use the guided coach." />}</>;
 }
 function InfoList({ title, icon, items }: { title: string; icon: string; items: string[] }) { return <section className="info-card"><h2><Icon name={icon} /> {title}</h2><ul>{items.map((item) => <li key={item}>{item}</li>)}</ul></section>; }
 
