@@ -58,6 +58,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
       `Common mistakes: ${item.commonMistakes.join(" | ")}`,
       `Focus points: ${item.focusPoints.join(" | ")}`,
       `Variations: ${item.variations.join(" | ")}`,
+      `Validated combinations: ${item.combinations.map((combination) => `${combination.name}; role: ${combination.role}; transition: ${combination.transition}; cues: ${combination.keyCues.join(" | ")}; mistakes: ${combination.commonMistakes.join(" | ")}`).join(" || ")}`,
       `Safety: ${item.safetyNote}`,
     ].join("\n")).join("\n")
     : "No validated technique sheet available.";

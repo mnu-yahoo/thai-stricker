@@ -12,6 +12,14 @@ export type CoachKnowledge = {
   focusPoints: string[];
   explanation: string;
   variations: string[];
+  combinations: {
+    name: string;
+    sequence: string[];
+    role: string;
+    transition: string;
+    keyCues: string[];
+    commonMistakes: string[];
+  }[];
   safetyNote: string;
 };
 
@@ -77,6 +85,21 @@ export const coachKnowledge: CoachKnowledge[] = [{
   ],
   explanation: "Focus on maintaining a stable posture to avoid falling. Keep the rear hand close to the cheek to avoid counter attacks and stay protected. Use the jab to disrupt the opponent's timing, measure distance, make contact, and prepare follow-up actions. The jab should be explosive but controlled, with the hand returning quickly to guard. The jab is a quick front-hand straight punch; keep it direct to the target.",
   variations: ["From a stationary stance.", "While stepping forward.", "Double or triple jab to create space.", "Body jab to change levels.", "Switch jab using a stance switch.", "As a range-finding or timing-disrupting jab.", "Before a follow-up punch, kick, teep, or combination."],
+  combinations: [{
+    name: "JAB–CROSS",
+    sequence: ["JAB", "CROSS"],
+    role: "Use the jab to measure distance, disrupt timing, and create the reaction or opening for the rear-hand cross.",
+    transition: "As the jab returns, stay balanced and drive from the rear foot into the cross without dropping the rear hand or exposing the chin.",
+    keyCues: ["Keep the rear hand close to the cheek during the jab.", "Keep the lead hand protecting the chin as the cross starts.", "Return to guard after the cross."],
+    commonMistakes: ["Pausing too long between the jab and cross.", "Dropping the lead hand during the cross.", "Forgetting to return to guard after the combination."],
+  }, {
+    name: "JAB–CROSS–HOOK",
+    sequence: ["JAB", "CROSS", "HOOK"],
+    role: "Use the jab and cross to create a reaction before continuing with the hook.",
+    transition: "Complete the cross with balance and recover the guard before rotating into the hook.",
+    keyCues: ["Keep the combination continuous but controlled.", "Maintain balance through each weight transfer.", "Do not sacrifice guard position for speed."],
+    commonMistakes: ["Rushing the hook before the cross is controlled.", "Overcommitting and losing balance.", "Leaving the hands low after the final punch."],
+  }],
   safetyNote: "Start slowly and prioritize balance, alignment, and returning to guard.",
 }, {
   technique: "CROSS",
@@ -138,6 +161,21 @@ export const coachKnowledge: CoachKnowledge[] = [{
     "Followed by a hook.",
     "Followed by a rear kick or switch kick.",
   ],
+  combinations: [{
+    name: "JAB–CROSS",
+    sequence: ["JAB", "CROSS"],
+    role: "Use the cross as the power punch after the jab has measured distance or drawn a reaction.",
+    transition: "As the jab returns, drive from the rear foot and rotate the rear hip, waist, and shoulder into the cross while keeping the lead hand near the chin.",
+    keyCues: ["Keep the lead hand protecting the chin.", "Transfer weight without falling forward.", "Return the rear hand quickly to guard."],
+    commonMistakes: ["Throwing the cross without using the jab to create a reaction.", "Dropping the lead hand during the cross.", "Over-rotating and losing balance."],
+  }, {
+    name: "JAB–CROSS–HOOK",
+    sequence: ["JAB", "CROSS", "HOOK"],
+    role: "Use the cross to continue the opening created by the jab before adding the hook.",
+    transition: "Finish the cross balanced, recover the guard, and rotate into the hook without rushing the transition.",
+    keyCues: ["Keep the lead hand active through the cross.", "Coordinate each weight transfer.", "Return to guard after the final punch."],
+    commonMistakes: ["Pausing between the jab and cross.", "Rushing the hook while off balance.", "Leaving the guard open after the combination."],
+  }],
   safetyNote: "Start slowly and prioritize balance, alignment, controlled rotation, and returning to guard. Avoid overextending the shoulder or falling forward.",
 }];
 

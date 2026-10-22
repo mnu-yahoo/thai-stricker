@@ -24,6 +24,8 @@ AI coaching must stay within safe coaching guidance.
 - This directory is private local material and must never be committed or sent to Git.
 - The `knowledge base/urls` file may reference Evolve MMA Muay Thai blog pages. Only Evolve MMA pages that remain within the Muay Thai context are allowed as web sources.
 - Preserve source attribution and validate each new technique sheet before using it in the coach.
+- Technique sheets must distinguish isolated execution from combination use. When sources document a technique followed by another technique, record the sequence, the role of each technique, the transition cues, and the combination-specific mistakes.
+- Combination guidance must remain source-grounded: do not infer an undocumented sequence, timing, target, or tactical purpose from the technique name alone.
 
 ## Local Coach
 
