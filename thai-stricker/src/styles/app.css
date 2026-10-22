@@ -213,6 +213,14 @@ fieldset { border: 1px solid var(--border); border-radius: 14px; padding: 14px; 
 .coach-action:disabled { opacity: .65; cursor: wait; }
 .coach-generated { border-color: var(--primary); }
 .coach-knowledge-status { margin: 0 0 10px; }
+.coach-exercise-picker { margin-bottom: 16px; }
+.coach-exercise-picker > label { display: block; margin-bottom: 6px; color: var(--muted); font-size: .9rem; }
+.coach-combobox { position: relative; }
+.coach-combobox > input { width: 100%; }
+.coach-exercise-options { position: absolute; z-index: 20; top: calc(100% + 4px); left: 0; right: 0; max-height: 260px; overflow-y: auto; padding: 6px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); }
+.coach-exercise-options button { width: 100%; padding: 10px; border: 0; border-radius: 8px; background: transparent; color: var(--text); text-align: left; cursor: pointer; }
+.coach-exercise-options button:hover, .coach-exercise-options button:focus-visible { background: var(--surface-2); color: var(--accent); outline: none; }
+.coach-exercise-no-results { padding: 8px 10px; margin: 0; color: var(--muted); }
 
 .settings-group { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 18px; }
 .settings-group > .eyebrow { padding: 16px 16px 6px; margin: 0; }
