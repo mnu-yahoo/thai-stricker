@@ -68,7 +68,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
     explanation: "a short explanation of the exercise",
   }[context.action];
   const actionInstructions = {
-    technicalTips: "Give 2 or 3 concrete execution cues. Prioritize stance, movement, alignment, timing, and recovery.",
+    technicalTips: "Give 2 or 3 concrete execution cues. Explain that the rear elbow stays down to protect the upper torso, while the rear hand stays close to the cheek for protection against a simultaneous or early counter from the opposite side, not to disrupt timing.",
     commonMistakes: "Give only these four short mistakes: do not drop the rear hand; do not expose the chin or lead cheek; snap the punch instead of pushing it; return to guard after the strike. Do not add elbow, stance, balance, or other details.",
     focusPoints: "Use exactly these eight short focus points and do not add other details: stay stable and balanced; keep the lead shoulder slightly raised; keep the rear hand close to the cheek; keep the elbow down and punch on a straight path; use coordination between the foot, hip, shoulder, and fist; rotate the front fist shortly before impact; prefer accuracy before power; quickly return to guard.",
     explanation: "Use exactly these explanation points and do not add other details: maintain stable posture to avoid falling; keep the rear hand close to the cheek to avoid counter attacks and stay protected; use the jab to disrupt the opponent's timing, measure distance, make contact, and prepare follow-up actions; make the jab explosive but controlled with the hand returning quickly to guard; keep this quick front-hand straight punch direct to the target.",
@@ -89,7 +89,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         "Answer in English, in 1 or 2 short sentences, directly addressing the requested action.",
         "Do not repeat the same generic advice across different actions.",
         "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
-        "For the jab, always apply the critical guard cue exactly: keep the rear elbow close to the jaw; keep the front elbow down for as long as possible, rotate it only just before the strike, then return it down as the arm returns to guard. Do not replace this with 'quick elbow movement' or the vague phrase 'elbow pointed down during the strike'.",
+        "For the jab, always apply the critical guard cue exactly: keep the rear elbow down to protect the upper torso; keep the rear hand close to the cheek to protect against a simultaneous or early counter from the opposite side while the jab is extended; keep the front elbow down for as long as possible, rotate it only just before the strike, then return it down as the arm returns to guard. Do not say that the rear hand protects timing, and do not replace this with 'quick elbow movement' or the vague phrase 'elbow pointed down during the strike'.",
       ].join("\n"),
     },
     {
