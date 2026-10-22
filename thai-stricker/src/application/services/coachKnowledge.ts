@@ -6,6 +6,7 @@ export type CoachKnowledge = {
   additionalSources?: { title: string; pages: number[]; status: "validated-against-source" }[];
   webSources?: string[];
   scope: string;
+  criticalGuardCue: string;
   principles: string[];
   commonMistakes: string[];
   focusPoints: string[];
@@ -39,6 +40,7 @@ export const coachKnowledge: CoachKnowledge[] = [{
     "https://evolve-mma.com/blog/16-basic-muay-thai-combinations-you-should-master-first/",
   ],
   scope: "Use the front-hand straight punch guidance for the jab. Do not apply rear-hand straight punch targets to the jab.",
+  criticalGuardCue: "Keep the rear elbow close to the jaw. Keep the front elbow down for as long as possible, rotate it only just before the strike, then return it down as the arm returns to guard.",
   principles: [
     "Use the jab to disrupt timing, measure distance, and prepare follow-up techniques.",
     "Use the jab to create space, occupy the opponent's line of sight, and draw a defensive reaction.",
@@ -47,7 +49,7 @@ export const coachKnowledge: CoachKnowledge[] = [{
     "From the fight stance, step forward with the front foot when needed and punch in a straight line.",
     "Punch straight toward the target with the lead hand, aiming at the nose, chin, or eyes.",
     "Launch the punch directly from the guard position.",
-    "Keep the elbow pointed down during the extension.",
+    "Keep the elbow pointed down for as long as possible during the extension, then return to the guard and stance.",
     "Bring the lead shoulder slightly forward to protect the cheek and chin.",
     "Keep the rear hand close to the cheek.",
     "Turn the hips and shoulder and shift the weight slightly forward without losing balance.",
@@ -59,6 +61,7 @@ export const coachKnowledge: CoachKnowledge[] = [{
   ],
   commonMistakes: [
     "Dropping the rear hand while throwing the jab.",
+    "Letting the rear elbow move away from the jaw or lifting the front elbow too early. Keep the rear elbow close to the jaw, keep the front elbow down until just before the strike, and return it down with the arm to guard.",
     "Leaving the chin or lead cheek exposed.",
     "Pushing the punch instead of using a quick snapping motion.",
     "Letting the elbow flare out or losing wrist alignment.",
@@ -68,7 +71,7 @@ export const coachKnowledge: CoachKnowledge[] = [{
   focusPoints: [
     "Keep the feet stable and the posture balanced.",
     "Keep the lead shoulder slightly raised.",
-    "Keep the elbow down and the punch on a straight path.",
+    "Keep the elbow down for as long as possible before returning to the guard and stance.",
     "Keep the rear hand close to the cheek.",
     "Coordinate the front foot, hip, shoulder, and fist as one controlled action.",
     "Rotate the fist shortly before impact, not at the start of the punch.",

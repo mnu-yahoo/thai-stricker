@@ -47,6 +47,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
   const validatedKnowledge = context.knowledge.length
     ? context.knowledge.map((item) => [
       `Validated technique: ${item.technique}`,
+      `Critical guard cue: ${item.criticalGuardCue}`,
       `Stance: ${item.stance}`,
       `Scope: ${item.scope}`,
       `Explanation: ${item.explanation}`,
@@ -85,6 +86,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         "Answer in English, in 2 or 3 short sentences, directly addressing the requested action.",
         "Do not repeat the same generic advice across different actions.",
         "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
+        "For the jab, always apply the critical guard cue exactly: keep the rear elbow close to the jaw; keep the front elbow down for as long as possible, rotate it only just before the strike, then return it down as the arm returns to guard. Do not replace this with 'quick elbow movement' or the vague phrase 'elbow pointed down during the strike'.",
       ].join("\n"),
     },
     {

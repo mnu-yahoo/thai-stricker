@@ -25,8 +25,13 @@ describe("local coach engine", () => {
     expect(prompt).toContain("JAB");
     expect(prompt).toContain("Fondamentaux");
     expect(prompt).toContain("Validated technique: JAB");
+    expect(prompt).toContain("Critical guard cue");
+    expect(prompt).toContain("rear elbow close to the jaw");
+    expect(prompt).toContain("rotate it only just before the strike");
     expect(prompt).toContain("disrupt timing");
     expect(prompt).toContain("Keep the elbow down");
+    expect(prompt).toContain("for as long as possible");
+    expect(prompt).toContain("Do not replace this with 'quick elbow movement'");
     expect(prompt).toContain("front foot");
     expect(prompt).toContain("create space");
     expect(prompt).toContain("Double or triple jab");
