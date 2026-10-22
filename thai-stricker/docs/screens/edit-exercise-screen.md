@@ -14,8 +14,8 @@ A user should be able to:
 
 - Open Edit Exercise from the Add Workout Available Exercises list
 - Change exercise title
-- Change exercise description
-- Change exercise help
+- Review the generated exercise description
+- Change exercise Tip
 - Review the exercise detail without editing it
 - Save the updated mocked exercise
 - Return to Add Workout without losing in-progress workout state
@@ -31,14 +31,15 @@ Current entry point:
 Current editable fields:
 
 - Title
-- Description
-- Help
+- Tip
+- Category and selected techniques
 
 ## Read-Only Fields
 
 Current read-only fields:
 
 - Exercise detail
+- Description (generated from selected technique names)
 - Exercise id
 
 ## Validation Rules
@@ -46,8 +47,7 @@ Current read-only fields:
 Current validation:
 
 - Exercise title is required
-- Exercise description is required
-- Exercise help is required
+- At least one technique is required
 
 ## Save Behavior
 
@@ -56,6 +56,7 @@ Current behavior:
 - Saving updates the mocked available exercise in session-only state
 - Exercise id is preserved
 - Exercise detail is preserved
+- Exercise description is regenerated from the selected technique names
 - User returns to Add Workout after saving
 
 ## Cancel Behavior
@@ -114,7 +115,8 @@ The Edit Exercise screen must not implement:
 ## Codex Rules
 
 - Edit Exercise is opened from Add Workout Available Exercises list
-- Only title, description, and help are editable
+- Title, Tip, category and techniques are editable
+- Description is generated from selected technique names and is not editable
 - Exercise detail is not editable
 - Existing Add Workout form state must be preserved
 - Changes are mocked and session-only

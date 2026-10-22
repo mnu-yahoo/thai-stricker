@@ -16,7 +16,7 @@ AI Coach uses guided prompt buttons only:
 - Explain exercise
 
 No open-ended user text input is implemented yet.
-Responses must come from local mocked coach data.
+Responses are generated locally when validated technique knowledge is available, with local coaching advice as a fallback.
 
 ## Knowledge Base Constraints
 

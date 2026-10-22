@@ -14,8 +14,8 @@ A user should be able to:
 
 - Open Add Exercise from Add Workout
 - Enter exercise title
-- Enter exercise description
-- Enter exercise help
+- Review the generated exercise description
+- Enter an exercise Tip
 - Save the new mocked exercise
 - Return to Add Workout without losing in-progress workout state
 
@@ -30,14 +30,15 @@ Current entry point:
 Current editable fields:
 
 - Title
-- Description
-- Help
+- Description (read-only, generated from selected technique names)
+- Tip
+- Category and selected techniques
 
 ## Default Detail Behavior
 
 Current behavior:
 
-- New exercises are assigned a mocked default detail of `10 reps`
+- New exercises default to `15 reps`
 - Detail selection is not editable in this screen
 
 ## Validation Rules
@@ -45,8 +46,7 @@ Current behavior:
 Current validation:
 
 - Exercise title is required
-- Exercise description is required
-- Exercise help is required
+- At least one technique is required
 
 ## Save Behavior
 
@@ -116,8 +116,9 @@ The Add Exercise screen must not implement:
 ## Codex Rules
 
 - Add Exercise is opened from Add Workout Available Exercises top-level Add button
-- Only title, description, and help are editable
-- Target is assigned a mocked default
+- Title, Tip, category and techniques are editable
+- Description is generated from selected technique names and is not editable
+- Execution defaults to repetitions with a count of 15
 - New exercise is added to the end of the Available Exercises list
 - Available Exercises pagination recalculates after save
 - Current Add Workout form state must be preserved

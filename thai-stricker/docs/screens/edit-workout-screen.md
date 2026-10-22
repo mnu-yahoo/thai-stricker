@@ -62,7 +62,6 @@ Current behavior:
 
 Current dependencies:
 
-- Maximum exercises per workout is enforced
 - Rest time between exercises is used for duration calculation
 - Default reps exercise duration is used for duration calculation
 - Available exercises pagination uses Settings page-size value
@@ -74,7 +73,6 @@ Current validation:
 - Workout title is required
 - Workout description is required
 - At least one exercise is required
-- Exercise count must be less than or equal to the Settings maximum
 
 ## Save Behavior
 
@@ -131,7 +129,7 @@ The Edit Workout Screen must not implement:
 - Edit Workout is opened from the Workouts screen
 - Based on Add Workout behavior
 - Total duration is calculated, not user-entered
-- Settings maximum exercises is enforced
+- There is no maximum exercise count per workout
 - Settings rest time is used
 - Settings default reps duration is used
 - Changes are mocked and session-only

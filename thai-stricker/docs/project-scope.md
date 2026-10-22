@@ -3,7 +3,7 @@
 ## Approved Scope
 
 - Private mobile-first Muay Thai coaching PWA
-- AI coaching with local mocked data only
+- AI coaching with a browser-local Transformers.js model and local fallback knowledge
 - Local training data
 - Local coach tips data
 - Browser development workflow
@@ -37,7 +37,7 @@ Current behavior:
 - Workouts opens the mocked Workouts screen
 - Schedule opens the mocked Planned Workout / Schedule screen
 - Settings opens the mocked Settings screen
-- AI Coach opens the mocked AI Coach screen
+- AI Coach opens the local AI Coach screen
 
 Not implemented:
 
@@ -138,7 +138,6 @@ Current behavior:
 - Duration-based exercises use their seconds value
 - Reps-based exercises use Settings default duration in minutes for reps exercises
 - Rest time between exercises uses Settings rest time
-- Settings maximum exercises per workout is enforced
 - After saving, user is redirected to Home
 
 Removed:
@@ -174,7 +173,6 @@ Current behavior:
 - User can add exercises from available exercises
 - User can remove exercises from the workout
 - Total duration is calculated automatically
-- Settings maximum exercises per workout is enforced
 - Saving updates the mocked workout in local state
 - User returns to Workouts after saving or cancelling
 
@@ -325,7 +323,6 @@ Current behavior:
 
 - User can set rest time between workout exercises locally
 - User can set desired training days per week locally
-- User can set maximum exercises per workout locally
 - User can set number of exercises per page locally
 - User can set default duration in minutes for reps exercises locally
 - User can choose light or dark theme preference locally
@@ -337,11 +334,9 @@ Not implemented:
 
 - Settings persistence
 - Database integration
-- Applying maximum exercises to Add Workout screen
-- Applying number of exercises per page to Add Workout pagination
+- Applying number of exercises per page to library and workout exercise pagination
 - Applying default reps exercise duration to Add Workout
 - Applying default reps exercise duration to workout execution
-- Validating existing workouts against maximum exercises
 - Updating existing workouts with default reps duration
 - Updating existing workouts
 - Schedule generation
@@ -377,7 +372,7 @@ Not implemented:
 Status:
 
 - Approved
-- Implemented with local mocked data only
+- Implemented with a browser-local model and local fallback data
 
 Current behavior:
 
@@ -386,13 +381,14 @@ Current behavior:
 - Provides tips for today's planned workout exercises
 - If no workout is planned today, selects one random available exercise
 - Uses guided chat-style buttons
-- Uses developer-provided mocked coach tips
+- Uses validated local technique knowledge as model context
+- Uses Transformers.js with WebGPU first and WebAssembly fallback
+- Falls back to local coaching advice when generation is unavailable
 - Home AI Coach card displays a random tip every time Home is shown
 
 Not implemented:
 
-- Real LLM
-- OpenAI API
+- Server-side LLM or external AI API
 - Backend
 - Database persistence
 - Open-ended chat input

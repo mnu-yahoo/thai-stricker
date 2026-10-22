@@ -21,7 +21,7 @@ Current behavior:
 - Home is active
 - Workouts opens the mocked Workouts screen
 - Schedule opens the mocked Planned Workout / Schedule screen
-- AI Coach opens the mocked AI Coach screen
+- AI Coach opens the local AI Coach screen
 - Settings opens the mocked Settings screen
 
 ## Purpose
@@ -197,27 +197,26 @@ Status:
 
 Current behavior:
 
-- Opens the mocked AI Coach screen
+- Opens the local AI Coach screen
 - Home displays one random local coach tip every time the screen is shown
 
 Future behavior:
 
-- Real AI generation is still not implemented
+- Guided local generation is available on the AI Coach screen
 
 Status:
 
-- Mocked flow implemented
+- Local guided flow implemented
 
 ## AI Coach Card
 
 Current behavior:
 - Displays one random local coach tip every time Home is shown
-- Tip comes from developer-provided mocked coach tip data
+- Tip comes from local coach data; guided generation is handled on the AI Coach screen
 - Card opens the AI Coach screen
 
 Not implemented:
-- Real AI generation
-- API-backed coaching
+- Server-side or API-backed coaching
 - Persisted tip history
 
 ## Visual Guidelines

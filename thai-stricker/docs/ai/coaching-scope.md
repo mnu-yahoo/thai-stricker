@@ -25,14 +25,16 @@ AI coaching must stay within safe coaching guidance.
 - The `knowledge base/urls` file may reference Evolve MMA Muay Thai blog pages. Only Evolve MMA pages that remain within the Muay Thai context are allowed as web sources.
 - Preserve source attribution and validate each new technique sheet before using it in the coach.
 
-## Local Rule-Based Coach
+## Local Coach
 
 Current behavior:
-- AI Coach uses developer-provided local tip data
-- Tips are matched to today's planned workout exercises
+- AI Coach uses validated local technique knowledge as context for guided generation
+- Transformers.js loads the local browser model lazily when a guided action is requested
+- WebGPU is preferred and WebAssembly CPU is used as a fallback
+- Existing local coaching tips remain available as an automatic fallback
+- Tips are matched to the selected exercise and its techniques
 - If no workout is planned, one random available exercise is selected
 
 Not implemented:
-- Real LLM
-- External API
-- Backend AI
+- External API or backend AI
+- Open-ended chat input

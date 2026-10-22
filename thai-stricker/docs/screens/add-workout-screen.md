@@ -97,7 +97,7 @@ Current behavior:
 - The available list displays exercise title and description only
 - Available exercise data includes help text and detail data used after selection
 - The same available exercise may be added multiple times
-- The screen blocks adding more than the Settings maximum exercises per workout
+- The screen does not limit the number of exercises that can be added
 
 ## Available Exercises Pagination
 
@@ -187,7 +187,6 @@ Current validation:
 - Workout title is required
 - Workout description is required
 - At least one exercise is required before saving
-- Exercise count must be less than or equal to the Settings maximum exercises per workout
 - Existing workouts are not validated against the setting
 
 ## Error Handling
@@ -196,14 +195,13 @@ Current behavior:
 
 - Errors are shown directly on screen
 - Invalid or incomplete workout fields do not save
-- Invalid exercise selection state does not add more exercises once the Settings maximum is reached
+- Invalid exercise selection state does not add an exercise
 
 ## Settings Dependency
 
 Current dependency:
 
-- Add Workout enforces Settings maximum exercises per workout
-- The limit comes from mocked app-level Settings state
+- Add Workout allows any number of exercises
 - Rest time between exercises comes from mocked app-level Settings state
 - Reps exercises use the mocked Settings default duration in minutes for reps exercises
 - The available exercise list comes from mocked app data seeded from existing workout exercises
@@ -295,7 +293,7 @@ The Add Workout screen must not implement:
 - New workouts are stored in local mocked app state only
 - After saving, user is redirected to Home
 - Total duration is calculated automatically and is read-only
-- Add Workout enforces Settings maximum exercises per workout
+- Add Workout allows any number of exercises
 - Add Workout does not persist data
 - Add Workout does not validate existing workouts
 - Add Workout does not implement Edit Workout
