@@ -8,6 +8,7 @@ export type CoachAction = (typeof COACH_ACTIONS)[number];
 
 export type CoachGenerationContext = {
   action: CoachAction;
+  focusTechnique: string;
   exercise: Exercise;
   techniques: Technique[];
   knowledge: CoachKnowledge[];
@@ -65,27 +66,38 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
     focusPoints: "focus points",
     explanation: "a short explanation of the exercise",
   }[context.action];
+  const actionInstructions = {
+    technicalTips: "Give 2 or 3 concrete execution cues. Prioritize stance, movement, alignment, timing, and recovery.",
+    commonMistakes: "Give 2 common mistakes and state the precise correction for each one.",
+    focusPoints: "Give 2 or 3 short, observable coaching cues to monitor during execution.",
+    explanation: "Explain the technique's purpose, how it works, and 1 or 2 tactical uses or variations.",
+  }[context.action];
 
   return [
     {
       role: "system",
       content: [
         "You are Thai Stricker's concise technique coach.",
-        "Give only practical advice about the exercise and training structure.",
+        "Give only practical advice about the focus technique and its training context.",
         "Do not give medical, injury, nutrition, or supplement advice.",
-        "If the user mentions pain or a health problem, advise them to consult a qualified professional.",
-        "Use only the supplied context. Never invent techniques or workout facts.",
+        "If the user mentions pain or a health problem, advise them to consult a qualified professional instead of coaching the symptom.",
+        "Use only the supplied validated knowledge. Never invent techniques or workout facts.",
         "Answer in English, in 2 or 3 short sentences, directly addressing the requested action.",
+        "Do not repeat the same generic advice across different actions.",
+        "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
       ].join("\n"),
     },
     {
       role: "user",
       content: [
         `Requested action: ${actionLabel}`,
+        `Focus technique: ${context.focusTechnique}`,
+        `Action requirements: ${actionInstructions}`,
         `Exercise: ${context.exercise.title}`,
         `Description: ${context.exercise.description || "No description"}`,
         `Additional tip: ${context.exercise.help || "No additional tip"}`,
-        `Techniques: ${techniqueNames}`,
+        `Techniques in exercise: ${techniqueNames}`,
+        "Answer only about the focus technique. Do not explain another technique in the exercise unless explicitly requested.",
         validatedKnowledge,
         `Current workout: ${workoutContext}`,
       ].join("\n"),

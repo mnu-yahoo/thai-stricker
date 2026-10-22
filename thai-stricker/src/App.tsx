@@ -276,12 +276,12 @@ function Coach() {
     exerciseId: selectedExercise.id,
     exerciseTitle: selectedExercise.title,
     shortTip: selectedExercise.help || selectedExercise.description,
-    technicalTips: [getFallbackCoachResponse({ action: "technicalTips", exercise: selectedExercise, techniques, knowledge, workout })],
-    commonMistakes: [getFallbackCoachResponse({ action: "commonMistakes", exercise: selectedExercise, techniques, knowledge, workout })],
-    focusPoints: [getFallbackCoachResponse({ action: "focusPoints", exercise: selectedExercise, techniques, knowledge, workout })],
+    technicalTips: [getFallbackCoachResponse({ action: "technicalTips", focusTechnique: knowledge[0]?.technique || techniques[0]?.name || selectedExercise.title, exercise: selectedExercise, techniques, knowledge, workout })],
+    commonMistakes: [getFallbackCoachResponse({ action: "commonMistakes", focusTechnique: knowledge[0]?.technique || techniques[0]?.name || selectedExercise.title, exercise: selectedExercise, techniques, knowledge, workout })],
+    focusPoints: [getFallbackCoachResponse({ action: "focusPoints", focusTechnique: knowledge[0]?.technique || techniques[0]?.name || selectedExercise.title, exercise: selectedExercise, techniques, knowledge, workout })],
     explanation: selectedExercise.description,
   } : undefined);
-  const context = selectedExercise ? (action: CoachAction): CoachGenerationContext => ({ action, exercise: selectedExercise, techniques, knowledge, workout }) : undefined;
+  const context = selectedExercise ? (action: CoachAction): CoachGenerationContext => ({ action, focusTechnique: knowledge[0]?.technique || techniques[0]?.name || selectedExercise.title, exercise: selectedExercise, techniques, knowledge, workout }) : undefined;
   const requestGeneration = async (action: CoachAction) => {
     if (!context || !knowledge.length) return;
     setActiveAction(action); setGenerationState("loading"); setGenerated(""); setGenerationError("");
