@@ -180,6 +180,8 @@ function cleanGeneratedText(value: string) {
     .replace(/^(assistant\s*[:：-]?\s*)/i, "")
     .replace(/\b(?:focus\s+points?|focus)\s*:\s*/gi, "")
     .replace(/\bvalidated\s+combination\s*:\s*[A-Z][A-Z–-]*(?:\s*\/\s*[A-Z][A-Z–-]*)?/gi, "")
+    .replace(/\bvalidated\s+technique\s*:\s*(?:JAB|CROSS)\s*:?\s*/gi, "")
+    .replace(/\btransition\s*:\s*/gi, "")
     .replace(/\b(?:JAB|CROSS)\s*:\s*/g, "")
     .replace(/\s+/g, " ")
     .trim();

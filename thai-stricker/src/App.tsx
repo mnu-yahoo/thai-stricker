@@ -273,7 +273,16 @@ function Coach() {
   const knowledge = getCoachKnowledgeForTechniqueNames(techniques.map((technique) => technique.name));
   const coachFocusTechnique = knowledge.length > 1 ? knowledge.map((item) => item.technique).join(" + ") : knowledge[0]?.technique || techniques[0]?.name || selectedExercise?.title || "";
   const filteredExercises = data.exercises.filter((exercise) => exercise.title.toLocaleLowerCase().includes(exerciseSearch.trim().toLocaleLowerCase()));
-  const fallbackTip = tip ?? (selectedExercise ? {
+  const knowledgeTip = selectedExercise && knowledge.length ? {
+    exerciseId: selectedExercise.id,
+    exerciseTitle: selectedExercise.title,
+    shortTip: selectedExercise.help || selectedExercise.description,
+    technicalTips: getFallbackCoachItems({ action: "technicalTips", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }),
+    commonMistakes: getFallbackCoachItems({ action: "commonMistakes", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }),
+    focusPoints: getFallbackCoachItems({ action: "focusPoints", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }),
+    explanation: getFallbackCoachItems({ action: "explanation", focusTechnique: coachFocusTechnique, exercise: selectedExercise, techniques, knowledge, workout }).join(" "),
+  } : undefined;
+  const fallbackTip = knowledgeTip ?? tip ?? (selectedExercise ? {
     exerciseId: selectedExercise.id,
     exerciseTitle: selectedExercise.title,
     shortTip: selectedExercise.help || selectedExercise.description,
