@@ -4,6 +4,7 @@ export type CoachKnowledge = {
   stance: string;
   source: { title: string; pages: number[]; status: "validated-against-source" };
   additionalSources?: { title: string; pages: number[]; status: "validated-against-source" }[];
+  webSources?: string[];
   scope: string;
   principles: string[];
   commonMistakes: string[];
@@ -26,10 +27,22 @@ export const coachKnowledge: CoachKnowledge[] = [{
     title: "Muay Thai Training Exercises",
     pages: [136, 137],
     status: "validated-against-source",
+  }, {
+    title: "Muay Thai: The Art of Fighting",
+    pages: [44],
+    status: "validated-against-source",
   }],
+  webSources: [
+    "https://evolve-mma.com/blog/the-4-muay-thai-punches-you-need-to-know/",
+    "https://evolve-mma.com/blog/how-to-throw-a-stronger-and-more-powerful-jab/",
+    "https://evolve-mma.com/blog/the-complete-muay-thai-beginners-guide/",
+    "https://evolve-mma.com/blog/16-basic-muay-thai-combinations-you-should-master-first/",
+  ],
   scope: "Use the front-hand straight punch guidance for the jab. Do not apply rear-hand straight punch targets to the jab.",
   principles: [
     "Use the jab to disrupt timing, measure distance, and prepare follow-up techniques.",
+    "Use the jab to create space, occupy the opponent's line of sight, and draw a defensive reaction.",
+    "Treat the jab as a fast, low-commitment entry that can set up punches, kicks, or a change of level.",
     "Advance while striking when the distance allows it.",
     "From the fight stance, step forward with the front foot when needed and punch in a straight line.",
     "Punch straight toward the target with the lead hand, aiming at the nose, chin, or eyes.",
@@ -39,6 +52,8 @@ export const coachKnowledge: CoachKnowledge[] = [{
     "Keep the rear hand close to the cheek.",
     "Turn the hips and shoulder and shift the weight slightly forward without losing balance.",
     "Rotate the fist down shortly before impact while keeping the wrist aligned.",
+    "Keep the stance balanced and slightly bladed, with the lead shoulder higher and the weight ready to move.",
+    "Pull the rear shoulder back as the lead arm extends instead of pushing the punch forward.",
     "Strike with the first two knuckles aligned with the wrist and shoulder.",
     "Return to the Muay Thai guard after the strike.",
   ],
@@ -61,7 +76,7 @@ export const coachKnowledge: CoachKnowledge[] = [{
     "Bring the fist quickly back to guard.",
   ],
   explanation: "The jab is a quick front-hand straight punch used to disrupt timing, measure distance, make contact, and prepare follow-up actions. It should be explosive but controlled, with the hand returning quickly to guard.",
-  variations: ["From a stationary stance.", "While stepping forward.", "As a range-finding or timing-disrupting jab.", "Before a follow-up punch or combination."],
+  variations: ["From a stationary stance.", "While stepping forward.", "Double or triple jab to create space.", "Body jab to change levels.", "Switch jab using a stance switch.", "As a range-finding or timing-disrupting jab.", "Before a follow-up punch, kick, teep, or combination."],
   safetyNote: "Start slowly and prioritize balance, alignment, and returning to guard.",
 }];
 

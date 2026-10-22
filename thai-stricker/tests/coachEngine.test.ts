@@ -28,6 +28,8 @@ describe("local coach engine", () => {
     expect(prompt).toContain("disrupt timing");
     expect(prompt).toContain("Keep the elbow down");
     expect(prompt).toContain("front foot");
+    expect(prompt).toContain("create space");
+    expect(prompt).toContain("Double or triple jab");
     expect(prompt).toContain("Answer in English");
   });
 
