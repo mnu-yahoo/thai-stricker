@@ -69,29 +69,29 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
     explanation: "a short explanation of the exercise",
   }[context.action];
   const actionInstructions = isCombination ? {
-    technicalTips: "Copy exactly 3 existing principles from the combination techniques. Do not prefix them with JAB: or CROSS:; keep entries such as 'Use the jab...' or 'Use the cross...' as written. Do not rephrase, merge, or add text.",
-    commonMistakes: "Copy exactly 3 existing combination mistakes. Prefix each with 'For the JAB,' or 'For the CROSS,' according to its source technique. Never use the format 'JAB:' or 'CROSS:'. Do not rephrase or add text.",
-    focusPoints: "Copy exactly 3 existing focus points from the techniques in the combination. Return only the three plain focus point sentences, without 'Focus points:', 'Focus:', technique labels, combination labels, or metadata.",
-    explanation: "Copy exactly 3 existing role or transition statements from the documented combinations. Do not rephrase, merge, or add text.",
+    technicalTips: "Copy exactly 1 existing principle from the combination techniques. Do not prefix it with JAB: or CROSS:; keep entries such as 'Use the jab...' or 'Use the cross...' as written. Do not rephrase, merge, or add text.",
+    commonMistakes: "Copy exactly 1 existing combination mistake. Prefix it with 'For the JAB,' or 'For the CROSS,' according to its source technique. Never use the format 'JAB:' or 'CROSS:'. Do not rephrase or add text.",
+    focusPoints: "Copy exactly 1 existing focus point from the techniques in the combination. Return only one plain focus point sentence, without 'Focus points:', 'Focus:', technique labels, combination labels, or metadata.",
+    explanation: "Copy exactly 1 existing role or transition statement from the documented combinations. Do not rephrase, merge, or add text.",
   }[context.action] : focusTechnique === "JAB" ? {
-    technicalTips: "Copy exactly 3 existing principles from the validated jab sheet. Do not rephrase, merge, or add text.",
-    commonMistakes: "Copy exactly 3 existing mistakes from the validated jab sheet. Do not rephrase, merge, correct, or add text.",
-    focusPoints: "Copy exactly 3 existing focus points from the validated jab sheet. Do not rephrase, merge, or add text.",
-    explanation: "Copy exactly 3 existing sentences or documented combination entries from the validated jab sheet. Do not rephrase, merge, or add text.",
+    technicalTips: "Copy exactly 1 existing principle from the validated jab sheet. Do not rephrase, merge, or add text.",
+    commonMistakes: "Copy exactly 1 existing mistake from the validated jab sheet. Do not rephrase, merge, correct, or add text.",
+    focusPoints: "Copy exactly 1 existing focus point from the validated jab sheet. Do not rephrase, merge, or add text.",
+    explanation: "Copy exactly 1 existing sentence or documented combination entry from the validated jab sheet. Do not rephrase, merge, or add text.",
   }[context.action] : {
-    technicalTips: "Copy exactly 3 existing principles from the validated cross sheet. Do not rephrase, merge, or add text.",
-    commonMistakes: "Copy exactly 3 existing mistakes from the validated cross sheet. Do not rephrase, merge, correct, or add text.",
-    focusPoints: "Copy exactly 3 existing focus points from the validated cross sheet. Do not rephrase, merge, or add text.",
-    explanation: "Copy exactly 3 existing sentences or documented combination entries from the validated cross sheet. Do not rephrase, merge, or add text.",
+    technicalTips: "Copy exactly 1 existing principle from the validated cross sheet. Do not rephrase, merge, or add text.",
+    commonMistakes: "Copy exactly 1 existing mistake from the validated cross sheet. Do not rephrase, merge, correct, or add text.",
+    focusPoints: "Copy exactly 1 existing focus point from the validated cross sheet. Do not rephrase, merge, or add text.",
+    explanation: "Copy exactly 1 existing sentence or documented combination entry from the validated cross sheet. Do not rephrase, merge, or add text.",
   }[context.action];
   const finalActionConstraint = context.action === "commonMistakes"
     ? isCombination
-      ? "Final constraint: output exactly 3 existing mistakes from the validated combination sheets and nothing else."
+      ? "Final constraint: output exactly 1 existing mistake from the validated combination sheets and nothing else."
       : focusTechnique === "JAB"
-      ? "Final constraint: output exactly 3 existing mistakes from the validated jab sheet and nothing else."
-      : "Final constraint: output exactly 3 existing mistakes from the validated cross sheet and nothing else."
+      ? "Final constraint: output exactly 1 existing mistake from the validated jab sheet and nothing else."
+      : "Final constraint: output exactly 1 existing mistake from the validated cross sheet and nothing else."
     : isCombination && context.action === "focusPoints"
-      ? "Final constraint: output exactly the three requested plain focus points and nothing else. Do not add labels, combination names, metadata, or the full knowledge sheet."
+      ? "Final constraint: output exactly 1 plain focus point and nothing else. Do not add labels, combination names, metadata, or the full knowledge sheet."
       : "Final constraint: stay specific to the requested action and focus technique.";
 
   return [
@@ -103,7 +103,7 @@ export function buildCoachMessages(context: CoachGenerationContext): CoachMessag
         "Do not give medical, injury, nutrition, or supplement advice.",
         "If the user mentions pain or a health problem, advise them to consult a qualified professional instead of coaching the symptom.",
         "Use only the supplied validated knowledge. Never invent techniques or workout facts.",
-        "Return exactly 3 existing responses from the supplied fiche, in English, and nothing else.",
+        "Return exactly 1 existing response from the supplied fiche, in English, and nothing else.",
         "Copy the selected responses verbatim, except for the explicitly requested 'For the JAB,' or 'For the CROSS,' prefix on mistakes. Do not paraphrase, merge, interpret, correct, or invent information.",
         "Do not repeat a response unless it appears as a separate validated entry in the fiche.",
         "Avoid vague advice such as 'stay focused' or 'maintain balance' unless you explain exactly how.",
@@ -164,7 +164,7 @@ export function getFallbackCoachItems(context: CoachGenerationContext) {
 }
 
 export function getFallbackCoachResponse(context: CoachGenerationContext) {
-  return getFallbackCoachItems(context).join(" ");
+  return getFallbackCoachItems(context).slice(0, 1).join(" ");
 }
 
 function extractGeneratedText(output: GeneratedText | GeneratedText[]) {

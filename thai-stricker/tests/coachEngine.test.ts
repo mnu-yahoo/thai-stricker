@@ -30,19 +30,19 @@ describe("local coach engine", () => {
     expect(prompt).toContain("disrupt timing");
     expect(prompt).toContain("Keep the elbow down");
     expect(prompt).toContain("for as long as possible");
-    expect(prompt).toContain("Copy exactly 3 existing principles");
+    expect(prompt).toContain("Copy exactly 1 existing principle");
     expect(prompt).toContain("Final constraint: stay specific to the requested action");
     expect(prompt).toContain("create space");
-    expect(prompt).toContain("Return exactly 3 existing responses");
+    expect(prompt).toContain("Return exactly 1 existing response");
     expect(prompt).toContain("Focus technique: JAB");
-    expect(prompt).toContain("Copy exactly 3 existing principles");
+    expect(prompt).toContain("Copy exactly 1 existing principle");
     expect(prompt).toContain("Do not explain another technique");
     const mistakePrompt = buildCoachPrompt({ action: "commonMistakes", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });
-    expect(mistakePrompt).toContain("Copy exactly 3 existing mistakes");
+    expect(mistakePrompt).toContain("Copy exactly 1 existing mistake");
     const focusPrompt = buildCoachPrompt({ action: "focusPoints", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });
-    expect(focusPrompt).toContain("Copy exactly 3 existing focus points");
+    expect(focusPrompt).toContain("Copy exactly 1 existing focus point");
     const explanationPrompt = buildCoachPrompt({ action: "explanation", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });
-    expect(explanationPrompt).toContain("Copy exactly 3 existing sentences or documented combination entries");
+    expect(explanationPrompt).toContain("Copy exactly 1 existing sentence or documented combination entry");
   });
 
   it("provides a local response for every guided action", () => {
@@ -64,7 +64,7 @@ describe("local coach engine", () => {
     expect(prompt).toContain("lead hand close to the chin");
     expect(prompt).not.toContain("front-hand straight punch");
     const mistakes = buildCoachPrompt({ action: "commonMistakes", focusTechnique: "CROSS", exercise, techniques: [cross], knowledge, workout });
-    expect(mistakes).toContain("Copy exactly 3 existing mistakes from the validated cross sheet");
+    expect(mistakes).toContain("Copy exactly 1 existing mistake from the validated cross sheet");
     expect(mistakes).not.toContain("four requested jab mistakes");
   });
 
@@ -79,9 +79,9 @@ describe("local coach engine", () => {
     expect(prompt).toContain("Validated technique: JAB");
     expect(prompt).toContain("Validated technique: CROSS");
     const focusPrompt = buildCoachPrompt({ action: "focusPoints", focusTechnique: "JAB + CROSS", exercise, techniques, knowledge, workout });
-    expect(focusPrompt).toContain("Copy exactly 3 existing focus points");
+    expect(focusPrompt).toContain("Copy exactly 1 existing focus point");
     expect(focusPrompt).toContain("without 'Focus points:'");
-    expect(focusPrompt).toContain("output exactly the three requested plain focus points and nothing else");
+    expect(focusPrompt).toContain("output exactly 1 plain focus point and nothing else");
     const fallback = getFallbackCoachResponse({ action: "focusPoints", focusTechnique: "JAB + CROSS", exercise, techniques, knowledge, workout });
     expect(fallback).toContain("Stay stable and balanced.");
     expect(fallback).not.toContain("Focus point:");

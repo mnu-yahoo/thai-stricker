@@ -31,10 +31,11 @@ Responses are generated locally when validated technique knowledge is available,
 - When one or more validated techniques are present in an exercise, the coach must use the isolated technique guidance and the documented combination guidance when available.
 - Combination guidance must identify the sequence, the role of each technique, the transition between techniques, and the most relevant combination-specific mistakes.
 - The fiches do not use separate `Critical guard cue` or `Key cues` sections. Guard and movement information belongs in the validated principles, focus points, explanations, or combination transitions.
-- Each guided action returns exactly 3 existing entries copied from the fiche.
-- `Technique tips` copies 3 principles, transitions, or documented execution entries.
-- `Common mistakes` copies 3 validated mistakes without adding corrections that are not written in the fiche.
-- `Focus points` copies 3 focus points or documented transition entries.
-- `Explain` copies 3 sentences, roles, or documented combination entries.
+- Each AI Coach guided action returns exactly 1 existing entry copied from the fiche.
+- `Technique tips` copies 1 principle, transition, or documented execution entry.
+- `Common mistakes` copies 1 validated mistake without adding a correction that is not written in the fiche.
+- `Focus points` copies 1 focus point or documented transition entry.
+- `Explain` copies 1 sentence, role, or documented combination entry.
 - The coach must not reproduce the whole fiche, paraphrase, merge entries, invent an undocumented combination, or repeat the same generic sentence for every guided action.
+- During workout execution, use compact local coaching instead of generative AI: display exactly one validated entry for `Technique tips`, one for `Common mistakes`, and one for `Focus points`. Do not display a separate generated `AI Coach` response in the workout session.
 - Example: for `JAB–CROSS`, the jab measures distance and creates a reaction; the transition drives the cross from the rear foot while the lead hand protects the chin; the cross returns quickly to guard.
