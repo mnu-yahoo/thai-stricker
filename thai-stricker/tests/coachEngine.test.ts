@@ -77,4 +77,19 @@ describe("local coach engine", () => {
     expect(mistakes).toContain("validated cross mistakes");
     expect(mistakes).not.toContain("four requested jab mistakes");
   });
+
+  it("uses combination coaching when jab and cross are in the same exercise", () => {
+    const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
+    const techniques = [technique, cross];
+    const knowledge = getCoachKnowledgeForTechniqueNames(techniques.map((item) => item.name));
+    const prompt = buildCoachPrompt({ action: "technicalTips", focusTechnique: "JAB + CROSS", exercise, techniques, knowledge, workout });
+    expect(prompt).toContain("This is combination coaching for JAB then CROSS");
+    expect(prompt).toContain("Address every validated technique in sequence");
+    expect(prompt).toContain("transition between techniques");
+    expect(prompt).toContain("Validated technique: JAB");
+    expect(prompt).toContain("Validated technique: CROSS");
+    const fallback = getFallbackCoachResponse({ action: "focusPoints", focusTechnique: "JAB + CROSS", exercise, techniques, knowledge, workout });
+    expect(fallback).toContain("JAB:");
+    expect(fallback).toContain("CROSS:");
+  });
 });
