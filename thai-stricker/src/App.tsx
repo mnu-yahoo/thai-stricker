@@ -183,9 +183,14 @@ function TechniqueForm() {
 
 function WorkoutDetail() {
   const { id } = useParams(); const { data } = useApp(); const workout = data.workouts.find((item) => item.id === id);
+  const [page, setPage] = useState(1);
   if (!workout) return <Navigate to="/workouts" replace />;
   const exercises = resolveWorkoutExercises(data, workout);
-  return <><Header title="Workout details" back="/workouts" action={<Link className="icon-button" to={`/workouts/${workout.id}/edit`} aria-label="Edit"><Icon name="edit" /></Link>} /><section className="title-block"><span className="pill">{workout.category}</span><h2>{workout.title}</h2><p>{workout.description}</p><div className="meta"><span>{workout.difficulty}</span><span>{workout.totalDurationMinutes} min</span><span>{workout.restSecondsBetweenExercises} sec rest</span></div></section><section><h2>Exercises</h2><ol className="exercise-list">{exercises.map((exercise, index) => <li key={`${exercise.exerciseId}-${index}`}><span className="number">{index + 1}</span><div><h3>{exercise.title}</h3><p>{exercise.description}</p><small>{exercise.techniqueIds.length} technique(s)</small></div><strong>{detailLabel(exercise)}</strong></li>)}</ol></section><Link className="button primary sticky-action" to={`/session/${workout.id}`}><Icon name="play_arrow" /> Start workout</Link></>;
+  const pageSize = data.settings.numberOfExercisesPerPage;
+  const pageCount = Math.max(1, Math.ceil(exercises.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const visibleExercises = exercises.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  return <><Header title="Workout details" back="/workouts" action={<Link className="icon-button" to={`/workouts/${workout.id}/edit`} aria-label="Edit"><Icon name="edit" /></Link>} /><section className="title-block"><span className="pill">{workout.category}</span><h2>{workout.title}</h2><p>{workout.description}</p><div className="meta"><span>{workout.difficulty}</span><span>{workout.totalDurationMinutes} min</span><span>{workout.restSecondsBetweenExercises} sec rest</span></div></section><section><h2>Exercises</h2><ol className="exercise-list">{visibleExercises.map((exercise, index) => <li key={`${exercise.exerciseId}-${index}`}><span className="number">{(currentPage - 1) * pageSize + index + 1}</span><div><h3>{exercise.title}</h3><p>{exercise.description}</p><small>{exercise.techniqueIds.length} technique(s)</small></div><strong>{detailLabel(exercise)}</strong></li>)}</ol>{pageCount > 1 && <nav className="pagination" aria-label="Workout exercise pages"><button type="button" className="button secondary small" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={currentPage === 1}>Previous</button><span>Page {currentPage} of {pageCount}</span><button type="button" className="button secondary small" onClick={() => setPage((value) => Math.min(pageCount, value + 1))} disabled={currentPage === pageCount}>Next</button></nav>}</section><Link className="button primary sticky-action" to={`/session/${workout.id}`}><Icon name="play_arrow" /> Start workout</Link></>;
 }
 
 const DRAFT_KEY = "thai-stricker:workout-draft";
