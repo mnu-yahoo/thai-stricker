@@ -134,6 +134,7 @@ section { margin-bottom: 28px; }
 .list-card, .library article, .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 15px; padding: 14px; display: flex; align-items: center; gap: 12px; }
 .list-card h3, .list-card p, .library h3, .library p, .day-card h3, .day-card p { margin-bottom: 0; }
 .list-card p, .library p, .day-card p { color: var(--muted); font-size: .8rem; }
+.exercise-library-description { margin-top: 3px; }
 .round-icon { flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); }
 .round-icon.success { color: var(--success); background: color-mix(in srgb, var(--success) 12%, transparent); }
 .coach-card { display: flex; align-items: center; gap: 14px; padding: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 18px; margin-bottom: 20px; }
