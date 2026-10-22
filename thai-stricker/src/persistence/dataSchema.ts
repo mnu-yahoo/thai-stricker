@@ -19,7 +19,6 @@ export const workoutExerciseSchema = z.object({
 export const settingsSchema = z.object({
   restSecondsBetweenExercises: z.union([z.literal(15), z.literal(30), z.literal(45), z.literal(60), z.literal(90), z.literal(120)]),
   trainingDaysPerWeek: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5), z.literal(6), z.literal(7)]),
-  maxExercisesPerWorkout: z.union([z.literal(5), z.literal(10), z.literal(15), z.literal(20)]),
   numberOfExercisesPerPage: z.union([z.literal(3), z.literal(6), z.literal(9), z.literal(12)]),
   defaultRepsExerciseDurationMinutes: z.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4), z.literal(5)]),
   themePreference: z.union([z.literal("Light"), z.literal("Dark")]),

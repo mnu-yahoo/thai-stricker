@@ -4,7 +4,6 @@ export const seedData: AppDataSnapshot = {
   settings: {
     restSecondsBetweenExercises: 30,
     trainingDaysPerWeek: 3,
-    maxExercisesPerWorkout: 10,
     numberOfExercisesPerPage: 6,
     defaultRepsExerciseDurationMinutes: 3,
     themePreference: "Light",

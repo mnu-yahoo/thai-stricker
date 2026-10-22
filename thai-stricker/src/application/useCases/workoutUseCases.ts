@@ -22,8 +22,7 @@ export function createWorkout(draft: WorkoutDraft, defaultRepsMinutes: number, e
   };
 }
 
-export function addExerciseToWorkout(exercises: WorkoutExercise[], exercise: Exercise, maxExercises: number) {
-  if (exercises.length >= maxExercises) return exercises;
+export function addExerciseToWorkout(exercises: WorkoutExercise[], exercise: Exercise) {
   return [...exercises, {
     exerciseId: exercise.id,
     id: exercise.id,
