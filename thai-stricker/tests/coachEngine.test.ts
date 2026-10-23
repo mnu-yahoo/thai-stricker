@@ -79,6 +79,16 @@ describe("local coach engine", () => {
     expect(leftHook[0].combinations.map((item) => item.name)).toContain("JAB–CROSS–LEFT HOOK");
   });
 
+  it("exposes the user-approved right hook fiche separately", () => {
+    const rightHook = getCoachKnowledgeForTechniqueNames(["RIGHT HOOK"]);
+    expect(rightHook).toHaveLength(1);
+    expect(rightHook[0].technique).toBe("RIGHT HOOK");
+    expect(rightHook[0].source.status).toBe("user-approved");
+    expect(rightHook[0].principles).toContain("Keep the lead hand close to the chin.");
+    expect(rightHook[0].commonMistakes).toContain("Do not drop the lead hand.");
+    expect(rightHook[0].combinations.map((item) => item.name)).toContain("JAB–CROSS–RIGHT HOOK");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
