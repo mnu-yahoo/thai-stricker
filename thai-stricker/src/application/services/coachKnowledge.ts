@@ -82,12 +82,6 @@ export const coachKnowledge: CoachKnowledge[] = [{
     role: "Use the jab to measure distance, disrupt timing, and create the reaction or opening for the rear-hand cross.",
     transition: "As the jab returns, stay balanced and drive from the rear foot into the cross without dropping the rear hand or exposing the chin.",
     commonMistakes: ["Pausing too long between the jab and cross.", "Dropping the lead hand during the cross.", "Forgetting to return to guard after the combination."],
-  }, {
-    name: "JAB–CROSS–HOOK",
-    sequence: ["JAB", "CROSS", "HOOK"],
-    role: "Use the jab and cross to create a reaction before continuing with the hook.",
-    transition: "Complete the cross with balance and recover the guard before rotating into the hook.",
-    commonMistakes: ["Rushing the hook before the cross is controlled.", "Overcommitting and losing balance.", "Leaving the hands low after the final punch."],
   }],
   safetyNote: "Start slowly and prioritize balance, alignment, and returning to guard.",
 }, {
@@ -147,12 +141,6 @@ export const coachKnowledge: CoachKnowledge[] = [{
     role: "Use the cross as the power punch after the jab has measured distance or drawn a reaction.",
     transition: "As the jab returns, drive from the rear foot and rotate the rear hip, waist, and shoulder into the cross while keeping the lead hand near the chin.",
     commonMistakes: ["Throwing the cross without using the jab to create a reaction.", "Dropping the lead hand during the cross.", "Over-rotating and losing balance."],
-  }, {
-    name: "JAB–CROSS–HOOK",
-    sequence: ["JAB", "CROSS", "HOOK"],
-    role: "Use the cross to continue the opening created by the jab before adding the hook.",
-    transition: "Finish the cross balanced, recover the guard, and rotate into the hook without rushing the transition.",
-    commonMistakes: ["Pausing between the jab and cross.", "Rushing the hook while off balance.", "Leaving the guard open after the combination."],
   }],
   safetyNote: "Start slowly and prioritize balance, alignment, controlled rotation, and returning to guard. Avoid overextending the shoulder or falling forward.",
 }, {
