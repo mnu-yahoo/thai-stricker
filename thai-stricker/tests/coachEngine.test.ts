@@ -69,6 +69,16 @@ describe("local coach engine", () => {
     expect(mistakes).not.toContain("four requested jab mistakes");
   });
 
+  it("exposes the user-approved left hook fiche separately", () => {
+    const leftHook = getCoachKnowledgeForTechniqueNames(["LEFT HOOK"]);
+    expect(leftHook).toHaveLength(1);
+    expect(leftHook[0].technique).toBe("LEFT HOOK");
+    expect(leftHook[0].source.status).toBe("user-approved");
+    expect(leftHook[0].principles).toContain("Keep the left elbow aligned with the fist during the strike.");
+    expect(leftHook[0].commonMistakes).toContain("Do not drop the rear hand.");
+    expect(leftHook[0].combinations.map((item) => item.name)).toContain("JAB–CROSS–LEFT HOOK");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];

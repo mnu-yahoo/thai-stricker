@@ -2,8 +2,8 @@ export type CoachKnowledge = {
   technique: string;
   discipline: "Muay Thai";
   stance: string;
-  source: { title: string; pages: number[]; status: "validated-against-source" };
-  additionalSources?: { title: string; pages: number[]; status: "validated-against-source" }[];
+  source: { title: string; pages: number[]; status: "validated-against-source" | "user-approved" };
+  additionalSources?: { title: string; pages: number[]; status: "validated-against-source" | "user-approved" }[];
   webSources?: string[];
   scope: string;
   principles: string[];
@@ -155,6 +155,64 @@ export const coachKnowledge: CoachKnowledge[] = [{
     commonMistakes: ["Pausing between the jab and cross.", "Rushing the hook while off balance.", "Leaving the guard open after the combination."],
   }],
   safetyNote: "Start slowly and prioritize balance, alignment, controlled rotation, and returning to guard. Avoid overextending the shoulder or falling forward.",
+}, {
+  technique: "LEFT HOOK",
+  discipline: "Muay Thai",
+  stance: "Orthodox stance, left hand forward",
+  source: {
+    title: "ThaiStricker curated LEFT HOOK technique sheet",
+    pages: [],
+    status: "user-approved",
+  },
+  scope: "Use the lead-hand hook as a short rounded punch from the guard. The left hook attacks the side of the head or body while the rear hand protects against counters.",
+  principles: [
+    "Use the left hook to attack the side of the head or body.",
+    "Use the hook to create angles and prepare follow-up techniques.",
+    "Launch the punch directly from the guard.",
+    "Keep the punch compact and avoid a wide swinging motion.",
+    "Pivot the lead foot and rotate the lead hip and shoulder together.",
+    "Keep the left elbow aligned with the fist during the strike.",
+    "Keep the rear hand close to the cheek.",
+    "Protect the chin while rotating.",
+    "Stay balanced throughout the movement.",
+    "Strike with the first two knuckles when targeting the head.",
+    "Return the left hand quickly to guard.",
+    "Use the left hook when the opponent's guard is occupied or extended.",
+  ],
+  commonMistakes: [
+    "Do not drop the rear hand.",
+    "Do not swing the left hook from too far away.",
+    "Do not punch only with the arm.",
+    "Do not over-rotate and lose balance.",
+    "Do not expose the chin while turning.",
+    "Do not push the hook instead of snapping it.",
+    "Do not forget to return the left hand to guard.",
+  ],
+  focusPoints: [
+    "Stay stable and balanced.",
+    "Keep the rear hand close to the cheek.",
+    "Keep the chin protected during the rotation.",
+    "Coordinate the lead foot, hip, shoulder, elbow, and fist.",
+    "Keep the hook compact and on a controlled arc.",
+    "Keep the left elbow aligned with the fist.",
+    "Rotate through the target without overcommitting.",
+    "Return quickly to guard.",
+  ],
+  explanation: "The left hook is a compact lead-hand punch used to attack the side of the head or body. Launch it from the guard with coordinated rotation of the lead foot, hip, shoulder, elbow, and fist. Keep the rear hand protecting the cheek and chin, stay balanced during the rotation, and return the left hand quickly to guard.",
+  combinations: [{
+    name: "JAB–LEFT HOOK",
+    sequence: ["JAB", "LEFT HOOK"],
+    role: "Use the jab to measure distance and occupy the opponent's guard before the left hook.",
+    transition: "As the jab returns, rotate into the left hook without dropping the rear hand.",
+    commonMistakes: ["Throwing the hook too wide.", "Rushing the transition.", "Losing balance."],
+  }, {
+    name: "JAB–CROSS–LEFT HOOK",
+    sequence: ["JAB", "CROSS", "LEFT HOOK"],
+    role: "Use the jab and cross to create a defensive reaction before the left hook.",
+    transition: "Complete the cross with balance, then rotate into the left hook while maintaining the guard.",
+    commonMistakes: ["Rushing the hook.", "Over-rotating.", "Leaving the hands low."],
+  }],
+  safetyNote: "Start slowly and prioritize balance, controlled rotation, protection, and returning to guard.",
 }];
 
 export function getCoachKnowledgeForTechniqueNames(names: string[]) {
