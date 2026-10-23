@@ -31,12 +31,29 @@ AI coaching must stay within safe coaching guidance.
 ## Local Coach
 
 Current behavior:
-- AI Coach uses validated local technique knowledge as context for guided generation
+- AI Coach uses validated local technique knowledge as the only source of responses
 - Transformers.js loads the local browser model lazily when a guided action is requested
 - WebGPU is preferred and WebAssembly CPU is used as a fallback
-- Existing local coaching tips remain available as an automatic fallback
+- The model acts as a constrained selector: it returns the index of one allowed fiche entry, not a free-form coaching sentence
+- The application resolves the selected index to the exact text stored in the validated fiche
+- Invalid model output, model errors, timeouts, or unavailable runtime automatically use the local fallback
 - Tips are matched to the selected exercise and its techniques
 - If no workout is planned, one random available exercise is selected
+
+The technique fiches are the source of truth. Improving the coach therefore means
+improving and validating the fiches, rather than relying on model creativity or
+fine-tuning. The model is not trained at runtime and does not add new Muay Thai
+knowledge.
+
+For every guided action, the coach must select exactly one existing entry:
+
+- `Technique tips`: one principle, transition, or documented execution entry
+- `Common mistakes`: one validated mistake, including the documented technique prefix when needed
+- `Focus points`: one validated focus point or documented transition entry
+- `Explain`: one explanation sentence, role, or documented combination entry
+
+The application must reject any response that is not a valid candidate index and
+must never display arbitrary model-generated text.
 
 Not implemented:
 - External API or backend AI

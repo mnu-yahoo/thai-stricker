@@ -4,7 +4,7 @@ Status: Approved
 
 ## Purpose
 
-The AI Coach screen gives the user local, guided technique guidance. It uses the browser-local `onnx-community/LFM2.5-350M-ONNX` model through Transformers.js when available, with the existing local coach tips as an automatic fallback.
+The AI Coach screen gives the user local, guided technique guidance. It uses the browser-local `onnx-community/LFM2.5-350M-ONNX` model through Transformers.js when available. The validated technique fiche remains the only source of coaching content: the model selects one numbered fiche entry and the application displays that exact entry. Local coaching advice is the automatic fallback.
 
 The AI runtime is loaded only when the user requests a guided response. The model is cached by the browser after its first download. WebGPU is preferred and WebAssembly CPU is used as a fallback.
 
@@ -47,20 +47,31 @@ The AI runtime is loaded only when the user requests a guided response. The mode
 - Common mistakes returns `commonMistakes`
 - Focus points returns `focusPoints`
 - Explain exercise returns `explanation`
+- Each action displays exactly one validated fiche entry
+- The model returns only a candidate index; free-form generated text is never displayed
 - No open-ended text input is implemented
 
 ## Context and fallback data
 
 - Context is restricted to the selected exercise, its description and Tip, its techniques, and the matching workout when available
-- Existing imported coach tips remain the local fallback source
+- Existing imported coach tips and validated knowledge sheets remain local sources/fallbacks
 - Exercise matching prefers id and falls back to exercise title
 - The first validated local knowledge entry is currently `JAB`; AI generation remains disabled for techniques without a validated entry
 
 ## Loading and failure behavior
 
 - The first guided action displays a loading state while the model is downloaded or initialized
-- Network, model, WebGPU/WebAssembly, timeout, empty, and overlong-response failures use local coaching advice
+- Network, model, WebGPU/WebAssembly, timeout, empty, invalid-index, out-of-range, and overlong-response failures use local coaching advice
 - No model is loaded on other screens
+
+## Knowledge quality and model scope
+
+- The fiches are the source of truth and must be enriched from validated, attributed sources.
+- Fiche entries must be concise, standalone, in English, and specific to their action category.
+- Isolated technique guidance must be kept separate from documented combination guidance.
+- Combination entries must document the sequence, role, transition, and combination-specific mistakes; the coach must not infer an undocumented sequence from technique names alone.
+- The current model is not fine-tuned or trained by the application. It is only a constrained selector over fiche entries.
+- Improving the answer set means improving and validating the fiches, not making the model more creative.
 
 ## Safety Guardrails
 
