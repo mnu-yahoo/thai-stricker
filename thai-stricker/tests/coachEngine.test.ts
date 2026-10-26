@@ -18,7 +18,7 @@ const workout: Workout = {
 describe("local coach engine", () => {
   it("uses the lightweight instruction-tuned model graph", () => {
     expect(COACH_MODEL_ID).toBe("onnx-community/SmolLM2-135M-Instruct-ONNX");
-    expect(COACH_MODEL_FILE_NAME).toBe("model_q4f16");
+    expect(COACH_MODEL_FILE_NAME).toBe("model");
     expect(COACH_MODEL_DTYPE).toBe("q4f16");
   });
 

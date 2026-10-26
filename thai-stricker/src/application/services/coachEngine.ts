@@ -6,7 +6,8 @@ export const COACH_MODEL_ID = "onnx-community/SmolLM2-135M-Instruct-ONNX";
 // Use the smallest instruction-tuned graph that remains suitable for the
 // constrained, fiche-based coach. q4f16 is substantially lighter than the
 // previous LFM model and avoids loading the large desktop-only graph.
-export const COACH_MODEL_FILE_NAME = "model_q4f16";
+// Transformers.js appends the selected dtype suffix to this base name.
+export const COACH_MODEL_FILE_NAME = "model";
 export const COACH_MODEL_DTYPE = "q4f16" as const;
 export const COACH_MODEL_ENABLED_ON_MOBILE = true;
 export const COACH_ACTIONS = ["technicalTips", "commonMistakes", "focusPoints", "explanation"] as const;
