@@ -232,12 +232,11 @@ function cleanGeneratedText(value: string) {
 }
 
 function selectGeneratedCandidate(value: string, candidates: string[]) {
-  const match = value.match(/(?:^|\s)(\d+)\s*$/);
-  if (!match) throw new Error("Coach returned an invalid response selection");
-  const index = Number(match[1]);
-  if (!Number.isInteger(index) || index < 0 || index >= candidates.length) {
-    throw new Error("Coach selected an unavailable response");
-  }
+  // Small browser models sometimes add a newline or a short assistant label
+  // despite the strict prompt. Accept the first valid index they emit.
+  const indexes = [...value.matchAll(/\b(\d+)\b/g)].map((match) => Number(match[1]));
+  const index = indexes.find((candidate) => Number.isInteger(candidate) && candidate >= 0 && candidate < candidates.length);
+  if (index === undefined) throw new Error("Coach returned an invalid response selection");
   return candidates[index];
 }
 
@@ -251,7 +250,7 @@ export async function generateCoachResponse(context: CoachGenerationContext, tim
   const candidates = getCoachCandidateResponses(context);
   const run = async (generator: TextGenerationPipeline) => {
     const output = await Promise.race([
-      generator(messages, { max_new_tokens: 64, do_sample: false, temperature: 0.1, return_full_text: true }),
+      generator(messages, { max_new_tokens: 4, do_sample: false, temperature: 0.1, return_full_text: false }),
       new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach generation timed out")), timeoutMs)),
     ]);
     const text = cleanGeneratedText(extractGeneratedText(output as GeneratedText | GeneratedText[]));
