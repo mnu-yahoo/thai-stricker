@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "fileType": "calendar",
+  "exportedAt": "2026-10-26T07:26:00.844Z",
+  "calendarWorkoutDays": [
+    {
+      "date": "2026-10-19",
+      "status": "completed",
+      "workoutName": "test-workout"
+    },
+    {
+      "date": "2026-10-20",
+      "status": "completed",
+      "workoutName": "Muay Thai Training Exercises"
+    },
+    {
+      "date": "2026-10-21",
+      "status": "completed",
+      "workoutName": "Instagram"
+    }
+  ],
+  "monthlySummary": {
+    "completedWorkouts": 4,
+    "plannedWorkouts": 0,
+    "missedWorkouts": 0
+  }
+}

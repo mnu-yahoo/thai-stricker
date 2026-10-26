@@ -120,13 +120,13 @@ describe("local coach engine", () => {
   });
 
   it("exposes the user-approved left low hook fiche separately from left hook", () => {
-    const lowLeftHook = getCoachKnowledgeForTechniqueNames(["LOW HOOK (LEFT)"]);
+    const lowLeftHook = getCoachKnowledgeForTechniqueNames(["LEFT LOW HOOK"]);
     expect(lowLeftHook).toHaveLength(1);
-    expect(lowLeftHook[0].technique).toBe("LOW HOOK (LEFT)");
+    expect(lowLeftHook[0].technique).toBe("LEFT LOW HOOK");
     expect(lowLeftHook[0].source.status).toBe("user-approved");
     expect(lowLeftHook[0].principles).toContain("Use the left low hook to attack the body or lower ribs.");
     expect(lowLeftHook[0].commonMistakes).toContain("Do not bend forward from the waist.");
-    expect(lowLeftHook[0].combinations.map((item) => item.name)).toContain("LOW CROSS–LOW HOOK (LEFT)");
+    expect(lowLeftHook[0].combinations.map((item) => item.name)).toContain("LOW CROSS–LEFT LOW HOOK");
   });
 
   it("uses combination coaching when jab and cross are in the same exercise", () => {

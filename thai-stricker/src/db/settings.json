@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "fileType": "settings",
+  "exportedAt": "2026-10-26T07:26:00.844Z",
+  "settings": {
+    "restSecondsBetweenExercises": 30,
+    "trainingDaysPerWeek": 3,
+    "numberOfExercisesPerPage": 6,
+    "defaultRepsExerciseDurationMinutes": 1,
+    "themePreference": "Dark"
+  }
+}

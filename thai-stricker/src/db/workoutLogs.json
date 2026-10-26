@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "fileType": "workoutLogs",
+  "exportedAt": "2026-10-26T07:26:00.844Z",
+  "workoutLogs": [
+    {
+      "id": "log-43f76688-9ac3-477d-bc07-d855b604a76a",
+      "workoutId": "workout-9e552e75-1f40-4b86-b18f-3d9aa130358c",
+      "workoutTitle": "test-workout",
+      "completedAt": "2026-10-19T15:06:00.055Z",
+      "completedDate": "2026-10-19",
+      "exerciseCount": 1,
+      "completedExerciseCount": 1,
+      "skippedExerciseCount": 0,
+      "totalDurationMinutes": 1,
+      "source": "web"
+    },
+    {
+      "id": "log-8338aac1-fbb1-41ac-aaaf-85868a4e56b5",
+      "workoutId": "workout-0983e585-50a3-4c2c-8223-29e3cfe6d012",
+      "workoutTitle": "Muay Thai Training Exercises",
+      "completedAt": "2026-10-20T15:27:10.588Z",
+      "completedDate": "2026-10-20",
+      "exerciseCount": 6,
+      "completedExerciseCount": 0,
+      "skippedExerciseCount": 6,
+      "totalDurationMinutes": 1,
+      "source": "web"
+    },
+    {
+      "id": "log-74373e66-8890-4eea-accb-b2c84a3a6b4a",
+      "workoutId": "workout-0983e585-50a3-4c2c-8223-29e3cfe6d012",
+      "workoutTitle": "Muay Thai Training Exercises",
+      "completedAt": "2026-10-20T20:05:53.129Z",
+      "completedDate": "2026-10-20",
+      "exerciseCount": 6,
+      "completedExerciseCount": 5,
+      "skippedExerciseCount": 1,
+      "totalDurationMinutes": 1,
+      "source": "web"
+    },
+    {
+      "id": "log-d23e7e62-ff23-40ef-b306-7c0e124e468a",
+      "workoutId": "workout-b9f75bb9-735c-4ec1-bff1-0b3e3ef4121d",
+      "workoutTitle": "Instagram",
+      "completedAt": "2026-10-21T22:13:37.270Z",
+      "completedDate": "2026-10-21",
+      "exerciseCount": 10,
+      "completedExerciseCount": 10,
+      "skippedExerciseCount": 0,
+      "totalDurationMinutes": 21,
+      "source": "web"
+    }
+  ]
+}

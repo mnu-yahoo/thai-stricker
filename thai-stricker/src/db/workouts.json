@@ -1,0 +1,1639 @@
+{
+  "schemaVersion": 1,
+  "fileType": "workouts",
+  "exportedAt": "2026-10-26T07:26:00.844Z",
+  "techniques": [
+    {
+      "id": "technique-001",
+      "name": "STANCE",
+      "shortName": "STANCE",
+      "description": "basic muay thai stance and guard",
+      "category": "Muay Thai techniques",
+      "subCategory": "Stance"
+    },
+    {
+      "id": "technique-002",
+      "name": "FOOTWORK",
+      "shortName": "FOOTWORK",
+      "description": "Movements front, back left, right, diagonal, pivots, ...",
+      "category": "Muay Thai techniques",
+      "subCategory": "Stance"
+    },
+    {
+      "id": "technique-003",
+      "name": "JAB",
+      "shortName": "JAB",
+      "description": "The jab is a quick snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-004",
+      "name": "CROSS",
+      "shortName": "CROSS",
+      "description": "The cross is a power strike and should be fast and hard.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-005",
+      "name": "LEFT HOOK",
+      "shortName": "LHOOK",
+      "description": "The left hook can be used as a fast and snapping strike or power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-006",
+      "name": "RIGHT HOOK",
+      "shortName": "RHOOK",
+      "description": "The right hook can be used as a fast and snapping strike or power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-007",
+      "name": "LOW JAB",
+      "shortName": "BJAB",
+      "description": "The low jab is the same as the regular jab technique, but drop eye-level by bending both knees substantially while advancing and striking.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-008",
+      "name": "LOW CROSS",
+      "shortName": "BCROSS",
+      "description": "The low cross is the same as the regular cross technique, but drop eye-level by bending both knees substantially while striking.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-009",
+      "name": "LEFT LOW HOOK",
+      "shortName": "LBHOOK",
+      "description": "The low hook is the same as the regular hook left technique, but drop eye-level by bending both knees substantially while striking.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-010",
+      "name": "RIGHT LOW HOOK",
+      "shortName": "RBHOOK",
+      "description": "The low hook is the same as the regular hook right technique, but drop eye-level by bending both knees substantially while striking.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-011",
+      "name": "LEFT UPPERCUT",
+      "shortName": "LUPP",
+      "description": "The left uppercut is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-012",
+      "name": "RIGHT UPPERCUT",
+      "shortName": "RUPP",
+      "description": "The right uppercut is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-013",
+      "name": "LEFT HORIZONTAL ELBOW",
+      "shortName": "LHELBOW",
+      "description": "The left horizontal elbow is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-014",
+      "name": "RIGHT HORIZONTAL ELBOW",
+      "shortName": "RHElbow",
+      "description": "The right horizontal elbow is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-015",
+      "name": "LEFT DOWN ELBOW",
+      "shortName": "LDELBOW",
+      "description": "The left down elbow is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-016",
+      "name": "RIGHT DOWN ELBOW",
+      "shortName": "RDELBOW",
+      "description": "The right down elbow is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-017",
+      "name": "LEFT UP ELBOW",
+      "shortName": "LUELBOW",
+      "description": "The left up elbow is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-018",
+      "name": "RIGHT UP ELBOW",
+      "shortName": "RUELBOW",
+      "description": "The right up elbow is a fast snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-019",
+      "name": "LEFT SPINNING BACK-FIST",
+      "shortName": "LSPINBF",
+      "description": "The left spinning back-fist is a fast power strike using centrifugal force.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-020",
+      "name": "RIGHT SPINNING BACK-FIST",
+      "shortName": "RSPINBF",
+      "description": "The right spinning back-fist is a fast power strike using centrifugal force.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-021",
+      "name": "LEFT SPINNING BACK-ELBOW",
+      "shortName": "LSPINBE",
+      "description": "The left spinning back-elbow is a fast power strike using centrifugal force.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-022",
+      "name": "RIGHT SPINNING BACK-ELBOW",
+      "shortName": "RSPINBE",
+      "description": "The right spinning back-elbow is a fast power strike using centrifugal force.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-023",
+      "name": "LEFT JUMP FLY CROSS",
+      "shortName": "LFLYCROSS",
+      "description": "The left jump fly cross is a power strike used to close the distance between you and the target while striking with Added momentum.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-024",
+      "name": "RIGHT JUMP FLY CROSS",
+      "shortName": "RFLYCROSS",
+      "description": "The right jump fly cross is a power strike used to close the distance between you and the target while striking with Added momentum.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-025",
+      "name": "LEFT JUMP FLY ELBOW",
+      "shortName": "LFLYELBOW",
+      "description": "The left jump fly elbow is a power strike used to close the distance between you and the target while striking with Added momentum",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-026",
+      "name": "RIGHT JUMP FLY ELBOW",
+      "shortName": "RFLYELBOW",
+      "description": "The right jump fly elbow is a power strike used to close the distance between you and the target while striking with Added momentum.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-027",
+      "name": "LEFT ROUND KICK",
+      "shortName": "LRKICK",
+      "description": "The left round kick is a fast power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-028",
+      "name": "RIGHT ROUND KICK",
+      "shortName": "RRKICK",
+      "description": "The right round kick is a fast power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-029",
+      "name": "LEFT MIDDLE KICK",
+      "shortName": "LMKICK",
+      "description": "The left middle kick is a fast power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-030",
+      "name": "RIGHT MIDDLE KICK",
+      "shortName": "RMKICK",
+      "description": "The right middle kick is a fast power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-031",
+      "name": "LEFT LOW KICK",
+      "shortName": "LLKICK",
+      "description": "The left low kick is a fast power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-032",
+      "name": "RIGHT LOW KICK",
+      "shortName": "RLKICK",
+      "description": "The right low kick is a fast power strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-033",
+      "name": "LEFT ANGLE KICK",
+      "shortName": "LAKICK",
+      "description": "The left angle kick is a quick, snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-034",
+      "name": "RIGHT ANGLE KICK",
+      "shortName": "RAKICK",
+      "description": "The right angle kick is a quick, snapping strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-035",
+      "name": "LEFT TEEP",
+      "shortName": "LONGTEEP",
+      "description": "The TEEP is a pushing technique or a quick thrusting strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-036",
+      "name": "SHORT TEEP",
+      "shortName": "SHORTTEEP",
+      "description": "The short TEEP is a pushing technique or a quick thrusting strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-037",
+      "name": "LEFT STRAIGHT KNEE",
+      "shortName": "LSTRKNEE",
+      "description": "A straight knee strike driven forward toward the abdomen or solar plexus.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-038",
+      "name": "RIGHT STRAIGHT KNEE",
+      "shortName": "RSTRKNEE",
+      "description": "A straight knee strike driven forward toward the abdomen or solar plexus.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-039",
+      "name": "LEFT JUMP FLY KNEE",
+      "shortName": "LFLYKNEE",
+      "description": "The left jump fly knee is a power strike and used to close the distance between you and the target while striking with added momentum.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-040",
+      "name": "RIGHT JUMP FLY KNEE",
+      "shortName": "RFLYKNEE",
+      "description": "The right jump fly knee is a power strike and used to close the distance between you and the target while striking with added momentum.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-041",
+      "name": "LEFT PARRY",
+      "shortName": "LPARRY",
+      "description": "The left parry is a quick defense against a cross.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-042",
+      "name": "RIGHT PARRY",
+      "shortName": "RPARRY",
+      "description": "The right parry is a quick defense against a jab.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-043",
+      "name": "LEFT COVER HIGH",
+      "shortName": "LCOVER",
+      "description": "The left cover high is a defense against high attacks to the center and left side of the head.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-044",
+      "name": "RIGHT COVER HIGH",
+      "shortName": "RCOVER",
+      "description": "The right cover high is a defense against high attacks to the center and right side of the head.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-045",
+      "name": "LEFT BODY BLOCK OUTSIDE",
+      "shortName": "LBBLOCKOUT",
+      "description": "The left cover low outside is a defense against attacks to the left side of the torso.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-046",
+      "name": "RIGHT BODY BLOCK OUTSIDE",
+      "shortName": "RBBLOCKOUT",
+      "description": "The right cover low outside is a defense against attacks to the right side of the torso.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-047",
+      "name": "LEFT BODY BLOCK INSIDE",
+      "shortName": "LBBLOCKIN",
+      "description": "The left cover low inside is a defense against attacks to the front midsection.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-048",
+      "name": "RIGHT BODY BLOCK INSIDE",
+      "shortName": "RBBLOCKIN",
+      "description": "The right cover low inside is a defense against attacks to the front midsection.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-049",
+      "name": "LEFT CUP/CATCH",
+      "shortName": "LCUPCATCH",
+      "description": "The left cup/catch is a defense against the jab or cross and can be altered as a defense against uppercuts.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-050",
+      "name": "RIGHT CUP/CATCH",
+      "shortName": "RCUPCATCH",
+      "description": "The right cup/catch is a defense against the jab or cross and can be altered as a defense against uppercuts.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-051",
+      "name": "LEFT SLIP",
+      "shortName": "LSLIP",
+      "description": "The left slip is a defense against the jab or cross.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-052",
+      "name": "RIGHT SLIP",
+      "shortName": "RSLIP",
+      "description": "The right slip is a defense against the jab or cross.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-053",
+      "name": "DUCK",
+      "shortName": "DUCK",
+      "description": "The duck is a defense against most attacks to the head.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-054",
+      "name": "LEFT BOB AND WEAVE",
+      "shortName": "LBOBW",
+      "description": "The left bob and weave is a defense against high attacks to the center and left side of the head.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-055",
+      "name": "RIGHT BOB AND WEAVE",
+      "shortName": "RBOBW",
+      "description": "The right bob and weave is a defense against high attacks to the center and right side of the head.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-056",
+      "name": "LEFT SHOULDER STOP",
+      "shortName": "LSHOULDERSTOP",
+      "description": "The left shoulder stop is a defense against the cross and right hook.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-057",
+      "name": "RIGHT SHOULDER STOP",
+      "shortName": "RSHOULDERSTOP",
+      "description": "The right shoulder stop is a defense against the left hook.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-058",
+      "name": "LEFT ELBOW JAM",
+      "shortName": "LELBOWJAM",
+      "description": "The left elbow jam is a defense against opponent’s right horizontal, right down, and right up elbow.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-059",
+      "name": "RIGHT ELBOW JAM",
+      "shortName": "LELBOWJAM",
+      "description": "The right elbow jam is a defense against opponent’s left horizontal, left down, and left up elbow.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-060",
+      "name": "LEFT PUSH",
+      "shortName": "LPUSH",
+      "description": "The left push is used to create distance and disrupt opponent’s strikes.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-061",
+      "name": "RIGHT PUSH",
+      "shortName": "RPUSH",
+      "description": "The right push is used to create distance and disrupt opponent’s strikes.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punch Defenses"
+    },
+    {
+      "id": "technique-062",
+      "name": "LEAD LEG SHIELD",
+      "shortName": "LSHINBLOCK",
+      "description": "The lead leg shield is a defense against opponent’s mid or low kicks.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-063",
+      "name": "CROSS SHIELD",
+      "shortName": "CSHINBLOCK",
+      "description": "The cross shield is a defense against opponent’s mid-level or low level left round kick.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-064",
+      "name": "SWEEP/PARRY LEFT ROUND KICK",
+      "shortName": "LSWEEPPARRY",
+      "description": "The sweep/parry left round kick is a defense against opponent’s mid-left round kick.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-065",
+      "name": "SWEEP/PARRY RIGHT ROUND KICK",
+      "shortName": "RSWEEPPARRY",
+      "description": "The sweep/parry right round kick is a defense against opponent’s mid-right round kick.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-066",
+      "name": "PARRY LONG TEEP INSIDE",
+      "shortName": "LGTEEPPARRYIN",
+      "description": "The parry long TEEP inside is a defense against opponent’s long TEEP.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-067",
+      "name": "PARRY LONG TEEP OUTSIDE",
+      "shortName": "LGTEEPPARRYOUT",
+      "description": "The parry long TEEP outside is a defense against opponent’s long TEEP.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-068",
+      "name": "PARRY SHORT TEEP INSIDE",
+      "shortName": "SHTEEPPARRYIN",
+      "description": "The parry short TEEP inside is a defense against opponent’s short TEEP.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-069",
+      "name": "PARRY SHORT TEEP OUTSIDE",
+      "shortName": "SHTEEPPARRYOUT",
+      "description": "The parry short TEEP outside is a defense against opponent’s short TEEP.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-070",
+      "name": "PARRY LEFT LONG KNEE INSIDE",
+      "shortName": "PLLKNEEIN",
+      "description": "The parry left long knee inside is a defense against opponent’s left long knee.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-071",
+      "name": "PARRY LEFT LONG KNEE OUTSIDE",
+      "shortName": "PLLKNEEOUT",
+      "description": "The parry left long knee outside is a defense against opponent’s left long knee.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-072",
+      "name": "PARRY RIGHT LONG KNEE INSIDE",
+      "shortName": "PRLKNEEIN",
+      "description": "The parry right long knee inside is a defense against opponent’s right long knee.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-073",
+      "name": "PARRY RIGHT LONG KNEE OUTSIDE",
+      "shortName": "PRLKNEEOUT",
+      "description": "The parry right long knee outside is a defense against opponent’s right long knee.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-074",
+      "name": "LEFT ANGLE EVADE KICK",
+      "shortName": "LANGLEEVADE",
+      "description": "The left angle evade kick is a defense against opponent’s left round kick and includes a follow-up strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-075",
+      "name": "RIGHT ANGLE EVADE KICK",
+      "shortName": "RANGLEEVADE",
+      "description": "The right angle evade kick is a defense against opponent’s right round kick and includes a follow-up strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-076",
+      "name": "LEFT CATCH KICK",
+      "shortName": "LCATCHKICK",
+      "description": "The left catch kick is a defense against opponent’s mid right round kick or mid right angle kick.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-077",
+      "name": "RIGHT CATCH KICK",
+      "shortName": "RCATCHKICK",
+      "description": "The right catch kick is a defense against opponent’s mid left round kick or mid left angle kick.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
+    },
+    {
+      "id": "technique-63af79d6-b0c9-42fb-8f97-20fa2597b78a",
+      "name": "Warmup",
+      "shortName": "WARMUP",
+      "description": "Warmup : run on place, stretch from top to bottom.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Warmup"
+    },
+    {
+      "id": "technique-6f2902ef-7451-4c51-a64e-57e251982214",
+      "name": "RIGHT TEEP",
+      "shortName": "RLONGTEEP",
+      "description": "The TEEP is a pushing technique or a quick thrusting strike.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-dd92d73c-824d-44a7-8750-ff91ed4f03b4",
+      "name": "LEFT DIAGONAL KNEE",
+      "shortName": "LDIAGKNEE",
+      "description": "Left Diagonal Knee",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-032d048a-5cf2-493f-8cda-8c809e179c2d",
+      "name": "RIGHT DIAGONAL KNEE",
+      "shortName": "RDIAGKNEE",
+      "description": "Diagonal Right Knee",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-5b4e3136-375c-4bdf-9d01-336d51697f29",
+      "name": "LEFT SPEAR ELBOW",
+      "shortName": "LSPELBOW",
+      "description": "The arm is driven forward with the point of the elbow facing the opponent.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-e55c82fb-42ba-4ff7-a8e4-33d5b3c0570d",
+      "name": "RIGHT SPEAR ELBOW",
+      "shortName": "RSPELBOW",
+      "description": "The arm is driven forward with the point of the elbow facing the opponent.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-fbdd8ea8-00f1-4ef7-a477-d930eaee6040",
+      "name": "LEFT BACK ELBOW",
+      "shortName": "LBACKELBOW",
+      "description": "The elbow moves from the inside toward the outside.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-f4dc2e02-6070-433e-9a94-f93b6edd578f",
+      "name": "RIGHT BACK ELBOW",
+      "shortName": "RBACKELBOW",
+      "description": "The elbow moves from the inside toward the outside.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Punches"
+    },
+    {
+      "id": "technique-bf157ea2-91fa-4696-a90f-243672b40677",
+      "name": "LEFT CLINCH KNEE",
+      "shortName": "LCLINKNEE",
+      "description": "Used in the clinch; the knee travels around the opponent’s hip to strike the flanks.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-3849c12d-8783-4bc2-94b8-267bf7859e4d",
+      "name": "RIGHT CLINCH KNEE",
+      "shortName": "RCLINKNEE",
+      "description": "Used in the clinch; the knee travels around the opponent’s hip to strike the flanks.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kicks"
+    },
+    {
+      "id": "technique-2446966a-035b-47f9-a8fc-8fd9b7a37e28",
+      "name": "STEP FORWARD",
+      "shortName": "FWSTEP",
+      "description": "Step Forward to close distance",
+      "category": "Muay Thai techniques",
+      "subCategory": "Footwork"
+    },
+    {
+      "id": "technique-8164bc2b-6ed3-48ee-939c-314ee53eeedd",
+      "name": "STEP BACKWARD",
+      "shortName": "BACKSTEP",
+      "description": "Step Backward",
+      "category": "Muay Thai techniques",
+      "subCategory": "Footwork"
+    },
+    {
+      "id": "technique-b15fa8fa-c7fd-43e2-a8cc-c85c370e5451",
+      "name": "LEFT PIVOT",
+      "shortName": "LPIVOT",
+      "description": "Left Pivot",
+      "category": "Muay Thai techniques",
+      "subCategory": "Footwork"
+    },
+    {
+      "id": "technique-ab20cd2d-8336-44f1-80dc-52fa0e369744",
+      "name": "RIGHT PIVOT",
+      "shortName": "RPIVOT",
+      "description": "Right Pivot",
+      "category": "Muay Thai techniques",
+      "subCategory": "Footwork"
+    },
+    {
+      "id": "technique-04d9109f-7e58-4ee3-92fe-6cb8c772a9f2",
+      "name": "NECK CLINCH",
+      "shortName": "NECKCLINCH",
+      "description": "Neck Clinch",
+      "category": "Muay Thai techniques",
+      "subCategory": "Clinch"
+    },
+    {
+      "id": "technique-ce759aa4-2d8e-439e-8fc1-df3b42054b4d",
+      "name": "FAKE LEFT TEEP",
+      "shortName": "FLTEEP",
+      "description": "Fake Left Teep",
+      "category": "Muay Thai techniques",
+      "subCategory": "Fake"
+    },
+    {
+      "id": "technique-dc2bb9f2-57b1-4a32-82b5-8951314f4fd7",
+      "name": "FAKE RIGHT TEEP",
+      "shortName": "FRTEEP",
+      "description": "Fake Right Teep",
+      "category": "Muay Thai techniques",
+      "subCategory": "Fake"
+    },
+    {
+      "id": "technique-5947daa5-2e6f-4c4e-8175-2ee936c59892",
+      "name": "FAKE JAB",
+      "shortName": "FAKEJAB",
+      "description": "Fake Jab",
+      "category": "Muay Thai techniques",
+      "subCategory": "Fake"
+    },
+    {
+      "id": "technique-dfa29265-71b9-41b1-91db-0175b450ecff",
+      "name": "FAKE CROSS",
+      "shortName": "FAKECROSS",
+      "description": "Fake Cross",
+      "category": "Muay Thai techniques",
+      "subCategory": "Fake"
+    },
+    {
+      "id": "technique-455460c9-8c08-45fa-9ca6-83a2b4c614f5",
+      "name": "FAKE RIGHT KNEE",
+      "shortName": "FRKNEE",
+      "description": "Fake Right Knee",
+      "category": "Muay Thai techniques",
+      "subCategory": "Fake"
+    },
+    {
+      "id": "technique-e2918ef3-6855-4e89-88d9-e4fe14a3971d",
+      "name": "FAKE LEFT KNEE",
+      "shortName": "FLKNEE",
+      "description": "Fake Left Knee",
+      "category": "Muay Thai techniques",
+      "subCategory": "Fake"
+    }
+  ],
+  "exercises": [
+    {
+      "id": "exercise-d6d57287-bc52-488f-ac61-59337c613986",
+      "title": "Warmup",
+      "description": "Warmup",
+      "help": "",
+      "category": "Warmup",
+      "detail": {
+        "type": "duration",
+        "seconds": 180
+      },
+      "techniqueIds": [
+        "technique-63af79d6-b0c9-42fb-8f97-20fa2597b78a"
+      ]
+    },
+    {
+      "id": "exercise-d6ed6003-32a5-4774-869c-83c3ab7eed4c",
+      "title": "Nonsai 1",
+      "description": "JAB, RIGHT HORIZONTAL ELBOW, RIGHT STRAIGHT KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-014",
+        "technique-038"
+      ]
+    },
+    {
+      "id": "exercise-32e51b73-6e11-4ff9-8e8d-5b8882d20a99",
+      "title": "Nonsai 2",
+      "description": "JAB, CROSS, RIGHT STRAIGHT KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-004",
+        "technique-038"
+      ]
+    },
+    {
+      "id": "exercise-684a67f4-4363-4962-8779-30e7a37d509d",
+      "title": "Nonsai 3",
+      "description": "LEFT HOOK, RIGHT ROUND KICK, LEFT TEEP",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-005",
+        "technique-028",
+        "technique-035"
+      ]
+    },
+    {
+      "id": "exercise-3547cc56-9896-453d-8817-a9187737f8f8",
+      "title": "Nonsai 4",
+      "description": "JAB, CROSS, LEFT MIDDLE KICK, RIGHT DIAGONAL KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-004",
+        "technique-029",
+        "technique-032d048a-5cf2-493f-8cda-8c809e179c2d"
+      ]
+    },
+    {
+      "id": "exercise-7b7f10d8-7d2a-4903-81a6-71e6cdb9d2d1",
+      "title": "Kem 1",
+      "description": "CROSS, LEFT HOOK, RIGHT DIAGONAL KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-004",
+        "technique-005",
+        "technique-032d048a-5cf2-493f-8cda-8c809e179c2d"
+      ]
+    },
+    {
+      "id": "exercise-f535faa9-e53b-4cba-b94a-15b546285d4f",
+      "title": "Kem 2",
+      "description": "RIGHT MIDDLE KICK, RIGHT DIAGONAL KNEE, LEFT MIDDLE KICK, RIGHT UP ELBOW",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-030",
+        "technique-032d048a-5cf2-493f-8cda-8c809e179c2d",
+        "technique-029",
+        "technique-018"
+      ]
+    },
+    {
+      "id": "exercise-5aad3320-3b4a-47ec-bd71-674d94f36053",
+      "title": "Evade Counter #1",
+      "description": "LEFT SLIP, RIGHT HORIZONTAL ELBOW",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-051",
+        "technique-014"
+      ]
+    },
+    {
+      "id": "exercise-fcd0974f-3bec-4d4e-8504-2427397fc0d2",
+      "title": "Dutch Combination #1",
+      "description": "JAB, RIGHT HOOK, LEFT LOW KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-006",
+        "technique-031"
+      ]
+    },
+    {
+      "id": "exercise-a83f75a9-ad79-4ea4-a569-6341bd1090d4",
+      "title": "Transition to Clinch",
+      "description": "FAKE LEFT TEEP, STEP FORWARD, NECK CLINCH, LEFT STRAIGHT KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-ce759aa4-2d8e-439e-8fc1-df3b42054b4d",
+        "technique-2446966a-035b-47f9-a8fc-8fd9b7a37e28",
+        "technique-04d9109f-7e58-4ee3-92fe-6cb8c772a9f2",
+        "technique-037"
+      ]
+    },
+    {
+      "id": "exercise-f21a7cd6-c63c-44ed-b67a-9bf59e1be484",
+      "title": "Keep simple",
+      "description": "JAB, CROSS, RIGHT STRAIGHT KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-004",
+        "technique-038"
+      ]
+    },
+    {
+      "id": "exercise-d9d5c313-8e8d-4830-a651-356f46804dce",
+      "title": "Attack all levels",
+      "description": "JAB, LOW CROSS, LEFT HOOK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-008",
+        "technique-005"
+      ]
+    },
+    {
+      "id": "exercise-625f0493-faf7-47b7-82d9-1281dbdff131",
+      "title": "Move the guard",
+      "description": "CROSS, LEFT HOOK, RIGHT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-004",
+        "technique-005",
+        "technique-030"
+      ]
+    },
+    {
+      "id": "exercise-6d222b64-08dd-4077-8295-0931db53ac83",
+      "title": "Stop step in",
+      "description": "JAB, RIGHT UPPERCUT, LEFT HOOK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-012",
+        "technique-005"
+      ]
+    },
+    {
+      "id": "exercise-2dc44370-b514-43c6-a13e-e1c88b57474d",
+      "title": "Hide low kick",
+      "description": "CROSS, LEFT HOOK, RIGHT LOW KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-004",
+        "technique-005",
+        "technique-032"
+      ]
+    },
+    {
+      "id": "exercise-97d4d558-0f0f-4518-b03e-66391838ef20",
+      "title": "Punch to kick #1",
+      "description": "JAB, LEFT TEEP",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-035"
+      ]
+    },
+    {
+      "id": "exercise-81c8e25d-5482-46b2-9dda-4f58c035ea40",
+      "title": "Punch to kick #2",
+      "description": "LEFT HOOK, RIGHT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-005",
+        "technique-030"
+      ]
+    },
+    {
+      "id": "exercise-c3472e5f-a5ad-4e1a-b8d1-9859707486e2",
+      "title": "Kick to punch #1",
+      "description": "LEFT MIDDLE KICK, CROSS",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-029",
+        "technique-004"
+      ]
+    },
+    {
+      "id": "exercise-ed9bad9f-d0bb-4ebc-9b7a-67507672996b",
+      "title": "Punch to elbow #1",
+      "description": "JAB, CROSS, RIGHT SPEAR ELBOW",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-004",
+        "technique-e55c82fb-42ba-4ff7-a8e4-33d5b3c0570d"
+      ]
+    },
+    {
+      "id": "exercise-df91d3ce-5aa6-4417-851a-e6d9a746c112",
+      "title": "Teeps #1",
+      "description": "LEFT TEEP, RIGHT TEEP",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-035",
+        "technique-6f2902ef-7451-4c51-a64e-57e251982214"
+      ]
+    },
+    {
+      "id": "exercise-cd9da26d-31f3-494c-b296-aa5c1f83a052",
+      "title": "Footwork",
+      "description": "FOOTWORK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-002"
+      ]
+    },
+    {
+      "id": "exercise-49189e31-c84e-4221-b6c0-d02ab122a42b",
+      "title": "Teeps #2",
+      "description": "LEFT TEEP",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-035"
+      ]
+    },
+    {
+      "id": "exercise-03768fd3-d699-47e5-b671-9cd32a5e45d7",
+      "title": "Teeps #3",
+      "description": "RIGHT TEEP",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-6f2902ef-7451-4c51-a64e-57e251982214"
+      ]
+    },
+    {
+      "id": "exercise-90acac1c-bb9f-486c-b4d3-1d4987dffc4c",
+      "title": "Block kick #1",
+      "description": "LEFT CATCH KICK, LEFT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-076",
+        "technique-029"
+      ]
+    },
+    {
+      "id": "exercise-5364e4a8-dcf7-4379-abf5-b10e032c8c15",
+      "title": "Block kick #2",
+      "description": "RIGHT CATCH KICK, RIGHT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-077",
+        "technique-030"
+      ]
+    },
+    {
+      "id": "exercise-287a05e1-4bff-4380-b259-ef935ace7fad",
+      "title": "Kicks #1",
+      "description": "LEFT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-029"
+      ]
+    },
+    {
+      "id": "exercise-7d38e075-cfae-4ef9-a4b6-61605811dbfd",
+      "title": "Kicks #2",
+      "description": "RIGHT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-030"
+      ]
+    },
+    {
+      "id": "exercise-23e70698-99da-4b76-b345-dabeeddeac71",
+      "title": "Kicks #3",
+      "description": "LEFT MIDDLE KICK, RIGHT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-029",
+        "technique-030"
+      ]
+    },
+    {
+      "id": "exercise-b4c7cd03-9b88-405e-a108-bc5bcb598878",
+      "title": "Knees #1",
+      "description": "LEFT JUMP FLY KNEE, RIGHT JUMP FLY KNEE",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-039",
+        "technique-040"
+      ]
+    },
+    {
+      "id": "exercise-d9b62097-04a2-4262-af16-d124f6c9f318",
+      "title": "Elbows #1",
+      "description": "LEFT SPEAR ELBOW, LEFT HORIZONTAL ELBOW, RIGHT SPEAR ELBOW, RIGHT HORIZONTAL ELBOW",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-5b4e3136-375c-4bdf-9d01-336d51697f29",
+        "technique-013",
+        "technique-e55c82fb-42ba-4ff7-a8e4-33d5b3c0570d",
+        "technique-014"
+      ]
+    },
+    {
+      "id": "exercise-1397b9af-bbe3-4cb7-8933-cf71ea68df60",
+      "title": "Punches #1",
+      "description": "JAB, CROSS",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-003",
+        "technique-004"
+      ]
+    },
+    {
+      "id": "exercise-b50d1a57-9579-4a4c-9a01-df59958589e0",
+      "title": "Hooks #1",
+      "description": "LEFT HOOK, LEFT LOW HOOK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-005",
+        "technique-009"
+      ]
+    },
+    {
+      "id": "exercise-defc9435-99f5-483e-be89-97de1c9fab13",
+      "title": "Hooks #2",
+      "description": "RIGHT HOOK, RIGHT LOW HOOK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-006",
+        "technique-010"
+      ]
+    },
+    {
+      "id": "exercise-17f8be3e-240e-43ca-aaa1-536095c7a339",
+      "title": "Kicks #4",
+      "description": "LEFT LOW KICK, LEFT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-031",
+        "technique-029"
+      ]
+    },
+    {
+      "id": "exercise-be564e51-ff9d-4dc0-8e6d-8c8587571af7",
+      "title": "Kicks #5",
+      "description": "RIGHT LOW KICK, RIGHT MIDDLE KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-032",
+        "technique-030"
+      ]
+    },
+    {
+      "id": "exercise-fe32bc8e-c5d9-49e8-b8d0-4a229a761ece",
+      "title": "Punches #2",
+      "description": "LEFT UPPERCUT, RIGHT UPPERCUT",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 15
+      },
+      "techniqueIds": [
+        "technique-011",
+        "technique-012"
+      ]
+    },
+    {
+      "id": "exercise-1da08436-9481-41c0-abaa-fb16b6f23dd0",
+      "title": "Punches #3",
+      "description": "JAB",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 20
+      },
+      "techniqueIds": [
+        "technique-003"
+      ]
+    },
+    {
+      "id": "exercise-4dbfcbfd-8776-45c0-ac11-aafad1564055",
+      "title": "Kicks #6",
+      "description": "LEFT LOW KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 20
+      },
+      "techniqueIds": [
+        "technique-031"
+      ]
+    },
+    {
+      "id": "exercise-9de5841a-745a-440a-b458-9369850873e3",
+      "title": "Kicks #7",
+      "description": "RIGHT LOW KICK",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 20
+      },
+      "techniqueIds": [
+        "technique-032"
+      ]
+    },
+    {
+      "id": "exercise-3b05137b-81bd-44c9-b513-6a41d24bc24e",
+      "title": "Punches #4",
+      "description": "CROSS",
+      "help": "",
+      "category": "Fundamentals",
+      "detail": {
+        "type": "reps",
+        "reps": 20
+      },
+      "techniqueIds": [
+        "technique-004"
+      ]
+    }
+  ],
+  "workouts": [
+    {
+      "id": "workout-54c68493-f6b2-4d97-9703-c547a8fd9f00",
+      "title": "Fundamentals #1",
+      "description": "",
+      "difficulty": "Beginner",
+      "category": "Fundamentals",
+      "totalDurationMinutes": 5,
+      "restSecondsBetweenExercises": 30,
+      "exercises": [
+        {
+          "exerciseId": "exercise-d6d57287-bc52-488f-ac61-59337c613986",
+          "detail": {
+            "type": "duration",
+            "seconds": 180
+          }
+        },
+        {
+          "exerciseId": "exercise-1397b9af-bbe3-4cb7-8933-cf71ea68df60",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "workout-0983e585-50a3-4c2c-8223-29e3cfe6d012",
+      "title": "Muay Thai Training Exercises",
+      "description": "Muay Thai Training Exercises",
+      "difficulty": "Beginner",
+      "category": "Fundamentals",
+      "totalDurationMinutes": 21,
+      "restSecondsBetweenExercises": 30,
+      "exercises": [
+        {
+          "exerciseId": "exercise-d6d57287-bc52-488f-ac61-59337c613986",
+          "detail": {
+            "type": "duration",
+            "seconds": 180
+          }
+        },
+        {
+          "exerciseId": "exercise-d6ed6003-32a5-4774-869c-83c3ab7eed4c",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-32e51b73-6e11-4ff9-8e8d-5b8882d20a99",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-684a67f4-4363-4962-8779-30e7a37d509d",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-3547cc56-9896-453d-8817-a9187737f8f8",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-7b7f10d8-7d2a-4903-81a6-71e6cdb9d2d1",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        }
+      ],
+      "lastDoneDate": "2026-10-20"
+    },
+    {
+      "id": "workout-b9f75bb9-735c-4ec1-bff1-0b3e3ef4121d",
+      "title": "Instagram",
+      "description": "",
+      "difficulty": "Beginner",
+      "category": "Fundamentals",
+      "totalDurationMinutes": 49,
+      "restSecondsBetweenExercises": 30,
+      "exercises": [
+        {
+          "exerciseId": "exercise-49189e31-c84e-4221-b6c0-d02ab122a42b",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-03768fd3-d699-47e5-b671-9cd32a5e45d7",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-df91d3ce-5aa6-4417-851a-e6d9a746c112",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-90acac1c-bb9f-486c-b4d3-1d4987dffc4c",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-5364e4a8-dcf7-4379-abf5-b10e032c8c15",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-287a05e1-4bff-4380-b259-ef935ace7fad",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-7d38e075-cfae-4ef9-a4b6-61605811dbfd",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-23e70698-99da-4b76-b345-dabeeddeac71",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-b4c7cd03-9b88-405e-a108-bc5bcb598878",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-d9b62097-04a2-4262-af16-d124f6c9f318",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-1397b9af-bbe3-4cb7-8933-cf71ea68df60",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-fe32bc8e-c5d9-49e8-b8d0-4a229a761ece",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-b50d1a57-9579-4a4c-9a01-df59958589e0",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        },
+        {
+          "exerciseId": "exercise-defc9435-99f5-483e-be89-97de1c9fab13",
+          "detail": {
+            "type": "reps",
+            "reps": 15
+          }
+        }
+      ],
+      "lastDoneDate": "2026-10-21"
+    },
+    {
+      "id": "workout-9ca42d99-954b-463b-b080-9d1e2df53598",
+      "title": "Evolve #1",
+      "description": "",
+      "difficulty": "Beginner",
+      "category": "Fundamentals",
+      "totalDurationMinutes": 9,
+      "restSecondsBetweenExercises": 30,
+      "exercises": [
+        {
+          "exerciseId": "exercise-d6d57287-bc52-488f-ac61-59337c613986",
+          "detail": {
+            "type": "duration",
+            "seconds": 180
+          }
+        },
+        {
+          "exerciseId": "exercise-1da08436-9481-41c0-abaa-fb16b6f23dd0",
+          "detail": {
+            "type": "reps",
+            "reps": 20
+          }
+        },
+        {
+          "exerciseId": "exercise-4dbfcbfd-8776-45c0-ac11-aafad1564055",
+          "detail": {
+            "type": "reps",
+            "reps": 20
+          }
+        },
+        {
+          "exerciseId": "exercise-9de5841a-745a-440a-b458-9369850873e3",
+          "detail": {
+            "type": "reps",
+            "reps": 20
+          }
+        },
+        {
+          "exerciseId": "exercise-3b05137b-81bd-44c9-b513-6a41d24bc24e",
+          "detail": {
+            "type": "reps",
+            "reps": 20
+          }
+        }
+      ]
+    }
+  ]
+}
