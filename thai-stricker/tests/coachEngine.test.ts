@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCoachPrompt, getFallbackCoachResponse } from "../src/application/services/coachEngine";
+import { buildCoachPrompt, COACH_MODEL_DTYPE, getFallbackCoachResponse } from "../src/application/services/coachEngine";
 import { getCoachKnowledgeForTechniqueNames } from "../src/application/services/coachKnowledge";
 import type { Exercise, Technique, Workout } from "../src/types/domain";
 
@@ -16,6 +16,10 @@ const workout: Workout = {
 };
 
 describe("local coach engine", () => {
+  it("uses the mobile-compatible q8 model variant", () => {
+    expect(COACH_MODEL_DTYPE).toBe("q8");
+  });
+
   it("builds a strict prompt from the selected exercise and workout context", () => {
     const knowledge = getCoachKnowledgeForTechniqueNames([technique.name]);
     const prompt = buildCoachPrompt({ action: "technicalTips", focusTechnique: "JAB", exercise, techniques: [technique], knowledge, workout });

@@ -3,6 +3,10 @@ import type { Exercise, Technique, Workout } from "../../types/domain";
 import type { CoachKnowledge } from "./coachKnowledge";
 
 export const COACH_MODEL_ID = "onnx-community/LFM2.5-350M-ONNX";
+// The q4 export uses GatherBlockQuantized, which is not implemented by some
+// Android ONNX Runtime backends. q8 uses the standard Transformers.js
+// quantized model mapping and keeps the same local/offline architecture.
+export const COACH_MODEL_DTYPE = "q8" as const;
 export const COACH_ACTIONS = ["technicalTips", "commonMistakes", "focusPoints", "explanation"] as const;
 export type CoachAction = (typeof COACH_ACTIONS)[number];
 
@@ -27,7 +31,7 @@ function hasWebGpu() {
 
 async function createGenerator(forceWasm = false) {
   const { pipeline } = await import("@huggingface/transformers");
-  const options = { dtype: "q4" as const };
+  const options = { dtype: COACH_MODEL_DTYPE };
   if (!forceWasm && hasWebGpu()) {
     try {
       const generator = await pipeline("text-generation", COACH_MODEL_ID, { ...options, device: "webgpu" });
