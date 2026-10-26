@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCoachPrompt, COACH_MODEL_DTYPE, COACH_MODEL_FILE_NAME, COACH_MODEL_ID, getFallbackCoachResponse } from "../src/application/services/coachEngine";
+import { buildCoachPrompt, COACH_MODEL_DTYPE, COACH_MODEL_ENABLED_ON_MOBILE, COACH_MODEL_FILE_NAME, COACH_MODEL_ID, getFallbackCoachResponse } from "../src/application/services/coachEngine";
 import { getCoachKnowledgeForTechniqueNames } from "../src/application/services/coachKnowledge";
 import type { Exercise, Technique, Workout } from "../src/types/domain";
 
@@ -16,10 +16,14 @@ const workout: Workout = {
 };
 
 describe("local coach engine", () => {
-  it("uses the explicit mobile-compatible INT8 model graph", () => {
-    expect(COACH_MODEL_ID).toBe("LiquidAI/LFM2.5-350M-ONNX");
-    expect(COACH_MODEL_FILE_NAME).toBe("model_q8");
-    expect(COACH_MODEL_DTYPE).toBe("fp32");
+  it("uses the lightweight instruction-tuned model graph", () => {
+    expect(COACH_MODEL_ID).toBe("onnx-community/SmolLM2-135M-Instruct-ONNX");
+    expect(COACH_MODEL_FILE_NAME).toBe("model_q4f16");
+    expect(COACH_MODEL_DTYPE).toBe("q4f16");
+  });
+
+  it("allows the lightweight local model on mobile browsers", () => {
+    expect(COACH_MODEL_ENABLED_ON_MOBILE).toBe(true);
   });
 
   it("builds a strict prompt from the selected exercise and workout context", () => {

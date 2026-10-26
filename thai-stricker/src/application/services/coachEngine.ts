@@ -2,12 +2,13 @@ import type { TextGenerationPipeline } from "@huggingface/transformers";
 import type { Exercise, Technique, Workout } from "../../types/domain";
 import type { CoachKnowledge } from "./coachKnowledge";
 
-export const COACH_MODEL_ID = "LiquidAI/LFM2.5-350M-ONNX";
-// Load the explicit INT8 ONNX graph instead of Transformers.js' generic
-// `q8` mapping (`model_quantized.onnx`). The q4 export uses
-// GatherBlockQuantized, which is not implemented by some Android runtimes.
-export const COACH_MODEL_FILE_NAME = "model_q8";
-export const COACH_MODEL_DTYPE = "fp32" as const;
+export const COACH_MODEL_ID = "onnx-community/SmolLM2-135M-Instruct-ONNX";
+// Use the smallest instruction-tuned graph that remains suitable for the
+// constrained, fiche-based coach. q4f16 is substantially lighter than the
+// previous LFM model and avoids loading the large desktop-only graph.
+export const COACH_MODEL_FILE_NAME = "model_q4f16";
+export const COACH_MODEL_DTYPE = "q4f16" as const;
+export const COACH_MODEL_ENABLED_ON_MOBILE = true;
 export const COACH_ACTIONS = ["technicalTips", "commonMistakes", "focusPoints", "explanation"] as const;
 export type CoachAction = (typeof COACH_ACTIONS)[number];
 
@@ -28,6 +29,10 @@ let generatorDevice: "webgpu" | "wasm" = "wasm";
 
 function hasWebGpu() {
   return typeof navigator !== "undefined" && "gpu" in navigator;
+}
+
+function isMobileBrowser() {
+  return typeof navigator !== "undefined" && /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
 async function createGenerator(forceWasm = false) {
@@ -237,6 +242,9 @@ function selectGeneratedCandidate(value: string, candidates: string[]) {
 
 export async function generateCoachResponse(context: CoachGenerationContext, timeoutMs = 25_000) {
   if (!context.knowledge.length) throw new Error("No validated coach knowledge is available for this technique");
+  if (isMobileBrowser() && !COACH_MODEL_ENABLED_ON_MOBILE) {
+    throw new Error("Local AI generation is disabled on mobile to protect browser memory; validated local coaching advice remains available.");
+  }
   if (!generatorPromise) generatorPromise = createGenerator();
   const messages = buildCoachMessages(context);
   const candidates = getCoachCandidateResponses(context);
