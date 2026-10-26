@@ -249,6 +249,16 @@ describe("local coach engine", () => {
     expect(rightSpinningBackElbow[0].combinations.map((item) => item.name)).toContain("JAB–RIGHT SPINNING BACK-ELBOW");
   });
 
+  it("exposes the user-approved left jump fly cross fiche", () => {
+    const leftJumpFlyCross = getCoachKnowledgeForTechniqueNames(["LEFT JUMP FLY CROSS"]);
+    expect(leftJumpFlyCross).toHaveLength(1);
+    expect(leftJumpFlyCross[0].technique).toBe("LEFT JUMP FLY CROSS");
+    expect(leftJumpFlyCross[0].source.status).toBe("user-approved");
+    expect(leftJumpFlyCross[0].principles).toContain("Drive from the rear foot.");
+    expect(leftJumpFlyCross[0].commonMistakes).toContain("Do not lose balance during the landing.");
+    expect(leftJumpFlyCross[0].combinations.map((item) => item.name)).toContain("JAB–LEFT JUMP FLY CROSS");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
