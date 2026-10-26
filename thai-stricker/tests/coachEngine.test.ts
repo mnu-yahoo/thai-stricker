@@ -179,6 +179,16 @@ describe("local coach engine", () => {
     expect(leftDownElbow[0].combinations.map((item) => item.name)).toContain("JAB–LEFT DOWN ELBOW");
   });
 
+  it("exposes the user-approved right down elbow fiche", () => {
+    const rightDownElbow = getCoachKnowledgeForTechniqueNames(["RIGHT DOWN ELBOW"]);
+    expect(rightDownElbow).toHaveLength(1);
+    expect(rightDownElbow[0].technique).toBe("RIGHT DOWN ELBOW");
+    expect(rightDownElbow[0].source.status).toBe("user-approved");
+    expect(rightDownElbow[0].principles).toContain("Drive from the rear foot and coordinate the rear hip, shoulder, and elbow.");
+    expect(rightDownElbow[0].commonMistakes).toContain("Do not drop the lead hand.");
+    expect(rightDownElbow[0].combinations.map((item) => item.name)).toContain("JAB–RIGHT DOWN ELBOW");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
