@@ -129,6 +129,16 @@ describe("local coach engine", () => {
     expect(lowLeftHook[0].combinations.map((item) => item.name)).toContain("LOW CROSS–LEFT LOW HOOK");
   });
 
+  it("exposes the user-approved right low hook fiche separately from right hook", () => {
+    const lowRightHook = getCoachKnowledgeForTechniqueNames(["RIGHT LOW HOOK"]);
+    expect(lowRightHook).toHaveLength(1);
+    expect(lowRightHook[0].technique).toBe("RIGHT LOW HOOK");
+    expect(lowRightHook[0].source.status).toBe("user-approved");
+    expect(lowRightHook[0].principles).toContain("Use the right low hook to attack the body or lower ribs.");
+    expect(lowRightHook[0].commonMistakes).toContain("Do not drop the lead hand while punching low.");
+    expect(lowRightHook[0].combinations.map((item) => item.name)).toContain("LOW CROSS–RIGHT LOW HOOK");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
