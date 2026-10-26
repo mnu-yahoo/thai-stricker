@@ -259,6 +259,26 @@ describe("local coach engine", () => {
     expect(leftJumpFlyCross[0].combinations.map((item) => item.name)).toContain("JAB–LEFT JUMP FLY CROSS");
   });
 
+  it("exposes the user-approved right jump fly cross fiche", () => {
+    const rightJumpFlyCross = getCoachKnowledgeForTechniqueNames(["RIGHT JUMP FLY CROSS"]);
+    expect(rightJumpFlyCross).toHaveLength(1);
+    expect(rightJumpFlyCross[0].technique).toBe("RIGHT JUMP FLY CROSS");
+    expect(rightJumpFlyCross[0].source.status).toBe("user-approved");
+    expect(rightJumpFlyCross[0].principles).toContain("Drive from the rear foot.");
+    expect(rightJumpFlyCross[0].commonMistakes).toContain("Do not lose balance during the landing.");
+    expect(rightJumpFlyCross[0].combinations.map((item) => item.name)).toContain("JAB–RIGHT JUMP FLY CROSS");
+  });
+
+  it("exposes the user-approved left jump fly elbow fiche", () => {
+    const leftJumpFlyElbow = getCoachKnowledgeForTechniqueNames(["LEFT JUMP FLY ELBOW"]);
+    expect(leftJumpFlyElbow).toHaveLength(1);
+    expect(leftJumpFlyElbow[0].technique).toBe("LEFT JUMP FLY ELBOW");
+    expect(leftJumpFlyElbow[0].source.status).toBe("user-approved");
+    expect(leftJumpFlyElbow[0].principles).toContain("Drive from the feet and hips.");
+    expect(leftJumpFlyElbow[0].commonMistakes).toContain("Do not lose balance during the landing.");
+    expect(leftJumpFlyElbow[0].combinations.map((item) => item.name)).toContain("JAB–LEFT JUMP FLY ELBOW");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
