@@ -329,6 +329,26 @@ describe("local coach engine", () => {
     expect(rightParry[0].combinations.map((item) => item.name)).toContain("RIGHT PARRY–CROSS");
   });
 
+  it("exposes the user-approved left cover high fiche", () => {
+    const leftCoverHigh = getCoachKnowledgeForTechniqueNames(["LEFT COVER HIGH"]);
+    expect(leftCoverHigh).toHaveLength(1);
+    expect(leftCoverHigh[0].technique).toBe("LEFT COVER HIGH");
+    expect(leftCoverHigh[0].source.status).toBe("user-approved");
+    expect(leftCoverHigh[0].principles).toContain("Protect the center and left side of the head.");
+    expect(leftCoverHigh[0].commonMistakes).toContain("Do not leave the head exposed.");
+    expect(leftCoverHigh[0].combinations.map((item) => item.name)).toContain("LEFT COVER HIGH–CROSS");
+  });
+
+  it("exposes the user-approved right cover high fiche", () => {
+    const rightCoverHigh = getCoachKnowledgeForTechniqueNames(["RIGHT COVER HIGH"]);
+    expect(rightCoverHigh).toHaveLength(1);
+    expect(rightCoverHigh[0].technique).toBe("RIGHT COVER HIGH");
+    expect(rightCoverHigh[0].source.status).toBe("user-approved");
+    expect(rightCoverHigh[0].principles).toContain("Protect the center and right side of the head.");
+    expect(rightCoverHigh[0].commonMistakes).toContain("Do not leave the head exposed.");
+    expect(rightCoverHigh[0].combinations.map((item) => item.name)).toContain("RIGHT COVER HIGH–CROSS");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
