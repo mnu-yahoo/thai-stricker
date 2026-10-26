@@ -52,6 +52,18 @@ describe("local coach engine", () => {
     }
   });
 
+  it("includes the Muay Thai Basics PDF enrichment for directly documented techniques", () => {
+    const jab = getCoachKnowledgeForTechniqueNames(["JAB"])[0];
+    const cross = getCoachKnowledgeForTechniqueNames(["CROSS"])[0];
+    const leftHook = getCoachKnowledgeForTechniqueNames(["LEFT HOOK"])[0];
+    const leftDownElbow = getCoachKnowledgeForTechniqueNames(["LEFT DOWN ELBOW"])[0];
+    expect(jab.additionalSources?.some((source) => source.title === "Muay Thai Basics" && source.pages.includes(94))).toBe(true);
+    expect(jab.principles).toContain("Use the nose, chin, or eyes as the primary target line.");
+    expect(cross.additionalSources?.some((source) => source.title === "Muay Thai Basics" && source.pages.includes(96))).toBe(true);
+    expect(leftHook.additionalSources?.some((source) => source.title === "Muay Thai Basics" && source.pages.includes(100))).toBe(true);
+    expect(leftDownElbow.additionalSources?.some((source) => source.title === "Muay Thai Basics" && source.pages.includes(115))).toBe(true);
+  });
+
   it("builds cross-specific coaching context without jab-only instructions", () => {
     const cross = { ...technique, name: "CROSS", shortName: "CROSS" };
     const knowledge = getCoachKnowledgeForTechniqueNames([cross.name]);
