@@ -2,11 +2,12 @@ import type { TextGenerationPipeline } from "@huggingface/transformers";
 import type { Exercise, Technique, Workout } from "../../types/domain";
 import type { CoachKnowledge } from "./coachKnowledge";
 
-export const COACH_MODEL_ID = "onnx-community/LFM2.5-350M-ONNX";
-// The q4 export uses GatherBlockQuantized, which is not implemented by some
-// Android ONNX Runtime backends. q8 uses the standard Transformers.js
-// quantized model mapping and keeps the same local/offline architecture.
-export const COACH_MODEL_DTYPE = "q8" as const;
+export const COACH_MODEL_ID = "LiquidAI/LFM2.5-350M-ONNX";
+// Load the explicit INT8 ONNX graph instead of Transformers.js' generic
+// `q8` mapping (`model_quantized.onnx`). The q4 export uses
+// GatherBlockQuantized, which is not implemented by some Android runtimes.
+export const COACH_MODEL_FILE_NAME = "model_q8";
+export const COACH_MODEL_DTYPE = "fp32" as const;
 export const COACH_ACTIONS = ["technicalTips", "commonMistakes", "focusPoints", "explanation"] as const;
 export type CoachAction = (typeof COACH_ACTIONS)[number];
 
@@ -31,7 +32,7 @@ function hasWebGpu() {
 
 async function createGenerator(forceWasm = false) {
   const { pipeline } = await import("@huggingface/transformers");
-  const options = { dtype: COACH_MODEL_DTYPE };
+  const options = { dtype: COACH_MODEL_DTYPE, model_file_name: COACH_MODEL_FILE_NAME };
   if (!forceWasm && hasWebGpu()) {
     try {
       const generator = await pipeline("text-generation", COACH_MODEL_ID, { ...options, device: "webgpu" });

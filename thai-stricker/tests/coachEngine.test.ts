@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCoachPrompt, COACH_MODEL_DTYPE, getFallbackCoachResponse } from "../src/application/services/coachEngine";
+import { buildCoachPrompt, COACH_MODEL_DTYPE, COACH_MODEL_FILE_NAME, COACH_MODEL_ID, getFallbackCoachResponse } from "../src/application/services/coachEngine";
 import { getCoachKnowledgeForTechniqueNames } from "../src/application/services/coachKnowledge";
 import type { Exercise, Technique, Workout } from "../src/types/domain";
 
@@ -16,8 +16,10 @@ const workout: Workout = {
 };
 
 describe("local coach engine", () => {
-  it("uses the mobile-compatible q8 model variant", () => {
-    expect(COACH_MODEL_DTYPE).toBe("q8");
+  it("uses the explicit mobile-compatible INT8 model graph", () => {
+    expect(COACH_MODEL_ID).toBe("LiquidAI/LFM2.5-350M-ONNX");
+    expect(COACH_MODEL_FILE_NAME).toBe("model_q8");
+    expect(COACH_MODEL_DTYPE).toBe("fp32");
   });
 
   it("builds a strict prompt from the selected exercise and workout context", () => {
