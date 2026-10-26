@@ -99,6 +99,16 @@ describe("local coach engine", () => {
     expect(leftUppercut[0].combinations.map((item) => item.name)).toContain("LEFT UPPERCUT–RIGHT HOOK");
   });
 
+  it("exposes the user-approved low jab fiche separately from jab", () => {
+    const lowJab = getCoachKnowledgeForTechniqueNames(["LOW JAB"]);
+    expect(lowJab).toHaveLength(1);
+    expect(lowJab[0].technique).toBe("LOW JAB");
+    expect(lowJab[0].source.status).toBe("user-approved");
+    expect(lowJab[0].principles).toContain("Punch straight toward the lower target with the lead hand.");
+    expect(lowJab[0].commonMistakes).toContain("Do not bend forward from the waist.");
+    expect(lowJab[0].combinations.map((item) => item.name)).toContain("LOW JAB–LEFT HOOK");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
