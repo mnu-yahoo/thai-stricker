@@ -309,6 +309,26 @@ describe("local coach engine", () => {
     expect(rightJumpFlyKnee[0].combinations.map((item) => item.name)).toContain("JAB–RIGHT JUMP FLY KNEE");
   });
 
+  it("exposes the user-approved left parry fiche", () => {
+    const leftParry = getCoachKnowledgeForTechniqueNames(["LEFT PARRY"]);
+    expect(leftParry).toHaveLength(1);
+    expect(leftParry[0].technique).toBe("LEFT PARRY");
+    expect(leftParry[0].source.status).toBe("user-approved");
+    expect(leftParry[0].principles).toContain("Redirect the incoming punch away from the center line.");
+    expect(leftParry[0].commonMistakes).toContain("Do not drop the rear hand.");
+    expect(leftParry[0].combinations.map((item) => item.name)).toContain("LEFT PARRY–CROSS");
+  });
+
+  it("exposes the user-approved right parry fiche", () => {
+    const rightParry = getCoachKnowledgeForTechniqueNames(["RIGHT PARRY"]);
+    expect(rightParry).toHaveLength(1);
+    expect(rightParry[0].technique).toBe("RIGHT PARRY");
+    expect(rightParry[0].source.status).toBe("user-approved");
+    expect(rightParry[0].principles).toContain("Redirect the incoming punch away from the center line.");
+    expect(rightParry[0].commonMistakes).toContain("Do not drop the lead hand.");
+    expect(rightParry[0].combinations.map((item) => item.name)).toContain("RIGHT PARRY–CROSS");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
