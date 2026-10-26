@@ -239,6 +239,16 @@ describe("local coach engine", () => {
     expect(leftSpinningBackElbow[0].combinations.map((item) => item.name)).toContain("JAB–LEFT SPINNING BACK-ELBOW");
   });
 
+  it("exposes the user-approved right spinning back-elbow fiche", () => {
+    const rightSpinningBackElbow = getCoachKnowledgeForTechniqueNames(["RIGHT SPINNING BACK-ELBOW"]);
+    expect(rightSpinningBackElbow).toHaveLength(1);
+    expect(rightSpinningBackElbow[0].technique).toBe("RIGHT SPINNING BACK-ELBOW");
+    expect(rightSpinningBackElbow[0].source.status).toBe("user-approved");
+    expect(rightSpinningBackElbow[0].principles).toContain("Rotate through the feet, hips, and shoulders together.");
+    expect(rightSpinningBackElbow[0].commonMistakes).toContain("Do not spin without controlling the distance.");
+    expect(rightSpinningBackElbow[0].combinations.map((item) => item.name)).toContain("JAB–RIGHT SPINNING BACK-ELBOW");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
