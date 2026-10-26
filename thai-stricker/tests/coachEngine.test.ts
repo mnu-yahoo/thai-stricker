@@ -149,6 +149,16 @@ describe("local coach engine", () => {
     expect(rightUppercut[0].combinations.map((item) => item.name)).toContain("JAB–CROSS–RIGHT UPPERCUT");
   });
 
+  it("exposes the user-approved left horizontal elbow fiche", () => {
+    const leftHorizontalElbow = getCoachKnowledgeForTechniqueNames(["LEFT HORIZONTAL ELBOW"]);
+    expect(leftHorizontalElbow).toHaveLength(1);
+    expect(leftHorizontalElbow[0].technique).toBe("LEFT HORIZONTAL ELBOW");
+    expect(leftHorizontalElbow[0].source.status).toBe("user-approved");
+    expect(leftHorizontalElbow[0].principles).toContain("Use the elbow at close range.");
+    expect(leftHorizontalElbow[0].commonMistakes).toContain("Do not drop the rear hand.");
+    expect(leftHorizontalElbow[0].combinations.map((item) => item.name)).toContain("JAB–LEFT HORIZONTAL ELBOW");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
