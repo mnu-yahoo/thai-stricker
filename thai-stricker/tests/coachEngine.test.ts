@@ -89,6 +89,16 @@ describe("local coach engine", () => {
     expect(rightHook[0].combinations.map((item) => item.name)).toContain("JAB–CROSS–RIGHT HOOK");
   });
 
+  it("exposes the user-approved left uppercut fiche", () => {
+    const leftUppercut = getCoachKnowledgeForTechniqueNames(["LEFT UPPERCUT"]);
+    expect(leftUppercut).toHaveLength(1);
+    expect(leftUppercut[0].technique).toBe("LEFT UPPERCUT");
+    expect(leftUppercut[0].source.status).toBe("user-approved");
+    expect(leftUppercut[0].principles).toContain("Bend the knees slightly and drive upward from the floor.");
+    expect(leftUppercut[0].commonMistakes).toContain("Do not drop the left hand before the punch.");
+    expect(leftUppercut[0].combinations.map((item) => item.name)).toContain("LEFT UPPERCUT–RIGHT HOOK");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
