@@ -109,6 +109,26 @@ describe("local coach engine", () => {
     expect(lowJab[0].combinations.map((item) => item.name)).toContain("LOW JAB–LEFT HOOK");
   });
 
+  it("exposes the user-approved low cross fiche separately from cross", () => {
+    const lowCross = getCoachKnowledgeForTechniqueNames(["LOW CROSS"]);
+    expect(lowCross).toHaveLength(1);
+    expect(lowCross[0].technique).toBe("LOW CROSS");
+    expect(lowCross[0].source.status).toBe("user-approved");
+    expect(lowCross[0].principles).toContain("Punch straight toward the lower target with the rear hand.");
+    expect(lowCross[0].commonMistakes).toContain("Do not bend forward from the waist.");
+    expect(lowCross[0].combinations.map((item) => item.name)).toContain("LOW CROSS–LEFT HOOK");
+  });
+
+  it("exposes the user-approved left low hook fiche separately from left hook", () => {
+    const lowLeftHook = getCoachKnowledgeForTechniqueNames(["LOW HOOK (LEFT)"]);
+    expect(lowLeftHook).toHaveLength(1);
+    expect(lowLeftHook[0].technique).toBe("LOW HOOK (LEFT)");
+    expect(lowLeftHook[0].source.status).toBe("user-approved");
+    expect(lowLeftHook[0].principles).toContain("Use the left low hook to attack the body or lower ribs.");
+    expect(lowLeftHook[0].commonMistakes).toContain("Do not bend forward from the waist.");
+    expect(lowLeftHook[0].combinations.map((item) => item.name)).toContain("LOW CROSS–LOW HOOK (LEFT)");
+  });
+
   it("uses combination coaching when jab and cross are in the same exercise", () => {
     const cross = { ...technique, id: "technique-2", name: "CROSS", shortName: "CROSS" };
     const techniques = [technique, cross];
