@@ -45,6 +45,7 @@ export interface AppRepository {
   updateWorkout(value: Workout): Promise<void>;
   deleteWorkout(id: string): Promise<void>;
   importWorkouts(values: WorkoutImportPayload[]): Promise<void>;
+  importQuickWorkout(workout: Workout, newExercises: Exercise[]): Promise<void>;
   saveWeeklyPlan(value: WeeklyWorkoutPlan): Promise<void>;
   addWorkoutLog(value: WorkoutLogEntry): Promise<void>;
   exportSections(selection: DataSectionName[]): Promise<ThaiStrickerSectionFileV1[]>;
@@ -295,6 +296,17 @@ export function createAppRepository(storage: StorageAdapter): AppRepository {
           const workout: Workout = { ...clone(imported), id: makeId("workout"), exercises: occurrences, totalDurationMinutes: 0 };
           draft.workouts.push(hydrateWorkout(draft, workout));
         }
+      });
+    },
+    async importQuickWorkout(workout, newExercises) {
+      await mutate((draft) => {
+        for (const exercise of newExercises) {
+          if (draft.exercises.some((item) => normalizeExerciseName(item.title) === normalizeExerciseName(exercise.title))) throw new Error(`An exercise named “${exercise.title}” already exists.`);
+          if (!exercise.techniqueIds.length || exercise.techniqueIds.some((id) => !draft.techniques.some((technique) => technique.id === id))) throw new Error(`The imported exercise “${exercise.title}” contains an unknown technique.`);
+          draft.exercises.push(clone(exercise));
+        }
+        if (draft.workouts.some((item) => item.id === workout.id)) throw new Error("This workout already exists.");
+        draft.workouts.push(hydrateWorkout(draft, clone(workout)));
       });
     },
     async saveWeeklyPlan(value) { await mutate((draft) => { const plan = { ...clone(value), source: "web" as const }; const index = draft.weeklyWorkoutPlans.findIndex((item) => item.weekStartDate === value.weekStartDate); if (index >= 0) draft.weeklyWorkoutPlans[index] = plan; else draft.weeklyWorkoutPlans.push(plan); }); },

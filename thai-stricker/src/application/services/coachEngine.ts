@@ -208,7 +208,8 @@ export function getFallbackCoachItems(context: CoachGenerationContext) {
 }
 
 export function getFallbackCoachResponse(context: CoachGenerationContext) {
-  return getFallbackCoachItems(context).slice(0, 1).join(" ");
+  const responses = getFallbackCoachItems(context);
+  return responses[Math.floor(Math.random() * responses.length)] || "Stay precise and controlled.";
 }
 
 function extractGeneratedText(output: GeneratedText | GeneratedText[]) {
@@ -240,37 +241,34 @@ function selectGeneratedCandidate(value: string, candidates: string[]) {
   return candidates[index];
 }
 
+async function generateRemoteCoachResponse(context: CoachGenerationContext, timeoutMs: number) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch("/api/coach", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: buildCoachMessages(context),
+        candidates: getCoachCandidateResponses(context),
+      }),
+      signal: controller.signal,
+    });
+    const payload = await response.json().catch(() => ({})) as { response?: string; error?: string };
+    if (!response.ok) throw new Error(payload.error || `Coach API request failed (${response.status})`);
+    if (!payload.response) throw new Error("Coach API returned an empty response");
+    return payload.response;
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
 export async function generateCoachResponse(context: CoachGenerationContext, timeoutMs = 25_000) {
   if (!context.knowledge.length) throw new Error("No validated coach knowledge is available for this technique");
-  if (isMobileBrowser() && !COACH_MODEL_ENABLED_ON_MOBILE) {
-    throw new Error("Local AI generation is disabled on mobile to protect browser memory; validated local coaching advice remains available.");
-  }
-  if (!generatorPromise) generatorPromise = createGenerator();
-  const messages = buildCoachMessages(context);
-  const candidates = getCoachCandidateResponses(context);
-  const run = async (generator: TextGenerationPipeline) => {
-    const output = await Promise.race([
-      generator(messages, { max_new_tokens: 4, do_sample: false, temperature: 0.1, return_full_text: false }),
-      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach generation timed out")), timeoutMs)),
-    ]);
-    const text = cleanGeneratedText(extractGeneratedText(output as GeneratedText | GeneratedText[]));
-    return selectGeneratedCandidate(text, candidates);
-  };
-  try {
-    const generator = await Promise.race([
-      generatorPromise,
-      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach model loading timed out")), timeoutMs)),
-    ]);
-    return await run(generator);
-  } catch (error) {
-    if (generatorDevice !== "webgpu") throw error;
-    generatorPromise = createGenerator(true);
-    const cpuGenerator = await Promise.race([
-      generatorPromise,
-      new Promise<never>((_, reject) => window.setTimeout(() => reject(new Error("Coach CPU model loading timed out")), timeoutMs)),
-    ]);
-    return run(cpuGenerator);
-  }
+  // The remote API is the primary generator. The UI catches any API error
+  // and displays the validated local response, so no API key is required for
+  // the application to remain usable.
+  return generateRemoteCoachResponse(context, timeoutMs);
 }
 
 export function resetCoachEngineForTests() {

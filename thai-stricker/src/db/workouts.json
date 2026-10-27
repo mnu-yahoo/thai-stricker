@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "fileType": "workouts",
-  "exportedAt": "2026-10-26T07:26:00.844Z",
+  "exportedAt": "2026-10-27T23:30:23.694Z",
   "techniques": [
     {
       "id": "technique-001",
@@ -786,6 +786,14 @@
       "description": "Fake Left Knee",
       "category": "Muay Thai techniques",
       "subCategory": "Fake"
+    },
+    {
+      "id": "technique-82c3df92-8f84-483f-96e4-d96cdca02d9b",
+      "name": "REAR LEG SHIELD",
+      "shortName": "RSHINBLOCK",
+      "description": "The rear leg shield is a defense against opponent’s mid or low kicks.",
+      "category": "Muay Thai techniques",
+      "subCategory": "Kick Defenses"
     }
   ],
   "exercises": [
