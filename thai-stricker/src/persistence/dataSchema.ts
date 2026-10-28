@@ -9,7 +9,7 @@ const detailSchema = z.discriminatedUnion("type", [
 export const exerciseSchema = z.object({
   id: z.string().min(1), title: z.string().min(1), description: z.string(), help: z.string(),
   category: z.string(), imageUri: z.string().optional(), detail: detailSchema,
-  techniqueIds: z.array(z.string()).min(1).max(5),
+  techniqueIds: z.array(z.string()).min(1),
 });
 
 export const workoutExerciseSchema = z.object({
