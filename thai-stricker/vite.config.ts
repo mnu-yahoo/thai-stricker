@@ -18,9 +18,12 @@ export default defineConfig({
         display: "standalone",
         orientation: "portrait",
         start_url: "/",
+        id: "/",
+        scope: "/",
         icons: [
-          { src: "/icon.png", sizes: "1024x1024", type: "image/png", purpose: "any" },
-          { src: "/icon.png", sizes: "1024x1024", type: "image/png", purpose: "maskable" }
+          { src: "/icon.png", sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: "/icon.png", sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: "/icon.png", sizes: "512x512", type: "image/png", purpose: "maskable" }
         ]
       },
       workbox: {

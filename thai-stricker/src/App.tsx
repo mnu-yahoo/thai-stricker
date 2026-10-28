@@ -25,6 +25,11 @@ type AppContextValue = {
   notify: (message: string, tone?: "success" | "error") => void;
 };
 
+type BeforeInstallPromptEvent = Event & {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+};
+
 const AppContext = createContext<AppContextValue | null>(null);
 const useApp = () => {
   const value = useContext(AppContext);
@@ -314,7 +319,27 @@ function SessionCoachCard({ title, icon, item }: { title: string; icon: string; 
 function Settings() {
   const { data, act, refresh, notify } = useApp();
   const sectionInput = useRef<HTMLInputElement>(null); const quickWorkoutInput = useRef<HTMLInputElement>(null);
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [confirmReset, setConfirmReset] = useState(false); const [exportOpen, setExportOpen] = useState(false); const [exportSelection, setExportSelection] = useState<DataSectionName[]>([...DATA_SECTION_NAMES]); const [pendingImport, setPendingImport] = useState<NamedSectionImport[] | null>(null);
+  useEffect(() => {
+    const onBeforeInstallPrompt = (event: Event) => {
+      event.preventDefault();
+      setInstallPrompt(event as BeforeInstallPromptEvent);
+    };
+    const onAppInstalled = () => setInstallPrompt(null);
+    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+    window.addEventListener("appinstalled", onAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", onAppInstalled);
+    };
+  }, []);
+  const installApp = async () => {
+    if (!installPrompt) return;
+    await installPrompt.prompt();
+    await installPrompt.userChoice;
+    setInstallPrompt(null);
+  };
   const setSetting = async <K extends keyof PersistedSettings>(key: K, value: PersistedSettings[K]) => { await act(() => updateSetting(appRepository, key, value)); };
   const downloadBackup = (files: Awaited<ReturnType<typeof exportBackup>>, prefix: string) => {
     const archive = buildSectionArchive(files);
@@ -353,6 +378,7 @@ function Settings() {
   const toggleSection = (section: DataSectionName) => setExportSelection((current) => current.includes(section) ? current.filter((item) => item !== section) : [...current, section]);
   return <><Header title="Settings" /><section className="settings-group"><p className="eyebrow">TRAINING</p><SettingSelect label="Rest between exercises" value={data.settings.restSecondsBetweenExercises} options={[15, 30, 45, 60, 90, 120]} suffix=" seconds" onChange={(value) => void setSetting("restSecondsBetweenExercises", value as PersistedSettings["restSecondsBetweenExercises"])} /><SettingSelect label="Days per week" value={data.settings.trainingDaysPerWeek} options={[1, 2, 3, 4, 5, 6, 7]} onChange={(value) => void setSetting("trainingDaysPerWeek", value as PersistedSettings["trainingDaysPerWeek"])} /><SettingSelect label="Exercises per page" value={data.settings.numberOfExercisesPerPage} options={[3, 6, 9, 12]} onChange={(value) => void setSetting("numberOfExercisesPerPage", value as PersistedSettings["numberOfExercisesPerPage"])} /><SettingSelect label="Duration of a repetition exercise" value={data.settings.defaultRepsExerciseDurationMinutes} options={[1, 2, 3, 4, 5]} suffix=" min" onChange={(value) => void setSetting("defaultRepsExerciseDurationMinutes", value as PersistedSettings["defaultRepsExerciseDurationMinutes"])} /></section>
     <section className="settings-group"><p className="eyebrow">APPEARANCE</p><div className="setting-row"><div><strong>Theme</strong><span>Light or dark</span></div><div className="segmented"><button className={data.settings.themePreference === "Light" ? "active" : ""} onClick={() => void setSetting("themePreference", "Light")}>Light</button><button className={data.settings.themePreference === "Dark" ? "active" : ""} onClick={() => void setSetting("themePreference", "Dark")}>Dark</button></div></div></section>
+    <section className="settings-group"><p className="eyebrow">APPLICATION</p>{installPrompt ? <button className="setting-action" onClick={() => void installApp()}><span className="round-icon"><Icon name="download" /></span><div><strong>Install THAI STRICKER</strong><span>Add the app to your phone's home screen</span></div><Icon name="chevron_right" /></button> : <div className="setting-row"><span><strong>Install THAI STRICKER</strong><span>In Chrome, open the menu ⋮ and choose “Install app” or “Add to Home screen”.</span></span></div>}</section>
     <section className="settings-group"><p className="eyebrow">LOCAL DATA</p><button className="setting-action" onClick={() => { setExportSelection([...DATA_SECTION_NAMES]); setExportOpen(true); }}><span className="round-icon"><Icon name="download" /></span><div><strong>Export a backup</strong><span>Choose the files to include in the ZIP archive</span></div><Icon name="chevron_right" /></button><button className="setting-action" onClick={() => sectionInput.current?.click()}><span className="round-icon"><Icon name="upload" /></span><div><strong>Import a backup</strong><span>ZIP archive or multiple JSON files</span></div><Icon name="chevron_right" /></button><button className="setting-action" onClick={() => quickWorkoutInput.current?.click()}><span className="round-icon"><Icon name="fitness_center" /></span><div><strong>Quick Import (.txt)</strong><span>Create a workout from technique combinations</span></div><Icon name="chevron_right" /></button><button className="setting-action danger-text" onClick={() => setConfirmReset(true)}><span className="round-icon"><Icon name="delete_forever" /></span><div><strong>Reset the app</strong><span>Delete data stored in this browser</span></div><Icon name="chevron_right" /></button><input ref={sectionInput} hidden multiple type="file" accept="application/json,application/zip,.json,.zip" onChange={(event) => void selectSectionImports(event.target.files)} /><input ref={quickWorkoutInput} hidden type="file" accept="text/plain,.txt" onChange={(event) => void importQuickWorkoutFromFile(event.target.files?.[0])} /></section>
     <p className="storage-note"><Icon name="lock" /> Data stays in this browser only. Export a backup regularly.</p>
     {exportOpen && <div className="dialog-backdrop" role="presentation"><dialog open aria-modal="true" aria-labelledby="export-title"><h2 id="export-title">Files to export</h2><p>The selected files will be bundled into a ZIP archive.</p><div className="backup-options"><label><input type="checkbox" checked={exportSelection.length === DATA_SECTION_NAMES.length} onChange={(event) => setExportSelection(event.target.checked ? [...DATA_SECTION_NAMES] : [])} /><strong>All</strong></label>{DATA_SECTION_NAMES.map((section) => <label key={section}><input type="checkbox" checked={exportSelection.includes(section)} onChange={() => toggleSection(section)} /><span>{SECTION_FILE_NAMES[section]}</span></label>)}</div><div className="dialog-actions"><button className="button secondary" onClick={() => setExportOpen(false)}>Cancel</button><button className="button primary" disabled={!exportSelection.length} onClick={() => void exportSelected()}>Export</button></div></dialog></div>}
