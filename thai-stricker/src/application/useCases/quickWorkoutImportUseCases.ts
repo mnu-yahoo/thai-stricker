@@ -44,11 +44,11 @@ function resolveTechnique(token: string, techniques: Technique[]) {
   return matches[0];
 }
 
-function findMatchingExercise(input: string, data: AppDataSnapshot) {
-  const techniques = new Map(data.techniques.map((technique) => [technique.id, technique]));
+function findMatchingExercise(input: string, exercises: Exercise[], techniques: Technique[]) {
+  const techniquesById = new Map(techniques.map((technique) => [technique.id, technique]));
   let best: { exercise: Exercise; score: number } | undefined;
-  for (const exercise of data.exercises) {
-    const exerciseShortNames = exercise.techniqueIds.map((id) => techniques.get(id)?.shortName ?? "").join(", ");
+  for (const exercise of exercises) {
+    const exerciseShortNames = exercise.techniqueIds.map((id) => techniquesById.get(id)?.shortName ?? "").join(", ");
     const score = Math.max(similarity(input, exercise.description), similarity(input, exerciseShortNames));
     if (score >= MATCH_THRESHOLD && (!best || score > best.score)) best = { exercise, score };
   }
@@ -56,26 +56,34 @@ function findMatchingExercise(input: string, data: AppDataSnapshot) {
 }
 
 export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot): QuickWorkoutImportPlan {
-  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  if (lines.length < 2) throw new Error("The TXT file must contain a workout name and at least one exercise.");
-  const title = lines[0];
+  const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
+  const title = lines[0]?.trim();
+  if (!title) throw new Error("The first line must contain the workout name.");
+  if (lines.length < 2 || lines[1].trim() !== "") throw new Error("The second line must be empty.");
+  const exerciseLines = lines.slice(2).filter((line) => line.trim());
+  if (!exerciseLines.length) throw new Error("The TXT file must contain at least one exercise.");
   const newExercises: Exercise[] = [];
   const workoutExercises: Workout["exercises"] = [];
   let matchedExerciseCount = 0;
 
-  for (const line of lines.slice(1)) {
-    const tokens = line.split(",").map((token) => token.trim()).filter(Boolean);
-    if (!tokens.length) continue;
+  for (const line of exerciseLines) {
+    const separatorIndex = line.search(/\t/);
+    if (separatorIndex < 0) throw new Error(`Exercise line must contain a tab separator: “${line.trim()}”.`);
+    const importedTitle = line.slice(0, separatorIndex).trim();
+    const content = line.slice(separatorIndex).replace(/^\t+/, "").trim();
+    if (!content) throw new Error(`Exercise content is missing: “${line.trim()}”.`);
+    const tokens = content.split(",").map((token) => token.trim()).filter(Boolean);
     const techniques = tokens.map((token) => resolveTechnique(token, data.techniques));
     const techniqueIds = techniques.map((technique) => technique.id);
-    let exercise = findMatchingExercise(line, data);
+    let exercise = findMatchingExercise(content, data.exercises, data.techniques);
     if (!exercise) {
       exercise = newExercises.find((candidate) => candidate.techniqueIds.join(",") === techniqueIds.join(","));
     }
     if (!exercise) {
+      if (!importedTitle) throw new Error(`No existing exercise matches “${content}”, and the imported line has no exercise title.`);
       exercise = {
         id: makeId("exercise"),
-        title: normalizeSequence(line),
+        title: importedTitle,
         description: techniques.map((technique) => technique.name).join(", "),
         help: "Imported from a quick workout file.",
         category: "Imported",

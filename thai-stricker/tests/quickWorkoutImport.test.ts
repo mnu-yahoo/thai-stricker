@@ -15,15 +15,16 @@ const data: AppDataSnapshot = {
 
 describe("quick workout TXT import", () => {
   it("matches existing exercises and creates missing combinations in order", () => {
-    const plan = buildQuickWorkoutImportPlan("Workout 001\nJAB, CROSS\nLHOOK, JAB", data);
+    const plan = buildQuickWorkoutImportPlan("Workout 001\n\nOne Two\tJAB, CROSS\nNew combo\tLHOOK, JAB", data);
     expect(plan.workout.title).toBe("Workout 001");
     expect(plan.matchedExerciseCount).toBe(1);
     expect(plan.createdExerciseCount).toBe(1);
     expect(plan.newExercises[0].techniqueIds).toEqual(["hook", "jab"]);
+    expect(plan.newExercises[0].title).toBe("New combo");
     expect(plan.workout.exercises.map((item) => item.exerciseId)).toEqual(["punches", plan.newExercises[0].id]);
   });
 
   it("rejects unknown techniques before creating anything", () => {
-    expect(() => buildQuickWorkoutImportPlan("Workout 001\nJAB, UNKNOWN", data)).toThrow("Unknown technique");
+    expect(() => buildQuickWorkoutImportPlan("Workout 001\n\n\tJAB, UNKNOWN", data)).toThrow("Unknown technique");
   });
 });
