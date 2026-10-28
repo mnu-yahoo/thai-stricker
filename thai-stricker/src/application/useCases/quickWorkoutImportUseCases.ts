@@ -60,7 +60,9 @@ export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot)
   const title = lines[0]?.trim();
   if (!title) throw new Error("The first line must contain the workout name.");
   if (lines.length < 2 || lines[1].trim() !== "") throw new Error("The second line must be empty.");
-  const exerciseLines = lines.slice(2).filter((line) => line.trim());
+  const rawExerciseLines = lines.slice(2);
+  const separatorIndex = rawExerciseLines.findIndex((line) => line.trim() === "=================================================================");
+  const exerciseLines = (separatorIndex >= 0 ? rawExerciseLines.slice(0, separatorIndex) : rawExerciseLines).filter((line) => line.trim());
   if (!exerciseLines.length) throw new Error("The TXT file must contain at least one exercise.");
   const newExercises: Exercise[] = [];
   const workoutExercises: Workout["exercises"] = [];

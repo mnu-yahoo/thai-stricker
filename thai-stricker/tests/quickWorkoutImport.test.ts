@@ -27,4 +27,10 @@ describe("quick workout TXT import", () => {
   it("rejects unknown techniques before creating anything", () => {
     expect(() => buildQuickWorkoutImportPlan("Workout 001\n\n\tJAB, UNKNOWN", data)).toThrow("Unknown technique");
   });
+
+  it("ignores the separator line and everything after it", () => {
+    const plan = buildQuickWorkoutImportPlan("Workout 001\n\n\tJAB, CROSS\n=================================================================\nNew combo\tLHOOK, JAB", data);
+    expect(plan.workout.exercises).toHaveLength(1);
+    expect(plan.newExercises).toHaveLength(0);
+  });
 });
