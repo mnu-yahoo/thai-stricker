@@ -74,6 +74,8 @@ export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot)
     const importedTitle = line.slice(0, separatorIndex).trim();
     const content = line.slice(separatorIndex).replace(/^\t+/, "").trim();
     if (!content) throw new Error(`Exercise content is missing: “${line.trim()}”.`);
+    // Keep the sequence exactly as written: repeated techniques are meaningful
+    // in combinations such as RMKICK, JAB, CROSS, JAB, CROSS.
     const tokens = content.split(",").map((token) => token.trim()).filter(Boolean);
     const techniques = tokens.map((token) => resolveTechnique(token, data.techniques));
     const techniqueIds = techniques.map((technique) => technique.id);

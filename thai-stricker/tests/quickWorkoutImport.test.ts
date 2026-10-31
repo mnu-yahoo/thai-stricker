@@ -33,4 +33,11 @@ describe("quick workout TXT import", () => {
     expect(plan.workout.exercises).toHaveLength(1);
     expect(plan.newExercises).toHaveLength(0);
   });
+
+  it("preserves repeated techniques in the imported sequence", () => {
+    const plan = buildQuickWorkoutImportPlan("Workout 001\n\nCombination #39\tCROSS, JAB, CROSS, JAB", data);
+    expect(plan.createdExerciseCount).toBe(1);
+    expect(plan.newExercises[0].techniqueIds).toEqual(["cross", "jab", "cross", "jab"]);
+    expect(plan.newExercises[0].description).toBe("CROSS, JAB, CROSS, JAB");
+  });
 });
