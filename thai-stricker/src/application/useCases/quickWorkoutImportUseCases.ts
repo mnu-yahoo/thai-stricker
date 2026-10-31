@@ -55,6 +55,14 @@ function findMatchingExercise(input: string, exercises: Exercise[], techniques: 
   return best?.exercise;
 }
 
+function nextGeneratedExerciseTitle(usedTitles: Set<string>) {
+  let sequence = 1;
+  while (usedTitles.has(`combination #${sequence}`)) sequence += 1;
+  const title = `Combination #${sequence}`;
+  usedTitles.add(title.toLocaleLowerCase("en"));
+  return title;
+}
+
 export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot): QuickWorkoutImportPlan {
   const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/);
   const title = lines[0]?.trim();
@@ -66,6 +74,7 @@ export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot)
   if (!exerciseLines.length) throw new Error("The TXT file must contain at least one exercise.");
   const newExercises: Exercise[] = [];
   const workoutExercises: Workout["exercises"] = [];
+  const usedTitles = new Set(data.exercises.map((exercise) => exercise.title.trim().toLocaleLowerCase("en")));
   let matchedExerciseCount = 0;
 
   for (const line of exerciseLines) {
@@ -84,10 +93,10 @@ export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot)
       exercise = newExercises.find((candidate) => candidate.techniqueIds.join(",") === techniqueIds.join(","));
     }
     if (!exercise) {
-      if (!importedTitle) throw new Error(`No existing exercise matches “${content}”, and the imported line has no exercise title.`);
+      const generatedTitle = importedTitle || nextGeneratedExerciseTitle(usedTitles);
       exercise = {
         id: makeId("exercise"),
-        title: importedTitle,
+        title: generatedTitle,
         description: techniques.map((technique) => technique.name).join(", "),
         help: "Imported from a quick workout file.",
         category: "Imported",
@@ -95,6 +104,7 @@ export function buildQuickWorkoutImportPlan(text: string, data: AppDataSnapshot)
         techniqueIds: [...techniqueIds],
       };
       newExercises.push(exercise);
+      usedTitles.add(generatedTitle.toLocaleLowerCase("en"));
     } else {
       matchedExerciseCount += 1;
     }

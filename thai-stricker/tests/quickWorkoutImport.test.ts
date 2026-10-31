@@ -40,4 +40,17 @@ describe("quick workout TXT import", () => {
     expect(plan.newExercises[0].techniqueIds).toEqual(["cross", "jab", "cross", "jab"]);
     expect(plan.newExercises[0].description).toBe("CROSS, JAB, CROSS, JAB");
   });
+
+  it("generates the first available Combination title for an unnamed exercise", () => {
+    const occupied = {
+      ...data,
+      exercises: [
+        ...data.exercises,
+        { id: "combination-1", title: "Combination #1", description: "OTHER", help: "", category: "Imported", detail: { type: "reps" as const, reps: 15 }, techniqueIds: ["hook"] },
+        { id: "combination-3", title: "Combination #3", description: "OTHER 3", help: "", category: "Imported", detail: { type: "reps" as const, reps: 15 }, techniqueIds: ["hook"] },
+      ],
+    };
+    const plan = buildQuickWorkoutImportPlan("Workout 001\n\n\tLHOOK, JAB\n\tCROSS, LHOOK", occupied);
+    expect(plan.newExercises.map((exercise) => exercise.title)).toEqual(["Combination #2", "Combination #4"]);
+  });
 });
